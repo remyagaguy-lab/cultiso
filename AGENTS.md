@@ -62,3 +62,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Emplacement du projet
+Ce dépôt a été déplacé le 2026-11-18 de `Carrière/Business/Cultiso` vers `Carrière/Business/Orkedio/Projets/Cultiso` (dossier `Professionnel`). Historique des déplacements : `Professionnel/README.md` et `Professionnel/Brain/00 Système/Journal des déplacements.md`.
