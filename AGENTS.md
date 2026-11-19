@@ -64,4 +64,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- END:nextjs-agent-rules -->
 
 ## Emplacement du projet
-Ce dépôt a été déplacé le 2026-11-18 de `Carrière/Business/Cultiso` vers `Carrière/Business/Orkedio/Projets/Cultiso` (dossier `Professionnel`). Historique des déplacements : `Professionnel/README.md` et `Professionnel/Brain/00 Système/Journal des déplacements.md`.
+Ce dépôt a été déplacé le 2026-11-18 de `Carrière/Business/Cultiso` vers `Carrière/Business/Orkedio/Projets/Cultiso/3_Execution/cultiso.com` (racine de ce dépôt) (dossier `Professionnel`). Historique des déplacements : `Professionnel/README.md` et `Professionnel/Brain/00 Système/Journal des déplacements.md`.

@@ -16,9 +16,9 @@ Le présent dépôt (MVP - V1) se concentre **exclusivement sur Cultiplan** : un
 ## 📚 Documentation du projet
 Pour comprendre l'architecture et les règles du projet, veuillez consulter les documents suivants :
 * 📜 **[Règles Agent]** `AGENTS.md` (À la racine) - Contrat strict pour le développement par l'IA.
-* 🏛️ **[Architecture]** `Cloud/ADR.md` - Registre des décisions techniques.
-* 🗺️ **[Plan de route]** `Cloud/ROADMAP.md` - Le backlog et la méthode MoSCoW.
-* 🎨 **[Parcours Utilisateur]** `Cloud/UX_FLOW.md` - Arborescence et flux de données (Mode Invité).
+* 🏛️ **[Architecture]** `../../2_Pilotage/03_Produit-et-technologie/ADR.md` - Registre des décisions techniques.
+* 🗺️ **[Plan de route]** `../../2_Pilotage/03_Produit-et-technologie/ROADMAP.md` - Le backlog et la méthode MoSCoW.
+* 🎨 **[Parcours Utilisateur]** `../../2_Pilotage/03_Produit-et-technologie/UX_FLOW.md` - Arborescence et flux de données (Mode Invité).
 
 ---
 *Ce projet est développé en "Vibe Coding" avec le support d'agents IA autonomes, sous la supervision d'un Tech Lead humain.*

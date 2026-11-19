@@ -6,7 +6,7 @@ from google.genai import types
 from pydantic import BaseModel, Field
 
 # Configuration
-RAG_DIR = r"../Cloud/RAG_Cultiso"
+RAG_DIR = r"../../90_Ressources/Base de connaissances/RAG_Cultiso"
 OUTPUT_JSON = "extracted_knowledge.json"
 
 # Vérifier la clé API

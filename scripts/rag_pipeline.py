@@ -25,8 +25,8 @@ print("Chargement du modle IA local (sentence-transformers)...")
 model = SentenceTransformer('all-MiniLM-L6-v2')
 print("Modle charg !")
 
-SOURCE_DIR = os.path.join("Cloud", "Cultisia")
-DEST_DIR = os.path.join("Cloud", "RAG_Cultiso")
+SOURCE_DIR = os.path.join("..", "Modules", "Cultisia")
+DEST_DIR = os.path.join("..", "90_Ressources", "Base de connaissances", "RAG_Cultiso")
 os.makedirs(DEST_DIR, exist_ok=True)
 
 # Limite de fichiers par lot
