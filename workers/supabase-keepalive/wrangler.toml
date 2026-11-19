@@ -1,0 +1,12 @@
+name = "cultiso-supabase-keepalive"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Déclenchement automatique tous les 2 jours à 08h00 UTC (largement suffisant pour contrer les 7 jours de pause)
+[triggers]
+crons = ["0 8 */2 * *"]
+
+[vars]
+SUPABASE_URL = "https://redtuedpnhbqziqmyyjc.supabase.co"
+# Note: SUPABASE_ANON_KEY doit être ajoutée comme Secret (chiffré) :
+# npx wrangler secret put SUPABASE_ANON_KEY
