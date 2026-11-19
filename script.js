@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const claudePrompt = fs.readFileSync('Cloud/Cultiplan/cultisia_cultiplan_system_prompt.md', 'utf-8')
+const claudePrompt = fs.readFileSync('../Modules/Cultiplan/cultisia_cultiplan_system_prompt.md', 'utf-8')
   .replace(/\/g, '\\')
   .replace(/\$/g, '\\$');
 

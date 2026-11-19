@@ -1,8 +1,8 @@
 const fs = require('fs');
 
-const promptPath = 'Cloud/Cultiplan/cultisia-system-prompt-v1.2.md';
-const modelPath = 'Cloud/Cultiplan/modele_cultiso.md';
-const schemaPath = 'Cloud/Cultiplan/cultiplan-business-plan.schema.json';
+const promptPath = '../Modules/Cultiplan/cultisia-system-prompt-v1.2.md';
+const modelPath = '../Modules/Cultiplan/modele_cultiso.md';
+const schemaPath = '../Modules/Cultiplan/cultiplan-business-plan.schema.json';
 const personasPath = 'src/lib/personas.ts';
 
 const promptContent = fs.readFileSync(promptPath, 'utf8');
