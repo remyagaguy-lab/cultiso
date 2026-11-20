@@ -28,7 +28,7 @@ export const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center z-50">
             <Link href="/" aria-label="Cultiso, accueil" className="block transition-transform active:scale-[0.96]" onClick={() => setMobileMenuOpen(false)}>
-              <Logo variant="horizontal" size="md" tone="on-light" priority />
+              <Logo variant="horizontal" size="md" tone="on-light" priority className="w-[148px] sm:w-auto" />
             </Link>
           </div>
 

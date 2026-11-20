@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Logo Cultiso (proposition B « Soleil dans le i », validée le 2026-11-20).
+ * Logo Cultiso (proposition F « Soleil dans le i », mot agrandi de 10 % et centré sur le symbole, écart de 2 u, validée le 2026-11-20).
  * On choisit un fichier du kit : aucune couleur recalculée, aucun style en dur.
  * Source : design system Orkedio, fondations/logos/cultiso/ (REGLES-CONSTRUCTION.md).
  *
@@ -14,7 +14,7 @@ export type LogoVariant = "horizontal" | "compact" | "vertical" | "symbol";
 export type LogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type LogoTone = "on-light" | "on-dark" | "on-color";
 
-const RATIO = { horizontal: 3.9878, compact: 5.4659, vertical: 1.2644, symbol: 0.9836, xs: 0.9836 } as const;
+const RATIO = { horizontal: 4.1799, compact: 5.4659, vertical: 1.2644, symbol: 0.9836, xs: 0.9836 } as const;
 const HAUTEUR: Record<Exclude<LogoVariant, "vertical">, Record<LogoSize, number>> = {
   horizontal: { xs: 28, sm: 28, md: 40, lg: 56, xl: 80 },
   compact: { xs: 24, sm: 24, md: 32, lg: 44, xl: 64 },
