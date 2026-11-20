@@ -53,7 +53,7 @@ export default function RegisterPage() {
           {isSubmitted ? (
             <Result
               status="success"
-              title={<span className="font-unbounded text-[#00342F]">Demande envoyée !</span>}
+              title={<span className="font-unbounded text-forest-ink">Demande envoyée !</span>}
               subTitle={<span className="font-manrope text-gray-500">Merci pour votre intérêt. Cultiso est actuellement en Beta privée. Notre équipe examinera votre profil et vous enverra une invitation très prochainement.</span>}
               extra={[
                 <Link href="/" key="home">
@@ -66,7 +66,7 @@ export default function RegisterPage() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <Title level={2} className="!mb-2 !text-[#00342F] !font-unbounded">
+                <Title level={2} className="!mb-2 !text-forest-ink !font-unbounded">
                   Bienvenue sur Cultiso 🌱
                 </Title>
                 <Text className="text-gray-500 text-base">
@@ -135,7 +135,7 @@ export default function RegisterPage() {
 
               <div className="mt-8 text-center text-gray-500 text-sm">
                 Déjà membre ou invité ?{' '}
-                <Link href="/login" className="text-[#D0541F] hover:text-[#E67E22] font-semibold transition-colors">
+                <Link href="/login" className="text-brand-orange hover:text-[#E67E22] font-semibold transition-colors">
                   Se connecter
                 </Link>
               </div>

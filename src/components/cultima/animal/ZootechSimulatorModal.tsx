@@ -52,7 +52,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="bg-[#007468] px-6 py-4 text-white flex items-center justify-between">
+        <div className="bg-brand-green px-6 py-4 text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
               <Calculator className="w-5 h-5 text-emerald-300" />
@@ -78,7 +78,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
         <div className="p-6 overflow-y-auto space-y-6">
           {/* Top Explainer */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-600 flex items-start gap-2.5">
-            <Sparkles className="w-4 h-4 text-[#D0541F] shrink-0 mt-0.5" />
+            <Sparkles className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
             <p>
               En élevage intensif, une variation de seulement <strong>0.05 point d'IC</strong> représente des milliers d'euros d'économie en provende. Ajustez vos paramètres ci-dessous pour calculer le gain direct :
             </p>
@@ -94,7 +94,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 type="number"
                 value={headCount}
                 onChange={(e) => setHeadCount(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-semibold"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-semibold"
               />
             </div>
 
@@ -107,7 +107,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 step="0.05"
                 value={targetWeight}
                 onChange={(e) => setTargetWeight(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-semibold"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-semibold"
               />
             </div>
 
@@ -120,12 +120,12 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 step="0.01"
                 value={currentFcr}
                 onChange={(e) => setCurrentFcr(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-semibold text-slate-800"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-semibold text-slate-800"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#007468] block mb-1">
+              <label className="text-xs font-bold text-brand-green block mb-1">
                 Indice de Conversion Optimisé (Cible)
               </label>
               <input
@@ -133,7 +133,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 step="0.01"
                 value={optimizedFcr}
                 onChange={(e) => setOptimizedFcr(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-emerald-500 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-bold text-[#007468] bg-emerald-50/50"
+                className="w-full px-3 py-2 text-xs border border-emerald-500 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-bold text-brand-green bg-emerald-50/50"
               />
             </div>
 
@@ -146,7 +146,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 step="0.01"
                 value={feedCostPerKg}
                 onChange={(e) => setFeedCostPerKg(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-semibold"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-semibold"
               />
               <span className="text-[10px] text-slate-400">Soit {(feedCostPerKg * 1000).toFixed(0)} € / Tonne</span>
             </div>
@@ -160,7 +160,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
                 step="0.05"
                 value={sellingPricePerKg}
                 onChange={(e) => setSellingPricePerKg(Number(e.target.value))}
-                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-semibold"
+                className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-green font-mono font-semibold"
               />
             </div>
           </div>
@@ -171,7 +171,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
                 Gain Économique Direct pour la Bande
               </span>
-              <span className="text-xs bg-[#D0541F] text-white font-bold px-2 py-0.5 rounded font-mono">
+              <span className="text-xs bg-brand-orange text-white font-bold px-2 py-0.5 rounded font-mono">
                 +{((financialGain / currentGrossMarginFeed) * 100).toFixed(1)}% Marge
               </span>
             </div>
@@ -221,7 +221,7 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#007468] hover:bg-[#116a58] text-white text-xs font-bold rounded-lg transition"
+            className="px-4 py-2 bg-brand-green hover:bg-[#116a58] text-white text-xs font-bold rounded-lg transition"
           >
             Fermer le simulateur
           </button>

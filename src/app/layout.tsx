@@ -33,7 +33,7 @@ export default function RootLayout({
       lang="fr"
       className={`${plusJakarta.variable} ${caveat.variable} h-full antialiased bg-[#ffffff]`}
     >
-      <body className="min-h-full flex flex-col font-plus-jakarta m-0 p-0 bg-[#ffffff] text-[#00342F] selection:bg-[#f3fbe9] selection:text-[#00342F]">
+      <body className="min-h-full flex flex-col font-plus-jakarta m-0 p-0 bg-[#ffffff] text-forest-ink selection:bg-[#f3fbe9] selection:text-forest-ink">
         <AntdRegistry>
           <ConfigProvider
             theme={{

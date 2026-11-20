@@ -30,7 +30,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
       <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs hover:border-slate-300 transition relative overflow-hidden group">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cheptel Actif</span>
-          <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#007468] flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-emerald-50 text-brand-green flex items-center justify-center">
             <Users className="w-3.5 h-3.5" />
           </div>
         </div>
@@ -58,17 +58,17 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
         <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full pointer-events-none -mr-4 -mt-4 opacity-50"></div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-bold text-[#007468] uppercase tracking-wider">Indice FCR (IC)</span>
-            <span className="text-[9px] bg-emerald-100/70 text-[#007468] font-bold px-1 rounded">Clé</span>
+            <span className="text-[11px] font-bold text-brand-green uppercase tracking-wider">Indice FCR (IC)</span>
+            <span className="text-[9px] bg-emerald-100/70 text-brand-green font-bold px-1 rounded">Clé</span>
           </div>
-          <div className="w-7 h-7 rounded-lg bg-[#007468]/10 text-[#007468] flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-brand-green/10 text-brand-green flex items-center justify-center">
             <Scale className="w-3.5 h-3.5" />
           </div>
         </div>
 
         <div className="mt-2.5">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-black text-[#007468] font-mono tracking-tight">
+            <span className="text-2xl font-black text-brand-green font-mono tracking-tight">
               {kpis.feedConversionRatio.toFixed(2)}
             </span>
             <span className="text-xs text-slate-500 font-medium">kg alim/kg</span>
@@ -132,7 +132,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
              species === 'aquaculture' ? 'Biomasse Bassin' : 
              'Rendement / Jour'}
           </span>
-          <div className="w-7 h-7 rounded-lg bg-orange-50 text-[#D0541F] flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-orange-50 text-brand-orange flex items-center justify-center">
             {species === 'poultry' ? <Egg className="w-3.5 h-3.5" /> : 
              species === 'cattle' ? <Milk className="w-3.5 h-3.5" /> : 
              species === 'aquaculture' ? <Fish className="w-3.5 h-3.5" /> : 
@@ -151,7 +151,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
               </div>
               <div className="text-[11px] text-slate-500 font-medium mt-0.5 flex items-center gap-1.5">
                 <span>Taux de ponte :</span>
-                <span className="font-bold text-[#007468]">{kpis.dailyProduction.layingRate}%</span>
+                <span className="font-bold text-brand-green">{kpis.dailyProduction.layingRate}%</span>
               </div>
             </div>
           ) : species === 'cattle' ? (
@@ -234,8 +234,8 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Autonomie Silos</span>
           <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
             kpis.feedStock.autonomyDays < 4 
-              ? 'bg-amber-100 text-[#D0541F]' 
-              : 'bg-emerald-50 text-[#007468]'
+              ? 'bg-amber-100 text-brand-orange' 
+              : 'bg-emerald-50 text-brand-green'
           }`}>
             <Wheat className="w-3.5 h-3.5" />
           </div>
@@ -244,7 +244,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({ kpis, species }) => {
         <div className="mt-2.5">
           <div className="flex items-baseline gap-1.5">
             <span className={`text-2xl font-black font-mono tracking-tight ${
-              kpis.feedStock.autonomyDays < 4 ? 'text-[#D0541F]' : 'text-slate-900'
+              kpis.feedStock.autonomyDays < 4 ? 'text-brand-orange' : 'text-slate-900'
             }`}>
               {kpis.feedStock.autonomyDays.toFixed(1)}
             </span>

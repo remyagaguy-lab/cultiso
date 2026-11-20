@@ -1,5 +1,6 @@
 "use client";
 
+import Logo from "@/components/ui/Logo";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -93,13 +94,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Link 
               key={item.name} 
               href={item.disabled ? "#" : item.href}
-              className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${item.disabled ? 'opacity-30 cursor-not-allowed' : isActive ? 'text-[#007468]' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${item.disabled ? 'opacity-30 cursor-not-allowed' : isActive ? 'text-brand-green' : 'text-gray-400 hover:text-gray-600'}`}
               onClick={(e) => item.disabled && e.preventDefault()}
             >
               <div className="p-1 transition-colors">
                 <Icon className="text-[22px]" />
               </div>
-              <span className={`text-[10px] font-medium ${isActive ? 'text-[#007468]' : 'text-gray-400'}`}>{item.name}</span>
+              <span className={`text-[10px] font-medium ${isActive ? 'text-brand-green' : 'text-gray-400'}`}>{item.name}</span>
             </Link>
           );
         })}
@@ -118,14 +119,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Logo row */}
         <div className="flex h-[72px] items-center justify-center px-4 shrink-0 border-b border-gray-100">
           <Link href="/dashboard" className="flex items-center gap-3 no-underline overflow-hidden w-full justify-center">
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
-              <img src="/favicon.png" alt="Cultiso" className="w-8 h-8 object-contain" />
-            </div>
-            <div className={`transition-all duration-300 overflow-hidden flex items-center ${isExpanded ? "w-auto opacity-100 ml-1" : "w-0 opacity-0"}`}>
-              <span className="font-unbounded font-bold text-[#007468] text-xl tracking-tight whitespace-nowrap">
-                cultiso
+            {isExpanded ? (
+              <span className="block w-[148px] shrink-0">
+                <Logo variant="horizontal" size="sm" tone="on-light" priority className="w-full" />
               </span>
-            </div>
+            ) : (
+              <span className="block w-[32px] shrink-0">
+                <Logo variant="symbol" size="sm" tone="on-light" className="w-full" />
+              </span>
+            )}
           </Link>
         </div>
 
@@ -142,7 +144,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     item.disabled
                       ? "text-gray-300 cursor-not-allowed"
                       : isActive
-                        ? "text-[#007468]"
+                        ? "text-brand-green"
                         : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                   }`}
                   style={{
@@ -204,7 +206,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className={`hidden lg:flex border-t border-gray-100 px-3 py-4 shrink-0 justify-center transition-all duration-300 bg-gray-50/50`}>
           <button
             onClick={togglePinned}
-            className={`flex items-center justify-center gap-3 h-10 rounded-xl text-gray-400 hover:text-[#007468] hover:bg-gray-100 transition-all text-sm border border-transparent ${isExpanded ? "w-full px-3" : "w-10"}`}
+            className={`flex items-center justify-center gap-3 h-10 rounded-xl text-gray-400 hover:text-brand-green hover:bg-gray-100 transition-all text-sm border border-transparent ${isExpanded ? "w-full px-3" : "w-10"}`}
             title={isPinned ? "Détacher" : "Épingler le menu"}
           >
             {isPinned ? <PushpinFilled className="text-xl" /> : <PushpinOutlined className="text-xl" />}
@@ -223,11 +225,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Left */}
             <div className="flex items-center gap-4 flex-1 min-w-0">
               {/* Mobile logo when no sidebar */}
-              <div className="lg:hidden flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#007468] rounded-lg flex items-center justify-center shrink-0">
-                  <img src="/favicon.png" alt="Cultiso" className="w-4 h-4 object-contain brightness-0 invert" />
-                </div>
-                <span className="font-unbounded font-bold text-[#007468] text-lg">cultiso</span>
+              <div className="lg:hidden flex items-center">
+                <Logo variant="horizontal" size="sm" tone="on-light" priority />
               </div>
             
               <div className="relative hidden sm:block w-full max-w-sm">
@@ -254,7 +253,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 rounded-full py-1 px-1.5 transition-colors">
                   
                   {/* Balance Affichage */}
-                  <div className="hidden sm:flex items-center gap-1.5 bg-[#f3fbe9] text-[#007468] px-2.5 py-1 rounded-md border border-[#22c55e]/30 mr-2">
+                  <div className="hidden sm:flex items-center gap-1.5 bg-[#f3fbe9] text-brand-green px-2.5 py-1 rounded-md border border-[#22c55e]/30 mr-2">
                     <span className="text-[13px]">⚡</span>
                     <span className="text-xs font-bold font-mono-numbers">
                       {userProfile?.app_metadata?.tokens_balance != null 
@@ -263,7 +262,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </span>
                   </div>
 
-                  <Avatar size={32} className="bg-[#D0541F] font-unbounded font-bold text-xs">
+                  <Avatar size={32} className="bg-brand-orange font-unbounded font-bold text-xs">
                     {(userProfile?.user_metadata?.full_name || userProfile?.user_metadata?.name || userProfile?.email || "CU").substring(0, 2).toUpperCase()}
                   </Avatar>
                   <div className="hidden lg:flex flex-col items-start leading-tight">

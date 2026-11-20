@@ -30,7 +30,7 @@ export const BatchDetailModal: React.FC<BatchDetailModalProps> = ({ batch, onClo
         {/* Header */}
         <div className="bg-slate-900 px-6 py-4 text-white flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#007468] flex items-center justify-center text-white font-mono font-bold text-sm">
+            <div className="w-10 h-10 rounded-xl bg-brand-green flex items-center justify-center text-white font-mono font-bold text-sm">
               {batch.code.slice(0, 3)}
             </div>
             <div>
@@ -80,7 +80,7 @@ export const BatchDetailModal: React.FC<BatchDetailModalProps> = ({ batch, onClo
 
             <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl">
               <span className="text-[10px] text-slate-400 uppercase font-bold block">Indice FCR (IC)</span>
-              <span className="text-lg font-black font-mono text-[#007468]">
+              <span className="text-lg font-black font-mono text-brand-green">
                 {batch.fcrCurrent.toFixed(2)}
               </span>
               <span className="text-[10px] text-slate-400 block font-mono">
@@ -103,7 +103,7 @@ export const BatchDetailModal: React.FC<BatchDetailModalProps> = ({ batch, onClo
           <div className="border border-slate-200 rounded-xl overflow-hidden">
             <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 font-bold text-slate-800 text-xs flex items-center justify-between">
               <span>Passeport Zootechnique & Fiche de Lot</span>
-              <span className="text-[11px] font-mono text-[#007468] font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <span className="text-[11px] font-mono text-brand-green font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                 Phase : {batch.phase}
               </span>
             </div>
@@ -146,7 +146,7 @@ export const BatchDetailModal: React.FC<BatchDetailModalProps> = ({ batch, onClo
 
           {/* Next Action Box */}
           <div className="bg-orange-50/50 border border-orange-200 rounded-xl p-4 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#D0541F] text-white flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-brand-orange text-white flex items-center justify-center shrink-0">
               <Clock className="w-4 h-4" />
             </div>
             <div>
@@ -156,7 +156,7 @@ export const BatchDetailModal: React.FC<BatchDetailModalProps> = ({ batch, onClo
               <div className="text-xs text-slate-700 mt-1 font-medium">
                 {batch.nextAction.description}
               </div>
-              <div className="text-[11px] text-[#D0541F] font-semibold mt-1 font-mono">
+              <div className="text-[11px] text-brand-orange font-semibold mt-1 font-mono">
                 Date d'échéance : {batch.nextAction.dueDate}
               </div>
             </div>

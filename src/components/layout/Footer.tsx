@@ -8,7 +8,7 @@ export const Footer = () => {
   if (pathname === '/cultisia' || pathname === '/cultiplan' || pathname === '/cultiseil') return null;
 
   return (
-    <footer className="w-full bg-[#00342F] text-white px-6 py-16 md:py-24 mt-auto">
+    <footer className="w-full bg-forest-ink text-white px-6 py-16 md:py-24 mt-auto">
       <div className="max-w-[1200px] mx-auto grid grid-cols-2 lg:grid-cols-5 gap-x-4 gap-y-10 lg:gap-8">
         <div className="col-span-2 lg:col-span-2 space-y-6">
           <Link href="/" aria-label="Cultiso, accueil" className="block w-fit">

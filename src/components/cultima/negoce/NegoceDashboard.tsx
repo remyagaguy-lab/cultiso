@@ -203,8 +203,8 @@ export default function NegoceDashboard() {
                   <p className="text-sm text-slate-500">Évolution des cours de clôture (€/Tonne)</p>
                 </div>
                 <div className="flex items-center space-x-4">
-                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#007468]"></div><span className="text-xs text-slate-600">Blé</span></div>
-                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#D0541F]"></div><span className="text-xs text-slate-600">Maïs</span></div>
+                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-brand-green"></div><span className="text-xs text-slate-600">Blé</span></div>
+                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-brand-orange"></div><span className="text-xs text-slate-600">Maïs</span></div>
                    <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#f5b041]"></div><span className="text-xs text-slate-600">Soja</span></div>
                 </div>
               </div>

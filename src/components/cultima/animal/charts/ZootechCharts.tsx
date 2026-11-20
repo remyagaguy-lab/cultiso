@@ -54,7 +54,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('growth')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'growth'
-                ? 'bg-[#007468] text-white shadow-xs'
+                ? 'bg-brand-green text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -67,7 +67,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
               onClick={() => setActiveTab('laying')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
                 activeTab === 'laying'
-                  ? 'bg-[#007468] text-white shadow-xs'
+                  ? 'bg-brand-green text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-200/60'
               }`}
             >
@@ -80,7 +80,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('feed')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'feed'
-                ? 'bg-[#007468] text-white shadow-xs'
+                ? 'bg-brand-green text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -92,7 +92,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('treasury')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'treasury'
-                ? 'bg-[#007468] text-white shadow-xs'
+                ? 'bg-brand-green text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -104,11 +104,11 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
         {/* Legend / Status pill */}
         <div className="flex items-center gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#007468]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-green"></span>
             <span className="font-medium text-slate-700">Données Réelles Lot</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#D0541F]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>
             <span className="font-medium text-slate-700">Standard Génétique Guide</span>
           </div>
         </div>
@@ -128,7 +128,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Comparaison du poids moyen pesé (g) contre le standard de sélection (Cobb 500 / ISA / Large White) avec tolérance ±5%
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#007468] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-brand-green border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>Avance de croissance : +70g / sujet</span>
               </div>
             </div>
@@ -235,7 +235,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Taux de ponte constaté vs courbe théorique de ponte (Semaine 18 à 40) et poids moyen de l'œuf
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-orange-50 text-[#D0541F] border border-orange-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-orange-50 text-brand-orange border border-orange-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>Pic de ponte atteint à Sem 25 (95.8%)</span>
               </div>
             </div>
@@ -290,7 +290,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     formatter={(val) => {
                       if (val === 'actualRate') return <span className="text-xs text-slate-700 font-semibold">Taux de Ponte Réel (%)</span>;
                       if (val === 'standardRate') return <span className="text-xs text-slate-700 font-semibold">Objectif Standard (%)</span>;
-                      if (val === 'eggWeightAvg') return <span className="text-xs text-[#D0541F] font-semibold">Poids Moyen Œuf (g)</span>;
+                      if (val === 'eggWeightAvg') return <span className="text-xs text-brand-orange font-semibold">Poids Moyen Œuf (g)</span>;
                       return val;
                     }}
                   />
@@ -338,7 +338,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Suivi de la quantité d'aliment distribuée et ratio de conversion biologique de la bande
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#007468] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-brand-green border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>IC Cumulé Actuel : 1.58 (Excellente valorisation alimentaire)</span>
               </div>
             </div>
@@ -379,7 +379,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     formatter={(val) => {
                       if (val === 'intakeKg') return <span className="text-xs text-slate-700 font-semibold">Aliment Hebdo (kg)</span>;
                       if (val === 'cumulativeKg') return <span className="text-xs text-slate-700 font-semibold">Cumulé Lot (kg)</span>;
-                      if (val === 'fcrPoint') return <span className="text-xs text-[#D0541F] font-semibold">Indice IC (FCR)</span>;
+                      if (val === 'fcrPoint') return <span className="text-xs text-brand-orange font-semibold">Indice IC (FCR)</span>;
                       return val;
                     }}
                   />
@@ -435,9 +435,9 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     height={36} 
                     formatter={(val) => {
                       if (val === 'revenue') return <span className="text-xs text-slate-800 font-semibold">Ventes (k€)</span>;
-                      if (val === 'feedOpex') return <span className="text-xs text-[#D0541F] font-semibold">Coût Provende</span>;
+                      if (val === 'feedOpex') return <span className="text-xs text-brand-orange font-semibold">Coût Provende</span>;
                       if (val === 'vetOpex') return <span className="text-xs text-purple-700 font-semibold">Vétérinaire</span>;
-                      if (val === 'grossMarginFeed') return <span className="text-xs text-[#007468] font-semibold">Marge Brute MCAS</span>;
+                      if (val === 'grossMarginFeed') return <span className="text-xs text-brand-green font-semibold">Marge Brute MCAS</span>;
                       return val;
                     }}
                   />

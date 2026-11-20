@@ -78,7 +78,7 @@ export default function DashboardPage() {
         {/* Cours du Maïs */}
         <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center text-[#D0541F]">
+            <div className="w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center text-brand-orange">
               <LineChartOutlined />
             </div>
             <span className="text-[11px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
@@ -164,7 +164,7 @@ export default function DashboardPage() {
         {/* ─── LEFT: 2/3 width ─── */}
         <div className="lg:col-span-2 space-y-6">
           {/* Cultisia Quick Chat */}
-          <div className="bg-gradient-to-br from-[#00342F] to-[#0a3f34] rounded-xl p-6 sm:p-8 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-br from-forest-ink to-[#0a3f34] rounded-xl p-6 sm:p-8 text-white relative overflow-hidden">
             <div className="absolute top-4 right-4 opacity-[0.04] pointer-events-none hidden sm:block">
               <RobotOutlined style={{ fontSize: 100 }} />
             </div>
@@ -183,7 +183,7 @@ export default function DashboardPage() {
                 />
                 <Button
                   type="primary"
-                  className="bg-[#D0541F] hover:bg-[#E67E22] border-none rounded-lg font-medium px-5 h-9 w-full sm:w-auto"
+                  className="bg-brand-orange hover:bg-[#E67E22] border-none rounded-lg font-medium px-5 h-9 w-full sm:w-auto"
                 >
                   Analyser
                 </Button>
@@ -364,7 +364,7 @@ export default function DashboardPage() {
           <div className="bg-[#f3fbe9] rounded-xl border border-[#22c55e]/15 p-5 relative overflow-hidden">
             <div className="absolute -right-8 -top-8 w-28 h-28 bg-[#22c55e]/10 rounded-full blur-2xl pointer-events-none" />
             <ShopOutlined className="text-xl text-[#22c55e] mb-3 block" />
-            <h4 className="font-unbounded font-bold text-[#00342F] text-sm mb-1.5 m-0">
+            <h4 className="font-unbounded font-bold text-forest-ink text-sm mb-1.5 m-0">
               Préparez la saison
             </h4>
             <p className="text-xs text-gray-600 leading-relaxed mb-4 m-0">

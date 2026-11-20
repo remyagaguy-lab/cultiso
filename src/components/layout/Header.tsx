@@ -35,7 +35,7 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-2">
             <div className="group flex items-center">
-              <button className="text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
+              <button className="text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
                 Produits
                 <svg className="w-3.5 h-3.5 ml-1.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
@@ -43,26 +43,26 @@ export const Header = () => {
             </div>
 
             <div className="group flex items-center">
-              <button className="text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
+              <button className="text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
                 Solutions
                 <svg className="w-3.5 h-3.5 ml-1.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
               <MegaMenuSolutions />
             </div>
 
-            <Link href="/cours-des-prix" className="text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center transition-colors">
+            <Link href="/cours-des-prix" className="text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center transition-colors">
               Cours des prix
             </Link>
             
             <div className="group flex items-center">
-              <button className="text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
+              <button className="text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center cursor-default transition-colors">
                 Ressources
                 <svg className="w-3.5 h-3.5 ml-1.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
               <MegaMenuResources />
             </div>
 
-            <Link href="/contact" className="text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center transition-colors">
+            <Link href="/contact" className="text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-md font-medium px-3.5 py-2 text-[14.5px] flex items-center transition-colors">
               Nous contacter
             </Link>
           </nav>
@@ -80,14 +80,14 @@ export const Header = () => {
             
             {/* Sign Up is visible everywhere */}
             <Link href="/register">
-              <Button className="font-bold text-[13px] sm:text-[14px] px-4 sm:px-5 h-[34px] sm:h-[40px] !bg-[#007468] hover:!bg-[#073A30] !text-white border-none shadow-sm rounded-[6px] sm:rounded-[8px] flex items-center justify-center transition-all">
+              <Button className="font-bold text-[13px] sm:text-[14px] px-4 sm:px-5 h-[34px] sm:h-[40px] !bg-brand-green hover:!bg-[#073A30] !text-white border-none shadow-sm rounded-[6px] sm:rounded-[8px] flex items-center justify-center transition-all">
                 S'inscrire
               </Button>
             </Link>
 
             {/* Mobile Menu Toggle */}
             <button 
-              className="lg:hidden p-1.5 -mr-1.5 text-[#00342F] hover:bg-[rgba(0,52,47,0.04)] rounded-lg transition-colors"
+              className="lg:hidden p-1.5 -mr-1.5 text-forest-ink hover:bg-[rgba(0,52,47,0.04)] rounded-lg transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -105,7 +105,7 @@ export const Header = () => {
       <div 
         className={`fixed inset-0 bg-white z-40 transition-transform duration-300 ease-in-out lg:hidden flex flex-col pt-[88px] px-6 pb-6 overflow-y-auto ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <nav className="flex flex-col text-[#00342F]">
+        <nav className="flex flex-col text-forest-ink">
           {/* Produits Accordion */}
           <div className="border-b border-gray-100">
             <button 

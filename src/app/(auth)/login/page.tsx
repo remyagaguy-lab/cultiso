@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Logo from "@/components/ui/Logo";
 import React, { useState } from "react";
 import { Form, Input, Alert, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
@@ -39,10 +40,10 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-12 h-12 bg-[#f3fbe9] rounded-xl flex items-center justify-center shadow-sm border border-[#22c55e]/20">
-            <img src="/favicon.png" alt="Cultiso" className="w-8 h-8 object-contain" />
+            <Logo variant="symbol" size="sm" className="w-[32px]" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-[28px] font-bold font-unbounded text-[#00342F] tracking-tight">
+        <h2 className="mt-6 text-center text-[28px] font-bold font-unbounded text-forest-ink tracking-tight">
           Bon retour
         </h2>
         <p className="mt-2 text-center text-[15px] text-gray-500 font-manrope">
@@ -117,7 +118,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-sm text-gray-500 font-medium">
             Vous n'avez pas encore d'accès ?{' '}
-            <Link href="/register" className="font-semibold text-[#00342F] hover:text-[#22c55e] transition-colors">
+            <Link href="/register" className="font-semibold text-forest-ink hover:text-[#22c55e] transition-colors">
               Rejoindre la liste d'attente
             </Link>
           </div>

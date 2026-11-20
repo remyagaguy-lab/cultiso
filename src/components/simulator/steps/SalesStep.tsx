@@ -24,10 +24,10 @@ export function SalesStep() {
       </div>
 
       <div className="bg-[#0D211A] border border-[#1A3329] rounded-xl p-5 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-24 h-24 bg-[#D0541F] opacity-5 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute right-0 top-0 w-24 h-24 bg-brand-orange opacity-5 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
         <h3 className="text-white font-medium mb-1">Rendement Agronomique Simulé</h3>
         <p className="text-[#6B857E] text-sm mb-4">Calculé automatiquement selon le sol, la culture et la surface.</p>
-        <div className="text-3xl font-unbounded font-bold text-[#D0541F]">
+        <div className="text-3xl font-unbounded font-bold text-brand-orange">
           {dynamicYield} <span className="text-lg text-white font-normal">Tonnes</span>
         </div>
       </div>
