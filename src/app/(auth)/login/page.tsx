@@ -42,7 +42,7 @@ export default function LoginPage() {
             <img src="/favicon.png" alt="Cultiso" className="w-8 h-8 object-contain" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-[28px] font-bold font-unbounded text-[#052821] tracking-tight">
+        <h2 className="mt-6 text-center text-[28px] font-bold font-unbounded text-[#00342F] tracking-tight">
           Bon retour
         </h2>
         <p className="mt-2 text-center text-[15px] text-gray-500 font-manrope">
@@ -117,7 +117,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-sm text-gray-500 font-medium">
             Vous n'avez pas encore d'accès ?{' '}
-            <Link href="/register" className="font-semibold text-[#052821] hover:text-[#22c55e] transition-colors">
+            <Link href="/register" className="font-semibold text-[#00342F] hover:text-[#22c55e] transition-colors">
               Rejoindre la liste d'attente
             </Link>
           </div>

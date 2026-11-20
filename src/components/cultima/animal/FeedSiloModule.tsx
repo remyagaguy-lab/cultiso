@@ -24,7 +24,7 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
       {/* Header */}
       <div className="p-4 sm:px-6 sm:py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#0B5345] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#007468] flex items-center justify-center">
             <Wheat className="w-4 h-4" />
           </div>
           <div>
@@ -55,7 +55,7 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
               key={silo.id}
               className={`rounded-xl border p-4 flex flex-col justify-between transition relative overflow-hidden ${
                 isCritical
-                  ? 'border-[#D35400] bg-orange-50/30 ring-1 ring-[#D35400]/30'
+                  ? 'border-[#D0541F] bg-orange-50/30 ring-1 ring-[#D0541F]/30'
                   : isWarning
                   ? 'border-amber-300 bg-amber-50/20'
                   : 'border-slate-200 bg-white hover:border-slate-300'
@@ -68,7 +68,7 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
                     {silo.name.split('—')[0].trim()}
                   </span>
                   {isCritical ? (
-                    <span className="flex items-center gap-1 text-[10px] font-bold bg-[#D35400] text-white px-1.5 py-0.2 rounded">
+                    <span className="flex items-center gap-1 text-[10px] font-bold bg-[#D0541F] text-white px-1.5 py-0.2 rounded">
                       <AlertTriangle className="w-3 h-3" />
                       Critique
                     </span>
@@ -100,10 +100,10 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
                         isCritical
-                          ? 'bg-[#D35400]'
+                          ? 'bg-[#D0541F]'
                           : isWarning
                           ? 'bg-amber-500'
-                          : 'bg-[#0B5345]'
+                          : 'bg-[#007468]'
                       }`}
                       style={{ width: `${silo.fillPercentage}%` }}
                     ></div>
@@ -123,7 +123,7 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
                     <span className="text-[10px] text-slate-400 block uppercase font-semibold">Autonomie</span>
                     <span
                       className={`font-mono font-bold text-sm ${
-                        isCritical ? 'text-[#D35400]' : 'text-slate-900'
+                        isCritical ? 'text-[#D0541F]' : 'text-slate-900'
                       }`}
                     >
                       {silo.daysRemaining.toFixed(1)} j
@@ -141,7 +141,7 @@ export const FeedSiloModule: React.FC<FeedSiloModuleProps> = ({ silos, onOrderFe
                   onClick={() => onOrderFeed(silo)}
                   className={`w-full py-1.5 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
                     isCritical
-                      ? 'bg-[#D35400] text-white hover:bg-[#a04000]'
+                      ? 'bg-[#D0541F] text-white hover:bg-[#a04000]'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >

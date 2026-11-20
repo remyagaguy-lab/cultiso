@@ -29,9 +29,9 @@ const yieldData = [
 ];
 
 const stockData = [
-  { name: 'Matières Premières', value: 450, color: '#0B5345' },
+  { name: 'Matières Premières', value: 450, color: '#007468' },
   { name: 'Produits Finis', value: 320, color: '#1A6C5B' },
-  { name: 'Emballages', value: 150, color: '#D35400' },
+  { name: 'Emballages', value: 150, color: '#D0541F' },
   { name: 'En transit', value: 80, color: '#E67E22' },
 ];
 
@@ -204,8 +204,8 @@ export default function TransformationDashboard() {
                     <AreaChart data={yieldData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorRendement" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0B5345" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#0B5345" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#007468" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#007468" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
@@ -216,9 +216,9 @@ export default function TransformationDashboard() {
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                       />
                       <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
-                      <Area yAxisId="left" type="monotone" dataKey="rendement" name="Rendement (%)" stroke="#0B5345" strokeWidth={3} fillOpacity={1} fill="url(#colorRendement)" />
+                      <Area yAxisId="left" type="monotone" dataKey="rendement" name="Rendement (%)" stroke="#007468" strokeWidth={3} fillOpacity={1} fill="url(#colorRendement)" />
                       <Line yAxisId="left" type="monotone" dataKey="cible" name="Cible (%)" stroke="#7F8C8D" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                      <Line yAxisId="right" type="monotone" dataKey="pertes" name="Pertes (%)" stroke="#D35400" strokeWidth={2} />
+                      <Line yAxisId="right" type="monotone" dataKey="pertes" name="Pertes (%)" stroke="#D0541F" strokeWidth={2} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>

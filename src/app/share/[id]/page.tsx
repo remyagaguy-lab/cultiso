@@ -95,12 +95,12 @@ export default function SharedConversationPage() {
       {/* HEADER */}
       <header className="h-[72px] flex items-center justify-between px-6 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-20 shadow-sm shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-[#0B5345] rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+          <div className="w-9 h-9 bg-[#007468] rounded-xl flex items-center justify-center shrink-0 shadow-sm">
             <img src="/favicon.png" alt="Cultiso" className="w-5 h-5 object-contain brightness-0 invert" />
           </div>
           <div>
-            <span className="font-unbounded font-bold text-[#0B5345] text-[17px] tracking-tight block leading-none">cultiso</span>
-            <span className="text-[11px] font-semibold text-[#D35400] uppercase tracking-wider block mt-0.5">Conversation partagée</span>
+            <span className="font-unbounded font-bold text-[#007468] text-[17px] tracking-tight block leading-none">cultiso</span>
+            <span className="text-[11px] font-semibold text-[#D0541F] uppercase tracking-wider block mt-0.5">Conversation partagée</span>
           </div>
         </div>
         <div className="text-[13px] font-semibold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 hidden sm:block truncate max-w-[300px]">
@@ -135,21 +135,21 @@ export default function SharedConversationPage() {
                   )}
                   <div className={`flex flex-col gap-1.5 ${msg.role === "user" ? "items-end max-w-[85%]" : "items-start w-full"}`}>
                     {msg.role === "user" ? (
-                      <div className="px-5 py-3.5 rounded-3xl bg-[#0B5345] text-white text-[15px] font-medium leading-[1.65] whitespace-pre-wrap shadow-sm">
+                      <div className="px-5 py-3.5 rounded-3xl bg-[#007468] text-white text-[15px] font-medium leading-[1.65] whitespace-pre-wrap shadow-sm">
                         {displayContent}
                       </div>
                     ) : (
                       <div className="relative w-full">
                         {displayContent && (
                           <div className="prose prose-sm md:prose-base max-w-none text-gray-800 leading-[1.75]
-                            prose-headings:font-unbounded prose-headings:font-bold prose-headings:text-[#0B5345] 
+                            prose-headings:font-unbounded prose-headings:font-bold prose-headings:text-[#007468] 
                             prose-h1:text-[22px] prose-h2:text-[18px] prose-h3:text-[15px] prose-h1:border-b-2 prose-h1:border-[#22c55e] prose-h1:pb-2
                             prose-p:text-[15px] prose-p:mb-4
-                            prose-strong:text-[#0B5345] prose-strong:font-bold
-                            prose-a:text-[#D35400] prose-a:font-semibold prose-a:no-underline hover:prose-a:underline
+                            prose-strong:text-[#007468] prose-strong:font-bold
+                            prose-a:text-[#D0541F] prose-a:font-semibold prose-a:no-underline hover:prose-a:underline
                             prose-ul:list-disc prose-ul:pl-5 prose-li:mb-2
                             prose-blockquote:border-l-4 prose-blockquote:border-[#22c55e] prose-blockquote:bg-[#f3fbe9]/50 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:rounded-r-lg prose-blockquote:italic
-                            prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-[#D35400] prose-code:text-[13px] prose-code:font-mono
+                            prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-[#D0541F] prose-code:text-[13px] prose-code:font-mono
                             prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:shadow-sm"
                           >
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -172,7 +172,7 @@ export default function SharedConversationPage() {
         <p className="text-[13px] text-gray-500 font-medium mb-3">Cette conversation a été générée avec Cultisia.</p>
         <a 
           href="/" 
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0B5345] text-white rounded-xl text-[13px] font-bold hover:bg-[#073c32] transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#007468] text-white rounded-xl text-[13px] font-bold hover:bg-[#073c32] transition-colors shadow-sm"
         >
           Découvrir Cultiso
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>

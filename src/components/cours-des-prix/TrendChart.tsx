@@ -12,8 +12,8 @@ import {
 } from 'recharts';
 
 const COLORS = [
-  '#0B5345', // Vert principal
-  '#D35400', // Orange latérite
+  '#007468', // Vert principal
+  '#D0541F', // Orange latérite
   '#2E86C1', // Bleu
   '#8E44AD', // Violet
   '#28B463', // Vert clair
@@ -83,8 +83,8 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-4 border border-[rgba(5,40,33,0.08)] rounded-[9px] shadow-lg min-w-[200px] z-50">
-          <p className="font-medium text-[#052821] mb-3 pb-2 border-b border-gray-100">{label}</p>
+        <div className="bg-white p-4 border border-[rgba(0,52,47,0.08)] rounded-[9px] shadow-lg min-w-[200px] z-50">
+          <p className="font-medium text-[#00342F] mb-3 pb-2 border-b border-gray-100">{label}</p>
           <div className="flex flex-col gap-2">
             {payload.map((entry: any, index: number) => (
               <div key={`item-${index}`} className="flex justify-between items-center text-[14px] font-mono-numbers gap-4">
@@ -133,7 +133,7 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
           <h3 className="text-gray-500 font-medium text-sm mb-1 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#D35400] inline-block animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-[#D0541F] inline-block animate-pulse"></span>
             Évolution {productName}
           </h3>
           <div className="flex items-baseline gap-2">
@@ -151,7 +151,7 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
               onClick={() => setActiveTimeRange(range.value)}
               className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap ${
                 activeTimeRange === range.value 
-                  ? 'bg-white text-[#0B5345] shadow-sm border border-gray-200' 
+                  ? 'bg-white text-[#007468] shadow-sm border border-gray-200' 
                   : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >

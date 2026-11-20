@@ -7,17 +7,17 @@
   --font-manrope: var(--font-plus-jakarta);
   
   /* Cultiso Core Colors */
-  --color-brand-green: #0B5345;
-  --color-brand-orange: #D35400;
+  --color-brand-green: #007468; /* sarcelle vive (logo 2026-11-20) */
+  --color-brand-orange: #D0541F; /* terre cuite */
 
   /* Plain x Cultiso Semantic Colors */
-  --color-forest-ink: #052821; /* Very dark variant of Cultiso Green */
+  --color-forest-ink: #00342F; /* encre : sarcelle foncée, jamais de noir */
   --color-parchment-cream: #f3fbe9;
   --color-card-linen: #f9f6f1;
-  --color-sage-charcoal: #084035; /* Dark surface */
+  --color-sage-charcoal: #063D36; /* surface sombre = Foncé de la marque */
   --color-muted-moss: #607166;
-  --color-vivid-accent: #D35400; /* Cultiso Orange for primary action */
-  --color-deep-botanical: #0B5345; /* Cultiso Green for outlines */
+  --color-vivid-accent: #BA4409; /* action : terre cuite assombrie pour tenir 4,5:1 avec du texte blanc */
+  --color-deep-botanical: #007468; /* sarcelle pour les contours */
 
   /* Spacing */
   --spacing-4: 4px;
@@ -48,7 +48,7 @@
 
 body {
   background-color: #ffffff;
-  color: #052821;
+  color: #00342F;
   margin: 0;
   padding: 0;
   font-family: var(--font-plus-jakarta), sans-serif;

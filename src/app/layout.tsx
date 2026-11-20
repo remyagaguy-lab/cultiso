@@ -33,45 +33,45 @@ export default function RootLayout({
       lang="fr"
       className={`${plusJakarta.variable} ${caveat.variable} h-full antialiased bg-[#ffffff]`}
     >
-      <body className="min-h-full flex flex-col font-plus-jakarta m-0 p-0 bg-[#ffffff] text-[#052821] selection:bg-[#f3fbe9] selection:text-[#052821]">
+      <body className="min-h-full flex flex-col font-plus-jakarta m-0 p-0 bg-[#ffffff] text-[#00342F] selection:bg-[#f3fbe9] selection:text-[#00342F]">
         <AntdRegistry>
           <ConfigProvider
             theme={{
               token: {
-                colorPrimary: '#D35400',
-                colorInfo: '#D35400',
+                colorPrimary: '#BA4409',
+                colorInfo: '#D0541F',
                 colorBgBase: '#ffffff',
                 colorBgContainer: '#ffffff', 
                 fontFamily: 'var(--font-plus-jakarta)',
                 colorError: '#EF4444',
-                colorTextBase: '#052821',
+                colorTextBase: '#00342F',
               },
               components: {
                 Typography: {
                   fontFamily: 'var(--font-plus-jakarta)',
                 },
                 Button: {
-                  colorPrimary: '#D35400',
-                  colorPrimaryHover: '#E67E22',
+                  colorPrimary: '#BA4409',
+                  colorPrimaryHover: '#D0541F',
                   borderRadius: 8,
                 },
                 Input: {
                   borderRadius: 8,
-                  colorBorder: 'rgba(5, 40, 33, 0.2)',
+                  colorBorder: 'rgba(0,52,47, 0.2)',
                   colorBgContainer: '#fcfcfc',
                 },
                 Select: {
                   borderRadius: 8,
-                  colorBorder: 'rgba(5, 40, 33, 0.2)',
+                  colorBorder: 'rgba(0,52,47, 0.2)',
                   colorBgContainer: '#fcfcfc',
                 },
                 Card: {
                   borderRadiusLG: 12,
-                  colorBorderSecondary: 'rgba(5, 40, 33, 0.08)',
+                  colorBorderSecondary: 'rgba(0,52,47, 0.08)',
                 },
                 Table: {
                   borderRadius: 9,
-                  colorBorderSecondary: 'rgba(5, 40, 33, 0.08)',
+                  colorBorderSecondary: 'rgba(0,52,47, 0.08)',
                 }
               }
             }}

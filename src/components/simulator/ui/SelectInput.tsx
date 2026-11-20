@@ -26,7 +26,7 @@ export function SelectInput({ label, description, value, options, onChange, disa
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className="w-full bg-[#0A1A14] border border-[#1A3329] text-white rounded-lg p-3 outline-none focus:border-[#D35400] transition-colors appearance-none"
+          className="w-full bg-[#0A1A14] border border-[#1A3329] text-white rounded-lg p-3 outline-none focus:border-[#D0541F] transition-colors appearance-none"
         >
           <option value="" disabled>Sélectionnez une option</option>
           {options.map(opt => (

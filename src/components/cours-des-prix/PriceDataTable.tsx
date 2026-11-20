@@ -47,7 +47,7 @@ export default function PriceDataTable({ data, loading }: PriceDataTableProps) {
       title: 'Prix',
       key: 'price',
       render: (_, record) => (
-        <span className="font-medium font-mono-numbers text-[#0B5345]">
+        <span className="font-medium font-mono-numbers text-[#007468]">
           {record.price.toLocaleString('fr-FR')} FCFA <span className="text-[13px] font-normal text-gray-400 font-sans">/ {record.product?.default_unit || 'unité'}</span>
         </span>
       ),

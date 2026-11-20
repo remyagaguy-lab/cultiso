@@ -110,7 +110,7 @@ export default function AnimalDashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-[#0B5345] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-[#007468] selection:text-white">
       {/* Toast notification */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 animate-in slide-in-from-bottom-3 duration-200">
@@ -148,7 +148,7 @@ export default function AnimalDashboard() {
 
         {/* Aquaculture Dedicated Sensors (when Aquaculture or All is selected) */}
         {(selectedSpecies === 'aquaculture' || selectedSpecies === 'all') && (
-          <section className="bg-gradient-to-r from-teal-900 to-[#0B5345] text-white rounded-xl p-4 sm:p-5 shadow-xs">
+          <section className="bg-gradient-to-r from-teal-900 to-[#007468] text-white rounded-xl p-4 sm:p-5 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-teal-800/80 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-teal-800 flex items-center justify-center text-teal-200">

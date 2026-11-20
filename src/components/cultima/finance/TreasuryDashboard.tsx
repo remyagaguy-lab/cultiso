@@ -116,7 +116,7 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#D35400] hover:bg-[#A04000] text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-sm"
+          className="bg-[#D0541F] hover:bg-[#A04000] text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-sm"
         >
           <PlusOutlined />
           Nouvelle Transaction
@@ -145,7 +145,7 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
           <p className="text-3xl font-bold text-[#17231F]">{totalExpense.toLocaleString('fr-FR')} <span className="text-lg text-gray-400 font-medium">FCFA</span></p>
         </div>
 
-        <div className="bg-[#0B5345] p-6 rounded-2xl shadow-md flex flex-col justify-between text-white">
+        <div className="bg-[#007468] p-6 rounded-2xl shadow-md flex flex-col justify-between text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
               <DollarOutlined className="text-lg" />
@@ -239,7 +239,7 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
                   required
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B5345] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007468] focus:border-transparent"
                   placeholder="Ex: 50000"
                 />
               </div>
@@ -251,7 +251,7 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
                   required
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B5345] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007468] focus:border-transparent"
                   placeholder="Ex: Semences, Vente maïs, Salaire..."
                 />
               </div>
@@ -262,14 +262,14 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
                   type="text" 
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B5345] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007468] focus:border-transparent"
                   placeholder="Ex: Achat de 2 sacs de NPK"
                 />
               </div>
 
               <button 
                 type="submit" 
-                className="w-full bg-[#0B5345] hover:bg-[#072F27] text-white py-3 rounded-xl font-bold transition-colors"
+                className="w-full bg-[#007468] hover:bg-[#072F27] text-white py-3 rounded-xl font-bold transition-colors"
               >
                 Enregistrer
               </button>

@@ -51,13 +51,13 @@ export default function MarketTicker({ data }: { data: PriceRecord[] }) {
   if (!tickerData.length) return null;
 
   return (
-    <div className="w-full bg-[#052821] text-white border-b border-[#0B5345] overflow-hidden flex items-center h-10 select-none">
+    <div className="w-full bg-[#00342F] text-white border-b border-[#007468] overflow-hidden flex items-center h-10 select-none">
       <div className="flex animate-marquee whitespace-nowrap min-w-max hover:[animation-play-state:paused]">
         {/* On double le contenu pour avoir un défilement infini fluide */}
         {[...tickerData, ...tickerData].map((pulse, index) => {
           const isUp = pulse.diff > 0;
           const isDown = pulse.diff < 0;
-          const colorClass = isUp ? 'text-[#22c55e]' : isDown ? 'text-[#D35400]' : 'text-white/60';
+          const colorClass = isUp ? 'text-[#22c55e]' : isDown ? 'text-[#D0541F]' : 'text-white/60';
           
           return (
             <div key={`${pulse.id}-${index}`} className="flex items-center mx-6 gap-2">

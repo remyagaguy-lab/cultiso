@@ -56,7 +56,7 @@ export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
       {pulseData.map(pulse => {
         const isUp = pulse.diff > 0;
         const isDown = pulse.diff < 0;
-        const color = isUp ? '#22c55e' : isDown ? '#D35400' : '#607166';
+        const color = isUp ? '#22c55e' : isDown ? '#D0541F' : '#607166';
         
         return (
           <Card key={pulse.id} size="small" className="min-w-[220px] flex-shrink-0 shadow-sm border border-gray-200 bg-white rounded-[9px]" styles={{ body: { padding: '12px' }}}>

@@ -51,7 +51,7 @@ export const BatchesTable: React.FC<BatchesTableProps> = ({
           <h2 className="text-base font-bold text-slate-900">
             Bandes & Lots en Production Active
           </h2>
-          <span className="text-xs bg-[#0B5345]/10 text-[#0B5345] font-bold px-2 py-0.5 rounded-full font-mono">
+          <span className="text-xs bg-[#007468]/10 text-[#007468] font-bold px-2 py-0.5 rounded-full font-mono">
             {filteredBatches.length} {filteredBatches.length > 1 ? 'lots' : 'lot'}
           </span>
         </div>
@@ -65,7 +65,7 @@ export const BatchesTable: React.FC<BatchesTableProps> = ({
               placeholder="Rechercher par code, souche, bâtiment..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-8.5 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0B5345] text-slate-800"
+              className="w-full pl-8.5 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#007468] text-slate-800"
             />
           </div>
 
@@ -73,7 +73,7 @@ export const BatchesTable: React.FC<BatchesTableProps> = ({
           <select
             value={phaseFilter}
             onChange={(e) => setPhaseFilter(e.target.value)}
-            className="px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-[#0B5345]"
+            className="px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-[#007468]"
           >
             <option value="all">Toutes phases</option>
             <option value="Démarrage">Démarrage</option>
@@ -202,7 +202,7 @@ export const BatchesTable: React.FC<BatchesTableProps> = ({
                       <div className="flex items-center gap-1">
                         <span className={`font-mono font-bold px-1.5 py-0.5 rounded text-xs ${
                           isFcrOptimal 
-                            ? 'bg-emerald-50 text-[#0B5345] border border-emerald-200' 
+                            ? 'bg-emerald-50 text-[#007468] border border-emerald-200' 
                             : 'bg-amber-50 text-amber-800 border border-amber-200'
                         }`}>
                           {batch.fcrCurrent.toFixed(2)}
@@ -236,7 +236,7 @@ export const BatchesTable: React.FC<BatchesTableProps> = ({
                           e.stopPropagation();
                           onSelectBatch(batch);
                         }}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-[#0B5345] hover:bg-emerald-50 transition"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-[#007468] hover:bg-emerald-50 transition"
                         title="Consulter le dossier zootechnique complet"
                       >
                         <ChevronRight className="w-4 h-4" />

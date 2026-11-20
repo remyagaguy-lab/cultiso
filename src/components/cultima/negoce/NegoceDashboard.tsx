@@ -37,8 +37,8 @@ const warehouseData = [
 ];
 
 const logisticsData = [
-  { name: 'En transit', value: 45, color: '#0B5345' },
-  { name: 'À quai (Chargement)', value: 25, color: '#D35400' },
+  { name: 'En transit', value: 45, color: '#007468' },
+  { name: 'À quai (Chargement)', value: 25, color: '#D0541F' },
   { name: 'Déchargement', value: 15, color: '#f5b041' },
   { name: 'En attente', value: 15, color: '#94a3b8' },
 ];
@@ -203,8 +203,8 @@ export default function NegoceDashboard() {
                   <p className="text-sm text-slate-500">Évolution des cours de clôture (€/Tonne)</p>
                 </div>
                 <div className="flex items-center space-x-4">
-                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#0B5345]"></div><span className="text-xs text-slate-600">Blé</span></div>
-                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#D35400]"></div><span className="text-xs text-slate-600">Maïs</span></div>
+                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#007468]"></div><span className="text-xs text-slate-600">Blé</span></div>
+                   <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#D0541F]"></div><span className="text-xs text-slate-600">Maïs</span></div>
                    <div className="flex items-center space-x-1.5"><div className="w-3 h-3 rounded-full bg-[#f5b041]"></div><span className="text-xs text-slate-600">Soja</span></div>
                 </div>
               </div>
@@ -218,8 +218,8 @@ export default function NegoceDashboard() {
                       contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                       cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
                     />
-                    <Line type="monotone" dataKey="ble" stroke="#0B5345" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
-                    <Line type="monotone" dataKey="mais" stroke="#D35400" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                    <Line type="monotone" dataKey="ble" stroke="#007468" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                    <Line type="monotone" dataKey="mais" stroke="#D0541F" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
                     <Line type="monotone" dataKey="soja" stroke="#f5b041" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -239,7 +239,7 @@ export default function NegoceDashboard() {
                     <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
                     <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(value) => `${value/1000}k`} />
                     <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Bar dataKey="entrees" fill="#0B5345" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="entrees" fill="#007468" radius={[4, 4, 0, 0]} maxBarSize={40} />
                     <Bar dataKey="sorties" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -309,12 +309,12 @@ export default function NegoceDashboard() {
                     <AreaChart data={marginData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorPhysique" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0B5345" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#0B5345" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#007468" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#007468" stopOpacity={0}/>
                         </linearGradient>
                         <linearGradient id="colorForward" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#D35400" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#D35400" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#D0541F" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#D0541F" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
                       <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />

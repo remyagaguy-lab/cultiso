@@ -62,7 +62,7 @@ export default function PriceDashboard({
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#D35400',
+          colorPrimary: '#D0541F',
           borderRadius: 8,
           fontFamily: 'var(--font-manrope)',
         },

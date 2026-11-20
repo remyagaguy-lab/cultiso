@@ -71,7 +71,7 @@ export default function BlogPage() {
         
         {/* En-tête de la page */}
         <div className="mb-16 mt-8">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#052821] font-unbounded mb-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-[#00342F] font-unbounded mb-4">
             Insights pour l'agrobusiness
           </h1>
           <p className="text-xl text-gray-500 max-w-2xl">
@@ -80,14 +80,14 @@ export default function BlogPage() {
         </div>
 
         {/* Featured Post (Inspiré de Plain.com - "Meet Sidekick") */}
-        <div className="flex flex-col md:flex-row gap-12 items-center mb-24 bg-[#F5F8F6] p-8 md:p-12 rounded-[2rem] border border-[#0B5345]/10">
+        <div className="flex flex-col md:flex-row gap-12 items-center mb-24 bg-[#F5F8F6] p-8 md:p-12 rounded-[2rem] border border-[#007468]/10">
           <div className="w-full md:w-5/12 flex flex-col items-start order-2 md:order-1">
-            <div className="flex items-center gap-2 text-[11px] font-bold tracking-widest text-[#0B5345] mb-6 uppercase">
+            <div className="flex items-center gap-2 text-[11px] font-bold tracking-widest text-[#007468] mb-6 uppercase">
               <span>{FEATURED_POST.category}</span>
               <span className="text-gray-400">•</span>
               <span className="text-gray-500">{FEATURED_POST.date}</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#052821] font-unbounded mb-4 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-[#00342F] font-unbounded mb-4 leading-tight">
               {FEATURED_POST.title}
             </h2>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -113,7 +113,7 @@ export default function BlogPage() {
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-[#0B5345]/10 mix-blend-overlay"></div>
+              <div className="absolute inset-0 bg-[#007468]/10 mix-blend-overlay"></div>
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function BlogPage() {
               key={category}
               className={`px-4 py-2 text-[11px] font-bold uppercase tracking-widest rounded border transition-colors ${
                 index === 0 
-                  ? 'border-[#0B5345] text-[#0B5345] bg-transparent' 
+                  ? 'border-[#007468] text-[#007468] bg-transparent' 
                   : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 bg-transparent'
               }`}
             >
@@ -150,12 +150,12 @@ export default function BlogPage() {
               
               {/* Contenu de la carte */}
               <div className="flex flex-col flex-grow">
-                <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#052821] mb-3 uppercase">
+                <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#00342F] mb-3 uppercase">
                   <span>{post.category}</span>
                   <span className="text-gray-300">•</span>
                   <span>{post.date}</span>
                 </div>
-                <h3 className="text-xl font-bold text-[#052821] mb-2 leading-snug group-hover:text-[#D35400] transition-colors line-clamp-2">
+                <h3 className="text-xl font-bold text-[#00342F] mb-2 leading-snug group-hover:text-[#D0541F] transition-colors line-clamp-2">
                   {post.title}
                 </h3>
                 <p className="text-[15px] text-gray-600 leading-relaxed line-clamp-3">
@@ -176,7 +176,7 @@ export default function BlogPage() {
       </div>
 
       {/* Section CTA Blueprint (Inspirée du bas de page Plain.com) */}
-      <div className="relative border-t border-[#0B5345]/10 bg-[#F5F8F6] overflow-hidden py-32">
+      <div className="relative border-t border-[#007468]/10 bg-[#F5F8F6] overflow-hidden py-32">
         {/* Lignes quadrillées (Blueprint) */}
         <div className="absolute inset-0 z-0 opacity-10" 
              style={{ 
@@ -188,7 +188,7 @@ export default function BlogPage() {
         
         {/* Contenu du CTA */}
         <div className="relative z-10 max-w-[800px] mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-[#052821] font-unbounded mb-10 leading-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#00342F] font-unbounded mb-10 leading-tight">
             Rejoignez les agri-preneurs qui s'appuient sur Cultiso pour réussir.
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

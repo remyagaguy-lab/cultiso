@@ -48,12 +48,12 @@ export default function RegisterPage() {
   return (
     <div className="flex-grow flex items-center justify-center bg-[#fcfcfc] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl border border-[rgba(5,40,33,0.06)] overflow-hidden" styles={{ body: { padding: '40px 32px' } }}>
+        <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl border border-[rgba(0,52,47,0.06)] overflow-hidden" styles={{ body: { padding: '40px 32px' } }}>
           
           {isSubmitted ? (
             <Result
               status="success"
-              title={<span className="font-unbounded text-[#052821]">Demande envoyée !</span>}
+              title={<span className="font-unbounded text-[#00342F]">Demande envoyée !</span>}
               subTitle={<span className="font-manrope text-gray-500">Merci pour votre intérêt. Cultiso est actuellement en Beta privée. Notre équipe examinera votre profil et vous enverra une invitation très prochainement.</span>}
               extra={[
                 <Link href="/" key="home">
@@ -66,7 +66,7 @@ export default function RegisterPage() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <Title level={2} className="!mb-2 !text-[#052821] !font-unbounded">
+                <Title level={2} className="!mb-2 !text-[#00342F] !font-unbounded">
                   Bienvenue sur Cultiso 🌱
                 </Title>
                 <Text className="text-gray-500 text-base">
@@ -135,7 +135,7 @@ export default function RegisterPage() {
 
               <div className="mt-8 text-center text-gray-500 text-sm">
                 Déjà membre ou invité ?{' '}
-                <Link href="/login" className="text-[#D35400] hover:text-[#E67E22] font-semibold transition-colors">
+                <Link href="/login" className="text-[#D0541F] hover:text-[#E67E22] font-semibold transition-colors">
                   Se connecter
                 </Link>
               </div>

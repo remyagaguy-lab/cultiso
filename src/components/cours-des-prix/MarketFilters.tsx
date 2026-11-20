@@ -119,7 +119,7 @@ export default function MarketFilters({
           type="primary" 
           icon={<FilterOutlined />} 
           onClick={() => setMobileDrawerOpen(true)}
-          className="w-full bg-[#D35400] hover:bg-[#E67E22] border-none rounded-md shadow-none"
+          className="w-full bg-[#D0541F] hover:bg-[#E67E22] border-none rounded-md shadow-none"
         >
           Filtrer les prix
         </Button>

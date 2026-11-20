@@ -121,15 +121,15 @@ export default function CultiseilPage() {
           <Logo variant="symbol" size="sm" tone="on-light" />
         </Link>
         <nav className="flex flex-col gap-4 w-full px-3">
-          <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#0B5345] hover:bg-gray-50 transition-colors">
+          <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#007468] hover:bg-gray-50 transition-colors">
             <AppstoreOutlined style={{fontSize:"20px"}} />
           </Link>
-          <Link href="/cultiplan" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#0B5345] hover:bg-gray-50 transition-colors">
+          <Link href="/cultiplan" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#007468] hover:bg-gray-50 transition-colors">
             <CalculatorOutlined style={{fontSize:"20px"}} />
           </Link>
-          <div className="relative w-full aspect-square rounded-xl flex items-center justify-center bg-[#0B5345] text-white shadow-sm cursor-default">
+          <div className="relative w-full aspect-square rounded-xl flex items-center justify-center bg-[#007468] text-white shadow-sm cursor-default">
             <ExperimentOutlined style={{fontSize:"20px"}} />
-            <div className="absolute left-[-12px] top-1/2 -translate-y-1/2 w-1 h-8 bg-[#0B5345] rounded-r-md"></div>
+            <div className="absolute left-[-12px] top-1/2 -translate-y-1/2 w-1 h-8 bg-[#007468] rounded-r-md"></div>
           </div>
         </nav>
       </aside>
@@ -143,7 +143,7 @@ export default function CultiseilPage() {
               <Link href="/" className="md:hidden">
                 <img src="/favicon.png" alt="Cultiso" className="w-6 h-6 object-contain" />
               </Link>
-              <h1 className="font-unbounded text-xl md:text-2xl font-bold text-[#0B5345] tracking-tight">CultiSeil</h1>
+              <h1 className="font-unbounded text-xl md:text-2xl font-bold text-[#007468] tracking-tight">CultiSeil</h1>
             </div>
             <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">Votre guide agronomique intelligent</p>
           </div>
@@ -155,7 +155,7 @@ export default function CultiseilPage() {
             /* INTERFACE COLLECTEUR DYNAMIQUE */
             <div className="max-w-3xl mx-auto w-full bg-white rounded-2xl border border-gray-200 p-10 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center gap-4 mb-10">
-                <div className="w-10 h-10 rounded-full bg-[#0B5345]/10 flex items-center justify-center text-[#0B5345]">
+                <div className="w-10 h-10 rounded-full bg-[#007468]/10 flex items-center justify-center text-[#007468]">
                   <ExperimentOutlined style={{fontSize: "20px"}} />
                 </div>
                 <div>
@@ -177,7 +177,7 @@ export default function CultiseilPage() {
                             onClick={() => setFormAnswers({...formAnswers, [q.question]: opt})}
                             className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all border ${
                               isSelected 
-                                ? "border-[#0B5345] bg-[#0B5345] text-white shadow-sm" 
+                                ? "border-[#007468] bg-[#007468] text-white shadow-sm" 
                                 : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                             }`}
                           >
@@ -190,7 +190,7 @@ export default function CultiseilPage() {
                         placeholder="Autre (précisez)..."
                         value={(!q.options.includes(formAnswers[q.question]) && formAnswers[q.question]) || ""}
                         onChange={(e) => setFormAnswers({...formAnswers, [q.question]: e.target.value})}
-                        className="px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#0B5345] focus:bg-white transition-all flex-1 min-w-[200px]"
+                        className="px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#007468] focus:bg-white transition-all flex-1 min-w-[200px]"
                       />
                     </div>
                   </div>
@@ -201,7 +201,7 @@ export default function CultiseilPage() {
                 <button
                   onClick={handleFormSubmit}
                   disabled={Object.keys(formAnswers).length < activeQuestionnaire.questions.length}
-                  className="px-6 py-3 bg-[#D35400] text-white rounded-lg font-bold text-sm hover:bg-[#E67E22] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-[#D0541F] text-white rounded-lg font-bold text-sm hover:bg-[#E67E22] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Valider les relevés
                 </button>
@@ -214,8 +214,8 @@ export default function CultiseilPage() {
               {/* Stepper minimaliste / Radar */}
               <div className="flex items-center gap-4 mb-16 w-full max-w-lg mx-auto opacity-70">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#0B5345]"></div>
-                  <span className="text-[10px] font-bold text-[#0B5345] uppercase tracking-widest">Symptômes</span>
+                  <div className="w-2 h-2 rounded-full bg-[#007468]"></div>
+                  <span className="text-[10px] font-bold text-[#007468] uppercase tracking-widest">Symptômes</span>
                 </div>
                 <div className="flex-1 h-px bg-gray-200 mb-5"></div>
                 <div className="flex flex-col items-center gap-2">
@@ -230,8 +230,8 @@ export default function CultiseilPage() {
               </div>
 
               <div className="w-16 h-16 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mb-6 shadow-sm relative">
-                 <div className="absolute inset-0 bg-[#0B5345]/5 rounded-2xl animate-pulse"></div>
-                 <ExperimentOutlined style={{fontSize:"28px", color:"#0B5345"}} className="relative z-10" />
+                 <div className="absolute inset-0 bg-[#007468]/5 rounded-2xl animate-pulse"></div>
+                 <ExperimentOutlined style={{fontSize:"28px", color:"#007468"}} className="relative z-10" />
               </div>
               
               <h2 className="font-unbounded text-2xl font-bold text-gray-900 mb-4">
@@ -251,7 +251,7 @@ export default function CultiseilPage() {
                   <p className="text-xs text-gray-500">Intégration des données environnementales.</p>
                 </div>
                 <div className="bg-white border border-gray-100 rounded-xl p-5 text-left shadow-sm">
-                  <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center mb-3 text-[#D35400]/70">
+                  <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center mb-3 text-[#D0541F]/70">
                     <BugOutlined />
                   </div>
                   <h3 className="font-bold text-gray-900 text-sm mb-1">Pathologies</h3>
@@ -266,12 +266,12 @@ export default function CultiseilPage() {
       {/* 3. RIGHT PANEL (Chatbot) */}
       <aside className="w-full md:w-[380px] flex-1 md:flex-none bg-white border-t md:border-t-0 md:border-l border-gray-200 flex flex-col flex-shrink-0 z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.02)]">
         <div className="py-4 md:py-6 shrink-0 border-b border-gray-100 flex items-center px-6 gap-4">
-          <div className="w-11 h-11 shrink-0 rounded-xl bg-[#0B5345] flex items-center justify-center text-white font-unbounded font-bold text-lg">
+          <div className="w-11 h-11 shrink-0 rounded-xl bg-[#007468] flex items-center justify-center text-white font-unbounded font-bold text-lg">
             C
           </div>
           <div className="flex flex-col justify-center">
             <h3 className="font-unbounded font-bold text-gray-900 text-sm leading-tight">Cultisia</h3>
-            <p className="text-[11px] text-[#D35400] font-bold tracking-wider uppercase mt-1 leading-none">Ingénieur Agronome</p>
+            <p className="text-[11px] text-[#D0541F] font-bold tracking-wider uppercase mt-1 leading-none">Ingénieur Agronome</p>
           </div>
         </div>
 
@@ -284,7 +284,7 @@ export default function CultiseilPage() {
               return (
                 <div key={i} className="flex justify-start">
                   <div className="bg-gray-50 text-gray-500 border border-gray-200 text-[11px] font-bold px-3 py-1.5 rounded-md flex items-center gap-2">
-                    <CheckCircleFilled className="text-[#0B5345]" /> Analyse requise
+                    <CheckCircleFilled className="text-[#007468]" /> Analyse requise
                   </div>
                 </div>
               );
@@ -294,11 +294,11 @@ export default function CultiseilPage() {
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-[13.5px] leading-relaxed ${
                   msg.role === "user" 
-                    ? "bg-[#0B5345] text-white rounded-br-sm" 
+                    ? "bg-[#007468] text-white rounded-br-sm" 
                     : "bg-[#F5F5F5] text-gray-800 rounded-bl-sm"
                 }`}>
                   {msg.role === "assistant" ? (
-                    <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-headings:font-unbounded prose-headings:text-[#0B5345] prose-strong:text-gray-900">
+                    <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-headings:font-unbounded prose-headings:text-[#007468] prose-strong:text-gray-900">
                       <ReactMarkdown>
                         {visibleContent}
                       </ReactMarkdown>
@@ -329,13 +329,13 @@ export default function CultiseilPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Décrivez vos symptômes (ex: feuilles jaunes)..."
-              className="w-full bg-gray-50 border border-gray-200 focus:border-[#0B5345]/50 focus:bg-white rounded-xl pl-4 pr-12 py-3.5 text-[13.5px] text-gray-800 outline-none transition-all"
+              className="w-full bg-gray-50 border border-gray-200 focus:border-[#007468]/50 focus:bg-white rounded-xl pl-4 pr-12 py-3.5 text-[13.5px] text-gray-800 outline-none transition-all"
               disabled={isThinking || !!activeQuestionnaire}
             />
             <button
               type="submit"
               disabled={!input.trim() || isThinking || !!activeQuestionnaire}
-              className="absolute right-2 w-8 h-8 rounded-lg bg-[#0B5345] flex items-center justify-center text-white hover:bg-[#148f6c] transition-colors disabled:opacity-50 disabled:hover:bg-[#0B5345]"
+              className="absolute right-2 w-8 h-8 rounded-lg bg-[#007468] flex items-center justify-center text-white hover:bg-[#148f6c] transition-colors disabled:opacity-50 disabled:hover:bg-[#007468]"
             >
               {isThinking ? <LoadingOutlined style={{fontSize:"14px"}} className="animate-spin" /> : <SendOutlined style={{fontSize:"14px"}} className="-ml-0.5" />}
             </button>

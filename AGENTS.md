@@ -5,7 +5,7 @@
 
 ## 1. La Pile Technique (Stack)
 *   **Frontend & Framework :** Next.js avec TypeScript strict.
-*   **UI / Design :** Librairie Ant Design (Couleurs de marque : Vert `#0B5345`, Orange Latérite `#D35400`, Polices : *Plus Jakarta Sans*).
+*   **UI / Design :** Librairie Ant Design (Couleurs de marque : Sarcelle `#007468`, Terre cuite `#D0541F` (action : `#BA4409`), Polices : *Plus Jakarta Sans*).
 *   **Backend, BDD & Auth :** Supabase (PostgreSQL & Supabase Auth).
 *   **Communication API :** REST.
 *   **Hébergement & Déploiement :** Vercel.

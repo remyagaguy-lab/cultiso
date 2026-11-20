@@ -44,7 +44,7 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
       icon: Egg,
       count: counts.poultry,
       highlight: '38 450 œufs/j • IC 1.56',
-      color: 'border-[#0B5345] text-[#0B5345]',
+      color: 'border-[#007468] text-[#007468]',
     },
     {
       id: 'cattle' as SpeciesCategory,
@@ -53,7 +53,7 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
       icon: Milk,
       count: counts.cattle,
       highlight: '4 820 L/j • TB 40.2 g/kg',
-      color: 'border-[#0B5345] text-[#0B5345]',
+      color: 'border-[#007468] text-[#007468]',
     },
     {
       id: 'swine' as SpeciesCategory,
@@ -62,7 +62,7 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
       icon: Beef,
       count: counts.swine,
       highlight: 'GMQ 810 g/j • IC 2.62',
-      color: 'border-[#D35400] text-[#D35400]',
+      color: 'border-[#D0541F] text-[#D0541F]',
     },
     {
       id: 'aquaculture' as SpeciesCategory,
@@ -97,8 +97,8 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
                   className={`w-9 h-9 rounded-lg flex items-center justify-center transition ${
                     isSelected
                       ? tab.id === 'swine'
-                        ? 'bg-[#D35400] text-white'
-                        : 'bg-[#0B5345] text-white'
+                        ? 'bg-[#D0541F] text-white'
+                        : 'bg-[#007468] text-white'
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >

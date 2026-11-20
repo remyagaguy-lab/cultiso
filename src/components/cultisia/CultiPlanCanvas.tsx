@@ -21,8 +21,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
     return (
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 w-full max-w-4xl space-y-12">
         {/* HEADER / META */}
-        <div className="border-b-4 border-[#0B5345] pb-6">
-          <h1 className="text-3xl font-bold font-unbounded text-[#0B5345] mb-4">
+        <div className="border-b-4 border-[#007468] pb-6">
+          <h1 className="text-3xl font-bold font-unbounded text-[#007468] mb-4">
             {syn?.nom_entreprise || projet?.nom_projet || "Business Plan"}
           </h1>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
@@ -37,12 +37,12 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 1. RESUME EXECUTIF */}
         {res && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">1</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">1</span>
               Résumé Exécutif
             </h2>
             <div className="bg-[#FAFAFA] p-5 rounded-xl border border-gray-100 mb-6 space-y-3">
-              <p className="text-[#0B5345] font-bold text-lg">{res.accroche}</p>
+              <p className="text-[#007468] font-bold text-lg">{res.accroche}</p>
               <p><strong>Problème :</strong> {res.probleme}</p>
               <p><strong>Solution :</strong> {res.solution}</p>
               <p><strong>Avantage Concurrentiel :</strong> {res.avantage_concurrentiel}</p>
@@ -51,11 +51,11 @@ export function CultiPlanCanvas({ data }: { data: any }) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-green-50 p-4 rounded-xl border border-green-100">
                 <div className="text-xs text-green-700 font-bold mb-1 uppercase tracking-wide">Coût Total</div>
-                <div className="text-lg font-unbounded text-[#0B5345]">{formatMoney(syn?.cout_total_projet)}</div>
+                <div className="text-lg font-unbounded text-[#007468]">{formatMoney(syn?.cout_total_projet)}</div>
               </div>
               <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
                 <div className="text-xs text-orange-700 font-bold mb-1 uppercase tracking-wide">CA (Année 1)</div>
-                <div className="text-lg font-unbounded text-[#D35400]">{formatMoney(syn?.chiffre_affaires_annee_1)}</div>
+                <div className="text-lg font-unbounded text-[#D0541F]">{formatMoney(syn?.chiffre_affaires_annee_1)}</div>
               </div>
               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                 <div className="text-xs text-blue-700 font-bold mb-1 uppercase tracking-wide">Montant Recherché</div>
@@ -74,8 +74,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 2. ETUDE DE MARCHE */}
         {marche && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">2</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">2</span>
               Étude de Marché
             </h2>
             <div className="space-y-6">
@@ -114,8 +114,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 3. MARKETING */}
         {marketing && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">3</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">3</span>
               Marketing & Distribution
             </h2>
             <div className="bg-[#FAFAFA] p-5 rounded-xl border border-gray-100 mb-4">
@@ -128,8 +128,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 4. TECHNIQUE */}
         {technique && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">4</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">4</span>
               Étude Technique
             </h2>
             <div className="bg-[#FAFAFA] p-5 rounded-xl border border-gray-100">
@@ -142,8 +142,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 5. FINANCIER */}
         {financier && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">5</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">5</span>
               Étude Financière
             </h2>
             <div className="space-y-6">
@@ -152,7 +152,7 @@ export function CultiPlanCanvas({ data }: { data: any }) {
                   <h3 className="font-bold text-gray-800 mb-4 border-b pb-2">Plan de Financement Initial</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                      <h4 className="font-bold text-[#0B5345] mb-2">Besoins (Emplois)</h4>
+                      <h4 className="font-bold text-[#007468] mb-2">Besoins (Emplois)</h4>
                       <ul className="text-sm space-y-2 text-gray-700">
                         {financier.plan_financement_initial.besoins?.map((b: any, i: number) => (
                           <li key={i} className="flex justify-between border-b border-gray-100 pb-1">
@@ -191,8 +191,8 @@ export function CultiPlanCanvas({ data }: { data: any }) {
         {/* 6. RISQUES */}
         {risques && risques.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold font-unbounded text-[#0B5345] mb-4 flex items-center gap-2">
-              <span className="bg-[#0B5345] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">6</span>
+            <h2 className="text-xl font-bold font-unbounded text-[#007468] mb-4 flex items-center gap-2">
+              <span className="bg-[#007468] text-white w-8 h-8 flex items-center justify-center rounded-lg text-sm">6</span>
               Risques & Mesures d&apos;Atténuation
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -205,7 +205,7 @@ export function CultiPlanCanvas({ data }: { data: any }) {
                     </span>
                   </div>
                   <p className="font-bold text-gray-800 text-sm mb-2">{r.description}</p>
-                  <div className="text-sm text-[#0B5345] bg-green-50 p-2 rounded border border-green-100">
+                  <div className="text-sm text-[#007468] bg-green-50 p-2 rounded border border-green-100">
                     <strong>Mesure:</strong> {r.mesures_mitigation}
                   </div>
                 </div>
@@ -221,7 +221,7 @@ export function CultiPlanCanvas({ data }: { data: any }) {
   // FALLBACK FOR VERY OLD V0 FORMAT
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 w-full max-w-4xl">
-      <h2 className="text-2xl font-bold font-unbounded text-[#0B5345] mb-4">Projet : {data.nom_projet || "Business Plan"}</h2>
+      <h2 className="text-2xl font-bold font-unbounded text-[#007468] mb-4">Projet : {data.nom_projet || "Business Plan"}</h2>
       <div className="space-y-8 text-gray-700">
         <p>Le document a été généré, mais son format n&apos;est pas pris en charge par cet affichage.</p>
         <pre className="text-xs bg-gray-100 p-4 rounded overflow-auto max-h-96">{JSON.stringify(data, null, 2)}</pre>

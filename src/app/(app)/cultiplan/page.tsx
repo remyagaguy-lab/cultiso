@@ -39,7 +39,7 @@ export default function CultiPlanPage() {
       {isGenerating && (
         <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
           <div className="w-16 h-16 border-4 border-[#22c55e]/20 border-t-[#22c55e] rounded-full animate-spin mb-6"></div>
-          <h2 className="text-2xl font-bold font-unbounded text-[#0B5345] mb-2">Génération en cours...</h2>
+          <h2 className="text-2xl font-bold font-unbounded text-[#007468] mb-2">Génération en cours...</h2>
           <p className="text-gray-600 font-medium text-center max-w-md">Nous structurons vos données pour créer un Business Plan professionnel et adapté à la réalité du terrain.</p>
         </div>
       )}

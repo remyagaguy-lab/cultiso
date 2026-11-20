@@ -54,7 +54,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('growth')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'growth'
-                ? 'bg-[#0B5345] text-white shadow-xs'
+                ? 'bg-[#007468] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -67,7 +67,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
               onClick={() => setActiveTab('laying')}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
                 activeTab === 'laying'
-                  ? 'bg-[#0B5345] text-white shadow-xs'
+                  ? 'bg-[#007468] text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-200/60'
               }`}
             >
@@ -80,7 +80,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('feed')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'feed'
-                ? 'bg-[#0B5345] text-white shadow-xs'
+                ? 'bg-[#007468] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -92,7 +92,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
             onClick={() => setActiveTab('treasury')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
               activeTab === 'treasury'
-                ? 'bg-[#0B5345] text-white shadow-xs'
+                ? 'bg-[#007468] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-200/60'
             }`}
           >
@@ -104,11 +104,11 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
         {/* Legend / Status pill */}
         <div className="flex items-center gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#0B5345]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#007468]"></span>
             <span className="font-medium text-slate-700">Données Réelles Lot</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#D35400]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#D0541F]"></span>
             <span className="font-medium text-slate-700">Standard Génétique Guide</span>
           </div>
         </div>
@@ -128,7 +128,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Comparaison du poids moyen pesé (g) contre le standard de sélection (Cobb 500 / ISA / Large White) avec tolérance ±5%
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#0B5345] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#007468] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>Avance de croissance : +70g / sujet</span>
               </div>
             </div>
@@ -156,7 +156,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="gmq" 
                     orientation="right"
                     tickLine={false} 
-                    stroke="#D35400" 
+                    stroke="#D0541F" 
                     fontSize={11}
                     tickFormatter={(val) => `${val}g/j`}
                   />
@@ -203,16 +203,16 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="weight" 
                     type="monotone" 
                     dataKey="actualWeight" 
-                    stroke="#0B5345" 
+                    stroke="#007468" 
                     strokeWidth={3} 
-                    dot={{ fill: '#0B5345', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, fill: '#D35400' }}
+                    dot={{ fill: '#007468', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: '#D0541F' }}
                   />
                   {/* GMQ Bar */}
                   <Bar 
                     yAxisId="gmq" 
                     dataKey="gmq" 
-                    fill="#D35400" 
+                    fill="#D0541F" 
                     opacity={0.3} 
                     radius={[4, 4, 0, 0]} 
                     maxBarSize={32}
@@ -235,7 +235,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Taux de ponte constaté vs courbe théorique de ponte (Semaine 18 à 40) et poids moyen de l'œuf
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-orange-50 text-[#D35400] border border-orange-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-orange-50 text-[#D0541F] border border-orange-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>Pic de ponte atteint à Sem 25 (95.8%)</span>
               </div>
             </div>
@@ -263,7 +263,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="eggWeight" 
                     orientation="right"
                     tickLine={false} 
-                    stroke="#D35400" 
+                    stroke="#D0541F" 
                     fontSize={11}
                     tickFormatter={(val) => `${val}g`}
                     domain={[40, 75]}
@@ -290,7 +290,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     formatter={(val) => {
                       if (val === 'actualRate') return <span className="text-xs text-slate-700 font-semibold">Taux de Ponte Réel (%)</span>;
                       if (val === 'standardRate') return <span className="text-xs text-slate-700 font-semibold">Objectif Standard (%)</span>;
-                      if (val === 'eggWeightAvg') return <span className="text-xs text-[#D35400] font-semibold">Poids Moyen Œuf (g)</span>;
+                      if (val === 'eggWeightAvg') return <span className="text-xs text-[#D0541F] font-semibold">Poids Moyen Œuf (g)</span>;
                       return val;
                     }}
                   />
@@ -307,8 +307,8 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="rate" 
                     type="monotone" 
                     dataKey="actualRate" 
-                    stroke="#0B5345" 
-                    fill="#0B5345" 
+                    stroke="#007468" 
+                    fill="#007468" 
                     fillOpacity={0.15} 
                     strokeWidth={3}
                   />
@@ -316,9 +316,9 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="eggWeight" 
                     type="monotone" 
                     dataKey="eggWeightAvg" 
-                    stroke="#D35400" 
+                    stroke="#D0541F" 
                     strokeWidth={2.5} 
-                    dot={{ fill: '#D35400', r: 4 }}
+                    dot={{ fill: '#D0541F', r: 4 }}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -338,7 +338,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                   Suivi de la quantité d'aliment distribuée et ratio de conversion biologique de la bande
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#0B5345] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
+              <div className="flex items-center gap-2 text-xs bg-emerald-50 text-[#007468] border border-emerald-200/60 px-2.5 py-1 rounded-md font-semibold">
                 <span>IC Cumulé Actuel : 1.58 (Excellente valorisation alimentaire)</span>
               </div>
             </div>
@@ -359,7 +359,7 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     yAxisId="fcr" 
                     orientation="right"
                     tickLine={false} 
-                    stroke="#D35400" 
+                    stroke="#D0541F" 
                     fontSize={11}
                     domain={[1.0, 2.0]}
                     tickFormatter={(val) => `${val.toFixed(2)}`}
@@ -379,13 +379,13 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     formatter={(val) => {
                       if (val === 'intakeKg') return <span className="text-xs text-slate-700 font-semibold">Aliment Hebdo (kg)</span>;
                       if (val === 'cumulativeKg') return <span className="text-xs text-slate-700 font-semibold">Cumulé Lot (kg)</span>;
-                      if (val === 'fcrPoint') return <span className="text-xs text-[#D35400] font-semibold">Indice IC (FCR)</span>;
+                      if (val === 'fcrPoint') return <span className="text-xs text-[#D0541F] font-semibold">Indice IC (FCR)</span>;
                       return val;
                     }}
                   />
-                  <Bar yAxisId="kg" dataKey="intakeKg" fill="#0B5345" radius={[4, 4, 0, 0]} maxBarSize={36} />
+                  <Bar yAxisId="kg" dataKey="intakeKg" fill="#007468" radius={[4, 4, 0, 0]} maxBarSize={36} />
                   <Line yAxisId="kg" type="monotone" dataKey="cumulativeKg" stroke="#334155" strokeWidth={2} dot={false} />
-                  <Line yAxisId="fcr" type="monotone" dataKey="fcrPoint" stroke="#D35400" strokeWidth={3} dot={{ fill: '#D35400', r: 4 }} />
+                  <Line yAxisId="fcr" type="monotone" dataKey="fcrPoint" stroke="#D0541F" strokeWidth={3} dot={{ fill: '#D0541F', r: 4 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -435,16 +435,16 @@ export const ZootechCharts: React.FC<ZootechChartsProps> = ({
                     height={36} 
                     formatter={(val) => {
                       if (val === 'revenue') return <span className="text-xs text-slate-800 font-semibold">Ventes (k€)</span>;
-                      if (val === 'feedOpex') return <span className="text-xs text-[#D35400] font-semibold">Coût Provende</span>;
+                      if (val === 'feedOpex') return <span className="text-xs text-[#D0541F] font-semibold">Coût Provende</span>;
                       if (val === 'vetOpex') return <span className="text-xs text-purple-700 font-semibold">Vétérinaire</span>;
-                      if (val === 'grossMarginFeed') return <span className="text-xs text-[#0B5345] font-semibold">Marge Brute MCAS</span>;
+                      if (val === 'grossMarginFeed') return <span className="text-xs text-[#007468] font-semibold">Marge Brute MCAS</span>;
                       return val;
                     }}
                   />
-                  <Bar dataKey="feedOpex" stackId="costs" fill="#D35400" radius={[0, 0, 0, 0]} maxBarSize={32} />
+                  <Bar dataKey="feedOpex" stackId="costs" fill="#D0541F" radius={[0, 0, 0, 0]} maxBarSize={32} />
                   <Bar dataKey="vetOpex" stackId="costs" fill="#9333ea" radius={[4, 4, 0, 0]} maxBarSize={32} />
                   <Line type="monotone" dataKey="revenue" stroke="#0f172a" strokeWidth={3} dot={{ fill: '#0f172a', r: 4 }} />
-                  <Line type="monotone" dataKey="grossMarginFeed" stroke="#0B5345" strokeWidth={3} dot={{ fill: '#0B5345', r: 4 }} />
+                  <Line type="monotone" dataKey="grossMarginFeed" stroke="#007468" strokeWidth={3} dot={{ fill: '#007468', r: 4 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>

@@ -60,16 +60,16 @@ interface QuestionnaireData {
 
 /* â”€â”€â”€ SVG Icons â”€â”€â”€ */
 const SuggestLeaf = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0B5345]"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#007468]"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
 );
 const SuggestSearch = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0B5345]"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#007468]"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 );
 const SuggestChart = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0B5345]"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#007468]"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 );
 const SuggestDroplet = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0B5345]"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#007468]"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
 );
 
 /* â”€â”€â”€ Thinking Animation â”€â”€â”€ */
@@ -81,9 +81,9 @@ const ThinkingIndicator = () => (
     </div>
     <div className="flex items-center gap-2.5">
       <div className="flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 bg-[#D35400] rounded-full animate-bounce opacity-80" />
-        <span className="w-1.5 h-1.5 bg-[#D35400] rounded-full animate-bounce opacity-80" style={{ animationDelay: "150ms" }} />
-        <span className="w-1.5 h-1.5 bg-[#D35400] rounded-full animate-bounce opacity-80" style={{ animationDelay: "300ms" }} />
+        <span className="w-1.5 h-1.5 bg-[#D0541F] rounded-full animate-bounce opacity-80" />
+        <span className="w-1.5 h-1.5 bg-[#D0541F] rounded-full animate-bounce opacity-80" style={{ animationDelay: "150ms" }} />
+        <span className="w-1.5 h-1.5 bg-[#D0541F] rounded-full animate-bounce opacity-80" style={{ animationDelay: "300ms" }} />
       </div>
       <span className="text-[13.5px] text-gray-500 font-medium italic">Cultisia réfléchit...</span>
     </div>
@@ -92,7 +92,7 @@ const ThinkingIndicator = () => (
 
 /* â”€â”€â”€ Markdown Renderer â”€â”€â”€ */
 const MarkdownContent = ({ content }: { content: string }) => (
-  <div className="prose prose-sm max-w-none text-gray-800 prose-headings:text-[#0B5345] prose-headings:font-unbounded prose-h2:text-[18px] prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-[16px] prose-h3:mt-5 prose-h3:mb-2 prose-p:text-[15.5px] prose-p:leading-[1.75] prose-p:mb-4 prose-li:text-[15px] prose-li:leading-[1.7] prose-strong:text-[#052821] prose-strong:font-bold prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-a:text-[#D35400] hover:prose-a:text-[#a04000] prose-a:no-underline">
+  <div className="prose prose-sm max-w-none text-gray-800 prose-headings:text-[#007468] prose-headings:font-unbounded prose-h2:text-[18px] prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-[16px] prose-h3:mt-5 prose-h3:mb-2 prose-p:text-[15.5px] prose-p:leading-[1.75] prose-p:mb-4 prose-li:text-[15px] prose-li:leading-[1.7] prose-strong:text-[#00342F] prose-strong:font-bold prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-a:text-[#D0541F] hover:prose-a:text-[#a04000] prose-a:no-underline">
     <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
   </div>
 );
@@ -174,7 +174,7 @@ const QuestionnaireWidget = ({
     <div className="mt-4 border border-gray-200 rounded-3xl bg-white shadow-sm overflow-hidden w-full max-w-3xl transition-all duration-500 ease-out animate-in slide-in-from-bottom-2 fade-in">
       <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100 bg-gray-50/50">
         <div>
-          <h4 className="font-unbounded font-semibold text-[#0B5345] text-[15px] leading-snug pr-4">{q.question}</h4>
+          <h4 className="font-unbounded font-semibold text-[#007468] text-[15px] leading-snug pr-4">{q.question}</h4>
           {isMulti && <p className="text-[12px] text-gray-500 font-medium mt-1">Plusieurs choix possibles</p>}
         </div>
         <div className="flex items-center text-[11px] text-gray-400 font-medium gap-1 shrink-0 px-2 mt-0.5">
@@ -189,7 +189,7 @@ const QuestionnaireWidget = ({
               placeholder="Précisez votre réponse..."
               value={freeTextValue}
               onChange={(e) => setFreeTextValue(e.target.value)}
-              className="w-full p-4 rounded-xl border border-gray-200 bg-[#f9f8f6] focus:bg-white focus:border-[#0B5345] focus:ring-1 focus:ring-[#0B5345] outline-none transition-all resize-none text-[14px] text-gray-700 min-h-[100px]"
+              className="w-full p-4 rounded-xl border border-gray-200 bg-[#f9f8f6] focus:bg-white focus:border-[#007468] focus:ring-1 focus:ring-[#007468] outline-none transition-all resize-none text-[14px] text-gray-700 min-h-[100px]"
             />
             <div className="flex justify-between items-center mt-1">
               <button
@@ -201,7 +201,7 @@ const QuestionnaireWidget = ({
               <button
                 onClick={() => handleSelectSingle(freeTextValue)}
                 disabled={!freeTextValue.trim()}
-                className="px-5 py-2.5 rounded-xl bg-[#0B5345] text-white text-[13px] font-semibold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 rounded-xl bg-[#007468] text-white text-[13px] font-semibold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Valider
               </button>
@@ -240,12 +240,12 @@ const QuestionnaireWidget = ({
                   placeholder="Autre (préciser)..."
                   value={freeTextValue}
                   onChange={(e) => setFreeTextValue(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:border-[#D35400] outline-none transition-all text-[14px] text-gray-700 mb-3"
+                  className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:border-[#D0541F] outline-none transition-all text-[14px] text-gray-700 mb-3"
                 />
                 <button
                   onClick={handleValidateMulti}
                   disabled={multiSelections.length === 0 && !freeTextValue.trim()}
-                  className="w-full py-3 rounded-xl bg-[#0B5345] text-white text-[14px] font-bold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 rounded-xl bg-[#007468] text-white text-[14px] font-bold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Valider ces choix
                 </button>
@@ -810,7 +810,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
 
   /* ─── Input Bar ─── */
   const renderInputBar = (placeholder: string, large?: boolean) => (
-    <div className={`w-full bg-white border border-gray-200/80 rounded-[32px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:border-[#0B5345]/20 transition-all duration-300 overflow-hidden flex items-center`}>
+    <div className={`w-full bg-white border border-gray-200/80 rounded-[32px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:border-[#007468]/20 transition-all duration-300 overflow-hidden flex items-center`}>
       <div className={`flex-1 flex items-center ${large ? "px-6 py-4" : "px-4 py-3"}`}>
         <textarea
           ref={textareaRef}
@@ -865,7 +865,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
       key={s.id} 
       className={`group flex items-center justify-between w-full px-3 py-3 rounded-xl text-[14px] font-medium transition-all duration-200 cursor-pointer 
       ${s.id === sessionId 
-        ? "bg-[#f3fbe9] text-[#0B5345] border border-[#22c55e]/20" 
+        ? "bg-[#f3fbe9] text-[#007468] border border-[#22c55e]/20" 
         : "bg-transparent text-gray-600 hover:bg-gray-50 border border-transparent"
       }`}
     >
@@ -925,7 +925,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
       {/* â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â• */}
       {!hideSidebar && (
         <Drawer
-          title={<span className="font-unbounded font-bold text-[#0B5345] text-lg tracking-tight">Historique</span>}
+          title={<span className="font-unbounded font-bold text-[#007468] text-lg tracking-tight">Historique</span>}
           placement="right"
           closable={true}
           onClose={() => setSidebarOpen(false)}
@@ -941,7 +941,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
           <div className="px-6 py-6 border-b border-gray-50">
             <button 
               onClick={startNewDiscussion} 
-              className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-[#0B5345] hover:bg-[#073c32] rounded-xl font-bold text-white transition-all shadow-[0_4px_12px_rgba(11,83,69,0.15)] hover:shadow-[0_6px_16px_rgba(11,83,69,0.2)] active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-[#007468] hover:bg-[#073c32] rounded-xl font-bold text-white transition-all shadow-[0_4px_12px_rgba(11,83,69,0.15)] hover:shadow-[0_6px_16px_rgba(11,83,69,0.2)] active:scale-[0.98]"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Nouvelle discussion
@@ -1119,7 +1119,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                               <MarkdownContent content={displayContent} />
                             )}
                             {msg.isStreaming && (
-                              <span className="inline-block w-1 h-5 bg-[#D35400] animate-pulse ml-1 align-text-bottom rounded-sm" />
+                              <span className="inline-block w-1 h-5 bg-[#D0541F] animate-pulse ml-1 align-text-bottom rounded-sm" />
                             )}
                             {questionnaireData && !msg.isStreaming && idx === messages.length - 1 && (
                               <QuestionnaireWidget
@@ -1132,7 +1132,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                             )}
                             {simulationData && !msg.isStreaming && (
                               <div className="mt-4 p-4 bg-[#f3fbe9] rounded-2xl border border-[#22c55e]/30 flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-sm">
-                                <p className="text-[14.5px] text-[#0B5345] font-semibold mb-4 text-center">🎉 La collecte d'informations est terminée.</p>
+                                <p className="text-[14.5px] text-[#007468] font-semibold mb-4 text-center">🎉 La collecte d'informations est terminée.</p>
                                 <button
                                   onClick={() => onSimulationComplete?.(simulationData)}
                                   className="bg-[#22c55e] text-white px-6 py-3 rounded-xl text-[14.5px] font-bold hover:bg-[#16a34a] hover:shadow-md transition-all duration-200 active:scale-[0.98] w-full sm:w-auto"
@@ -1146,7 +1146,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                         {msg.role === "assistant" && !msg.isStreaming && msg.sources && msg.sources.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-3">
                             {msg.sources.map((s, i) => (
-                              <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#0B5345]/20 rounded-lg text-[11px] text-[#0B5345] font-semibold shadow-[0_1px_2px_rgba(11,83,69,0.05)] cursor-default">
+                              <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#007468]/20 rounded-lg text-[11px] text-[#007468] font-semibold shadow-[0_1px_2px_rgba(11,83,69,0.05)] cursor-default">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 {s.file_name}
                               </span>
@@ -1195,7 +1195,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                   <Tooltip title="Désarchiver">
                     <button 
                       onClick={() => handleUnarchiveSession(s.id)}
-                      className="p-1.5 text-gray-500 hover:text-[#0B5345] hover:bg-[#0B5345]/10 rounded-lg transition-colors"
+                      className="p-1.5 text-gray-500 hover:text-[#007468] hover:bg-[#007468]/10 rounded-lg transition-colors"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     </button>
@@ -1225,8 +1225,8 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
         className="font-manrope"
       >
         <div className="py-6 space-y-6">
-          <div className="p-4 bg-[#f3fbe9]/50 border border-[#0B5345]/10 rounded-xl">
-            <h4 className="font-bold text-[#0B5345] mb-1">Copie Locale</h4>
+          <div className="p-4 bg-[#f3fbe9]/50 border border-[#007468]/10 rounded-xl">
+            <h4 className="font-bold text-[#007468] mb-1">Copie Locale</h4>
             <p className="text-[13px] text-gray-600 mb-3 leading-relaxed">Téléchargez la conversation actuelle sous forme de fichier texte enrichi (.txt) sur votre appareil.</p>
             <button 
               onClick={async () => {
@@ -1274,7 +1274,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                   console.error(err);
                 }
               }}
-              className="px-4 py-2 bg-[#0B5345] text-white font-bold rounded-lg text-[13px] hover:bg-[#073c32] transition-all shadow-[0_2px_8px_rgba(11,83,69,0.2)] active:scale-[0.98]"
+              className="px-4 py-2 bg-[#007468] text-white font-bold rounded-lg text-[13px] hover:bg-[#073c32] transition-all shadow-[0_2px_8px_rgba(11,83,69,0.2)] active:scale-[0.98]"
             >
               Créer et copier le lien
             </button>

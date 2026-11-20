@@ -6,10 +6,10 @@ export default function Home() {
     <>
       <main className="flex-grow flex flex-col items-center">
         {/* --- 1. HERO SECTION --- */}
-        <section className="relative w-full px-6 pt-[64px] pb-16 md:pt-[64px] lg:pt-[64px] lg:pb-24 flex items-center bg-[#052821] overflow-hidden">
+        <section className="relative w-full px-6 pt-[64px] pb-16 md:pt-[64px] lg:pt-[64px] lg:pb-24 flex items-center bg-[#00342F] overflow-hidden">
           {/* Background Image with Gradient Overlay */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#052821] via-[#052821]/90 to-[#052821]/20 z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00342F] via-[#00342F]/90 to-[#00342F]/20 z-10"></div>
             <img 
               src="/hero-bg.jpeg" 
               alt="Agriculteur dans une serre" 
@@ -29,7 +29,7 @@ export default function Home() {
               
               <h1 className="mb-6 md:mb-6 text-[clamp(36px,6vw,68px)] font-unbounded font-bold text-white leading-[1.05] tracking-[-0.03em]">
                 <span className="sm:whitespace-nowrap">L'agribusiness africain,</span> <br className="hidden sm:block" />
-                <span className="text-[#D35400] sm:whitespace-nowrap">sans improvisation.</span>
+                <span className="text-[#D0541F] sm:whitespace-nowrap">sans improvisation.</span>
               </h1>
               
               <p className="mb-6 md:mb-8 text-[17px] md:text-[19px] leading-[1.5] text-white/95 font-manrope font-semibold">
@@ -50,10 +50,10 @@ export default function Home() {
                   
                   <div className="flex items-center gap-3 mt-1 sm:mt-0">
                     <div className="flex -space-x-2">
-                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#052821] bg-[#16a34a] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">MK</div>
-                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#052821] bg-[#D35400] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">SA</div>
-                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#052821] bg-[#f59e0b] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">TR</div>
-                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#052821] bg-white/10 backdrop-blur-md flex items-center justify-center text-[11px] font-bold text-white shadow-sm">+</div>
+                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#00342F] bg-[#16a34a] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">MK</div>
+                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#00342F] bg-[#D0541F] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">SA</div>
+                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#00342F] bg-[#f59e0b] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">TR</div>
+                      <div className="w-[34px] h-[34px] rounded-full border-2 border-[#00342F] bg-white/10 backdrop-blur-md flex items-center justify-center text-[11px] font-bold text-white shadow-sm">+</div>
                     </div>
                     <div className="flex flex-col items-start justify-center">
                       <div className="flex text-[#f59e0b] mb-1">
@@ -73,12 +73,12 @@ export default function Home() {
         </section>
 
         {/* --- 2. WORKFLOW SECTION --- */}
-        <section className="w-full bg-[#fcfcfc] px-6 py-20 lg:py-24 border-t border-[#052821]/10">
+        <section className="w-full bg-[#fcfcfc] px-6 py-20 lg:py-24 border-t border-[#00342F]/10">
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center max-w-[1000px] mx-auto mb-16 md:mb-20">
-              <h2 className="text-[20px] md:text-[clamp(28px,3.5vw,36px)] font-unbounded font-bold text-[#052821] mb-6 tracking-[-0.02em] leading-[1.2]">
+              <h2 className="text-[20px] md:text-[clamp(28px,3.5vw,36px)] font-unbounded font-bold text-[#00342F] mb-6 tracking-[-0.02em] leading-[1.2]">
                 L'improvisation ruine vos investissements <br className="hidden md:block" /> 
-                <span className="text-[#0B5345]">— <span className="text-[#D35400]">Cultiso</span> vous donne les outils pour les rentabiliser.</span>
+                <span className="text-[#007468]">— <span className="text-[#D0541F]">Cultiso</span> vous donne les outils pour les rentabiliser.</span>
               </h2>
               <p className="text-[16px] md:text-[18px] text-gray-500 font-manrope max-w-3xl mx-auto leading-relaxed">
                 Des outils intelligents pour gérer et sécuriser chaque aspect de votre agrobusiness, de l'idée jusqu'à la vente de vos produits.
@@ -102,7 +102,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-gray-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">01.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Opportunités</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Opportunités</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Identifiez et analysez les meilleures opportunités d'investissement agricole.</p>
                     </div>
                   </div>
@@ -115,7 +115,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-gray-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">02.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Rentabilité</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Rentabilité</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Simulez vos coûts et anticipez la rentabilité financière de votre projet.</p>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-gray-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">03.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Mise en place</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Mise en place</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Faites-vous accompagner par des experts qualifiés pour un lancement réussi.</p>
                     </div>
                   </div>
@@ -147,7 +147,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-gray-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">04.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Pilotage IA</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Pilotage IA</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Pilotez votre exploitation avec précision au quotidien grâce à nos algorithmes intelligents.</p>
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-gray-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">05.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Production</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Production</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Menez à bien vos cycles agricoles et produisez en quantité ainsi qu'en qualité.</p>
                     </div>
                   </div>
@@ -173,7 +173,7 @@ export default function Home() {
                     <div className="w-[1px] h-8 lg:h-12 bg-green-200 ml-8 lg:ml-10 relative z-0"></div>
                     <div className="pt-2">
                       <div className="text-[13px] font-extrabold text-[#22c55e]/60 tracking-wider mb-1 font-mono">06.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[20px] lg:text-[22px] tracking-tight mb-2">Ventes</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[20px] lg:text-[22px] tracking-tight mb-2">Ventes</h4>
                       <p className="text-[14px] lg:text-[15px] text-gray-500 font-medium leading-relaxed">Accédez aux marchés porteurs et vendez vos récoltes agricoles au meilleur prix.</p>
                     </div>
                   </div>
@@ -196,7 +196,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-gray-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">01.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Opportunités</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Opportunités</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Identifiez et analysez les meilleures opportunités d'investissement agricole.</p>
                     </div>
                   </div>
@@ -209,7 +209,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-gray-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">02.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Rentabilité</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Rentabilité</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Simulez vos coûts et anticipez la rentabilité de votre projet.</p>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-gray-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">03.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Mise en place</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Mise en place</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Faites-vous accompagner par des experts qualifiés.</p>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-gray-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">04.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Pilotage IA</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Pilotage IA</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Pilotez votre exploitation avec précision au quotidien.</p>
                     </div>
                   </div>
@@ -258,7 +258,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-gray-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-gray-300 tracking-wider mb-1 font-mono">05.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Production</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Production</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Menez à bien vos cycles et produisez en quantité et en qualité.</p>
                     </div>
                   </div>
@@ -271,7 +271,7 @@ export default function Home() {
                     <div className="w-[1px] h-6 bg-green-200 mx-auto relative z-0"></div>
                     <div className="pt-1 flex flex-col items-center">
                       <div className="text-[11px] font-extrabold text-[#22c55e]/60 tracking-wider mb-1 font-mono">06.</div>
-                      <h4 className="font-extrabold text-[#052821] text-[16px] leading-tight mb-1">Ventes</h4>
+                      <h4 className="font-extrabold text-[#00342F] text-[16px] leading-tight mb-1">Ventes</h4>
                       <p className="text-[13px] text-gray-500 font-medium leading-snug">Accédez aux marchés et vendez au meilleur prix.</p>
                     </div>
                   </div>
@@ -295,10 +295,10 @@ export default function Home() {
               <div className="w-full lg:w-[45%] flex flex-col items-start text-left z-10">
                 <div className="flex items-center gap-2 mb-6">
                   <img src="/favicon.png" alt="Cultiso" className="w-10 h-10 object-contain" />
-                  <span className="font-unbounded font-bold text-[#052821] text-lg tracking-tight">Cultiplan</span>
+                  <span className="font-unbounded font-bold text-[#00342F] text-lg tracking-tight">Cultiplan</span>
                 </div>
                 
-                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6">
+                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6">
                   Étudiez le marché avant d'investir
                 </h2>
                 
@@ -313,25 +313,25 @@ export default function Home() {
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Génération automatique de Business Plan</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Génération automatique de Business Plan</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Simulateur de rentabilité financière IA</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Simulateur de rentabilité financière IA</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Export PDF professionnel</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Export PDF professionnel</span>
                   </div>
                 </div>
                 
                 {/* Buttons */}
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href="/register" className="bg-[#052821] hover:bg-[#0a4237] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#052821]/20 flex items-center justify-center gap-2">
+                  <Link href="/register" className="bg-[#00342F] hover:bg-[#0a4237] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#00342F]/20 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Lancer CultiPlan
                   </Link>
@@ -344,15 +344,15 @@ export default function Home() {
                      style={{ transform: 'rotateY(-8deg) rotateX(4deg)', transformStyle: 'preserve-3d' }}>
                   
                   {/* Cultiplan Business Plan Dashboard */}
-                  <div className="bg-[#DEF7F2] rounded-2xl border border-gray-200 shadow-2xl shadow-[#052821]/10 w-full flex flex-col overflow-hidden">
+                  <div className="bg-[#DEF7F2] rounded-2xl border border-gray-200 shadow-2xl shadow-[#00342F]/10 w-full flex flex-col overflow-hidden">
                     {/* Top Bar */}
-                    <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#052821] to-[#0a4237]">
+                    <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#00342F] to-[#0a4237]">
                       <div className="flex items-center gap-3">
                         <span className="font-unbounded font-bold text-white text-sm">Cultiplan</span>
                         <span className="text-[10px] text-white/60 font-medium">Business Plan</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button className="px-2.5 py-1 bg-[#D35400] rounded-md text-[10px] font-bold text-white flex items-center gap-1">
+                        <button className="px-2.5 py-1 bg-[#D0541F] rounded-md text-[10px] font-bold text-white flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                           Exporter PDF
                         </button>
@@ -363,7 +363,7 @@ export default function Home() {
                     <div className="px-5 py-4 border-b border-gray-50">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-bold text-[#052821] text-[15px] mb-0.5">Culture de Tomate — Région Maritime</div>
+                          <div className="font-bold text-[#00342F] text-[15px] mb-0.5">Culture de Tomate — Région Maritime</div>
                           <div className="text-[11px] text-gray-500 flex items-center gap-3">
                             <span className="flex items-center gap-1">
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -381,20 +381,20 @@ export default function Home() {
                     </div>
                     {/* Big ROI */}
                     <div className="px-5 pt-4 pb-3">
-                      <div className="bg-gradient-to-br from-[#D35400]/5 to-[#F39C12]/5 border border-[#D35400]/15 rounded-xl p-4 flex items-center justify-between">
+                      <div className="bg-gradient-to-br from-[#D0541F]/5 to-[#F39C12]/5 border border-[#D0541F]/15 rounded-xl p-4 flex items-center justify-between">
                         <div>
                           <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Marge nette prévisionnelle</div>
-                          <div className="text-2xl font-black text-[#052821] font-unbounded tracking-tight">12 450 000 <span className="text-sm text-gray-400 font-bold">FCFA</span></div>
+                          <div className="text-2xl font-black text-[#00342F] font-unbounded tracking-tight">12 450 000 <span className="text-sm text-gray-400 font-bold">FCFA</span></div>
                         </div>
                         <div className="flex flex-col items-center">
                           {/* Donut chart simulation */}
                           <div className="relative w-16 h-16">
                             <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
                               <circle cx="18" cy="18" r="14" fill="none" stroke="#f3f4f6" strokeWidth="3" />
-                              <circle cx="18" cy="18" r="14" fill="none" stroke="#D35400" strokeWidth="3" strokeDasharray="64 100" strokeLinecap="round" />
+                              <circle cx="18" cy="18" r="14" fill="none" stroke="#D0541F" strokeWidth="3" strokeDasharray="64 100" strokeLinecap="round" />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-[11px] font-black text-[#D35400]">+145%</span>
+                              <span className="text-[11px] font-black text-[#D0541F]">+145%</span>
                             </div>
                           </div>
                           <span className="text-[8px] font-bold text-gray-400 mt-1">ROI</span>
@@ -405,15 +405,15 @@ export default function Home() {
                     <div className="px-5 pb-3 grid grid-cols-3 gap-3">
                       <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Chiffre d{"'"}affaires</div>
-                        <div className="text-[15px] font-black text-[#052821]">21.0M <span className="text-[9px] text-gray-400">F</span></div>
+                        <div className="text-[15px] font-black text-[#00342F]">21.0M <span className="text-[9px] text-gray-400">F</span></div>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Charges totales</div>
-                        <div className="text-[15px] font-black text-[#052821]">8.55M <span className="text-[9px] text-gray-400">F</span></div>
+                        <div className="text-[15px] font-black text-[#00342F]">8.55M <span className="text-[9px] text-gray-400">F</span></div>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                         <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Point mort</div>
-                        <div className="text-[15px] font-black text-[#052821]">J+38</div>
+                        <div className="text-[15px] font-black text-[#00342F]">J+38</div>
                       </div>
                     </div>
                     {/* Breakdown Bars */}
@@ -422,21 +422,21 @@ export default function Home() {
                       <div className="space-y-2.5">
                         <div>
                           <div className="flex justify-between text-[10px] mb-1">
-                            <span className="font-bold text-[#052821]">Intrants & Semences</span>
-                            <span className="font-bold text-[#D35400]">45%</span>
+                            <span className="font-bold text-[#00342F]">Intrants & Semences</span>
+                            <span className="font-bold text-[#D0541F]">45%</span>
                           </div>
-                          <div className="w-full h-2 rounded-full bg-gray-100"><div className="h-full bg-[#D35400] rounded-full" style={{width: "45%"}}></div></div>
+                          <div className="w-full h-2 rounded-full bg-gray-100"><div className="h-full bg-[#D0541F] rounded-full" style={{width: "45%"}}></div></div>
                         </div>
                         <div>
                           <div className="flex justify-between text-[10px] mb-1">
-                            <span className="font-bold text-[#052821]">Main d{"'"}œuvre</span>
+                            <span className="font-bold text-[#00342F]">Main d{"'"}œuvre</span>
                             <span className="font-bold text-[#E67E22]">35%</span>
                           </div>
                           <div className="w-full h-2 rounded-full bg-gray-100"><div className="h-full bg-[#E67E22] rounded-full" style={{width: "35%"}}></div></div>
                         </div>
                         <div>
                           <div className="flex justify-between text-[10px] mb-1">
-                            <span className="font-bold text-[#052821]">Logistique & Divers</span>
+                            <span className="font-bold text-[#00342F]">Logistique & Divers</span>
                             <span className="font-bold text-[#F39C12]">20%</span>
                           </div>
                           <div className="w-full h-2 rounded-full bg-gray-100"><div className="h-full bg-[#F39C12] rounded-full" style={{width: "20%"}}></div></div>
@@ -461,10 +461,10 @@ export default function Home() {
               <div className="w-full lg:w-[45%] flex flex-col items-start text-left z-10">
                 <div className="flex items-center gap-2 mb-6">
                   <img src="/favicon.png" alt="Cultiso" className="w-10 h-10 object-contain" />
-                  <span className="font-unbounded font-bold text-[#D35400] text-lg tracking-tight">Cultisia</span>
+                  <span className="font-unbounded font-bold text-[#D0541F] text-lg tracking-tight">Cultisia</span>
                 </div>
                 
-                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6">
+                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6">
                   Votre ingénieur agronome en poche
                 </h2>
                 
@@ -476,27 +476,27 @@ export default function Home() {
                 <div className="flex flex-col gap-5 mb-10 w-full">
 
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Assistance disponible 24h/24 et 7j/7</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Assistance disponible 24h/24 et 7j/7</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Réponses simples et adaptées à votre réalité</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Réponses simples et adaptées à votre réalité</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Orientation vers les bons outils et experts</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Orientation vers les bons outils et experts</span>
                   </div>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href="/register" className="bg-[#D35400] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D35400]/20 flex items-center justify-center gap-2">
+                  <Link href="/register" className="bg-[#D0541F] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D0541F]/20 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                     Discuter avec Cultisia
                   </Link>
@@ -509,9 +509,9 @@ export default function Home() {
                      style={{ transform: 'rotateY(8deg) rotateX(4deg)', transformStyle: 'preserve-3d' }}>
                   
                   {/* Cultisia Dashboard Mockup */}
-                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#052821]/10 w-full flex overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#00342F]/10 w-full flex overflow-hidden">
                     {/* Sidebar */}
-                    <div className="w-[52px] bg-[#052821] flex flex-col items-center py-4 gap-4 flex-shrink-0">
+                    <div className="w-[52px] bg-[#00342F] flex flex-col items-center py-4 gap-4 flex-shrink-0">
                       <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                       </div>
@@ -530,19 +530,19 @@ export default function Home() {
                       {/* Top Bar */}
                       <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="font-unbounded font-bold text-[#052821] text-sm">Cultisia</span>
+                          <span className="font-unbounded font-bold text-[#00342F] text-sm">Cultisia</span>
                           <span className="text-[10px] text-gray-400 font-medium">Intelligence Marché</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded-md text-[10px] font-bold">Live</span>
-                          <div className="w-7 h-7 rounded-full bg-[#052821] text-white flex items-center justify-center text-[10px] font-bold">AK</div>
+                          <div className="w-7 h-7 rounded-full bg-[#00342F] text-white flex items-center justify-center text-[10px] font-bold">AK</div>
                         </div>
                       </div>
                       {/* KPI Row */}
                       <div className="px-5 pt-4 pb-3 grid grid-cols-3 gap-3">
                         <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                           <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Tomate Ronde</div>
-                          <div className="text-lg font-black text-[#052821]">450 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
+                          <div className="text-lg font-black text-[#00342F]">450 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
                           <div className="text-[10px] font-bold text-green-600 flex items-center gap-0.5 mt-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
                             +12.5%
@@ -550,7 +550,7 @@ export default function Home() {
                         </div>
                         <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                           <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Maïs Blanc</div>
-                          <div className="text-lg font-black text-[#052821]">280 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
+                          <div className="text-lg font-black text-[#00342F]">280 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
                           <div className="text-[10px] font-bold text-red-500 flex items-center gap-0.5 mt-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                             -3.2%
@@ -558,7 +558,7 @@ export default function Home() {
                         </div>
                         <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                           <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-1">Piment Frais</div>
-                          <div className="text-lg font-black text-[#052821]">1 200 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
+                          <div className="text-lg font-black text-[#00342F]">1 200 <span className="text-[10px] text-gray-400 font-bold">F/kg</span></div>
                           <div className="text-[10px] font-bold text-green-600 flex items-center gap-0.5 mt-1">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
                             +8.1%
@@ -569,10 +569,10 @@ export default function Home() {
                       <div className="px-5 pb-3">
                         <div className="bg-gray-50 rounded-xl border border-gray-100 p-4">
                           <div className="flex items-center justify-between mb-3">
-                            <div className="text-[11px] font-bold text-[#052821]">Évolution des prix — Lomé</div>
+                            <div className="text-[11px] font-bold text-[#00342F]">Évolution des prix — Lomé</div>
                             <div className="flex gap-1">
                               <span className="px-2 py-0.5 bg-white border border-gray-200 rounded text-[9px] font-bold text-gray-500">7j</span>
-                              <span className="px-2 py-0.5 bg-[#052821] rounded text-[9px] font-bold text-white">30j</span>
+                              <span className="px-2 py-0.5 bg-[#00342F] rounded text-[9px] font-bold text-white">30j</span>
                               <span className="px-2 py-0.5 bg-white border border-gray-200 rounded text-[9px] font-bold text-gray-500">90j</span>
                             </div>
                           </div>
@@ -599,21 +599,21 @@ export default function Home() {
                           <div className="flex items-center justify-between bg-green-50/50 border border-green-100 rounded-lg px-3 py-2">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                              <span className="text-[11px] font-bold text-[#052821]">Lomé — Grand Marché</span>
+                              <span className="text-[11px] font-bold text-[#00342F]">Lomé — Grand Marché</span>
                             </div>
                             <span className="text-[10px] font-bold text-green-600">Forte demande</span>
                           </div>
                           <div className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-3 py-2">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-                              <span className="text-[11px] font-bold text-[#052821]">Kara — Marché Central</span>
+                              <span className="text-[11px] font-bold text-[#00342F]">Kara — Marché Central</span>
                             </div>
                             <span className="text-[10px] font-bold text-orange-500">Modéré</span>
                           </div>
                           <div className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-3 py-2">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-blue-400"></div>
-                              <span className="text-[11px] font-bold text-[#052821]">Sokodé — Gare routière</span>
+                              <span className="text-[11px] font-bold text-[#00342F]">Sokodé — Gare routière</span>
                             </div>
                             <span className="text-[10px] font-bold text-blue-500">Stable</span>
                           </div>
@@ -630,17 +630,17 @@ export default function Home() {
         </section>
 
         {/* --- 4.3 CULTIMA (BEIGE) --- */}
-        <section className="w-full bg-[#fdf8f5] px-6 py-20 lg:py-32 overflow-hidden border-t border-[#D35400]/10">
+        <section className="w-full bg-[#fdf8f5] px-6 py-20 lg:py-32 overflow-hidden border-t border-[#D0541F]/10">
           <div className="max-w-[1200px] mx-auto">
             <div className="flex flex-col lg:flex-row-reverse items-center gap-12 lg:gap-20">
               {/* Content Column */}
               <div className="w-full lg:w-[45%] flex flex-col items-start text-left z-10">
                 <div className="flex items-center gap-2 mb-6">
                   <img src="/favicon.png" alt="Cultiso" className="w-10 h-10 object-contain" />
-                  <span className="font-unbounded font-bold text-[#D35400] text-lg tracking-tight">Cultima</span>
+                  <span className="font-unbounded font-bold text-[#D0541F] text-lg tracking-tight">Cultima</span>
                 </div>
                 
-                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6">
+                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6">
                   Gérez votre business au quotidien
                 </h2>
                 
@@ -651,28 +651,28 @@ export default function Home() {
                 {/* Checkmarks */}
                 <div className="flex flex-col gap-5 mb-10 w-full">
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Suivi financier & Trésorerie</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Suivi financier & Trésorerie</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Calendrier de Semis & Récoltes</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Calendrier de Semis & Récoltes</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Formulation de Provendes (Élevage)</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Formulation de Provendes (Élevage)</span>
                   </div>
                 </div>
                 
                 {/* Buttons */}
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href="/register" className="bg-[#D35400] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D35400]/20 flex items-center justify-center gap-2">
+                  <Link href="/register" className="bg-[#D0541F] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D0541F]/20 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
                     Gérer mon business
                   </Link>
@@ -685,15 +685,15 @@ export default function Home() {
                      style={{ transform: 'rotateY(8deg) rotateX(4deg)', transformStyle: 'preserve-3d' }}>
                   
                   {/* Cultima ERP Dashboard */}
-                  <div className="bg-white rounded-2xl border border-[#D35400]/20 shadow-2xl shadow-[#D35400]/10 w-full flex flex-col overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-[#D0541F]/20 shadow-2xl shadow-[#D0541F]/10 w-full flex flex-col overflow-hidden">
                     {/* Top Bar */}
                     <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-white to-[#fdf8f5]">
                       <div className="flex items-center gap-3">
-                        <span className="font-unbounded font-bold text-[#D35400] text-sm">Cultima</span>
+                        <span className="font-unbounded font-bold text-[#D0541F] text-sm">Cultima</span>
                         <span className="text-[10px] text-gray-500 font-medium">Tableau de bord</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-[#D35400]/10 text-[#D35400] flex items-center justify-center text-[10px] font-bold">KA</div>
+                        <div className="w-7 h-7 rounded-full bg-[#D0541F]/10 text-[#D0541F] flex items-center justify-center text-[10px] font-bold">KA</div>
                       </div>
                     </div>
                     {/* Dashboard Content */}
@@ -701,29 +701,29 @@ export default function Home() {
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                           <div className="text-[10px] text-gray-500 font-bold mb-1 uppercase tracking-wider">Trésorerie</div>
-                          <div className="text-[18px] font-bold text-[#052821]">1,250,000 F</div>
+                          <div className="text-[18px] font-bold text-[#00342F]">1,250,000 F</div>
                         </div>
                         <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                           <div className="text-[10px] text-gray-500 font-bold mb-1 uppercase tracking-wider">Dépenses (Mois)</div>
                           <div className="text-[18px] font-bold text-red-500">- 450,000 F</div>
                         </div>
-                        <div className="bg-[#D35400]/10 p-3 rounded-xl border border-[#D35400]/20 shadow-sm">
-                          <div className="text-[10px] text-[#D35400] font-bold mb-1 uppercase tracking-wider">Ventes (Mois)</div>
-                          <div className="text-[18px] font-bold text-[#D35400]">+ 800,000 F</div>
+                        <div className="bg-[#D0541F]/10 p-3 rounded-xl border border-[#D0541F]/20 shadow-sm">
+                          <div className="text-[10px] text-[#D0541F] font-bold mb-1 uppercase tracking-wider">Ventes (Mois)</div>
+                          <div className="text-[18px] font-bold text-[#D0541F]">+ 800,000 F</div>
                         </div>
                       </div>
                       
                       {/* Tâches du jour */}
                       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-                        <h4 className="text-[13px] font-bold text-[#052821] mb-3">Tâches du jour (Semis)</h4>
+                        <h4 className="text-[13px] font-bold text-[#00342F] mb-3">Tâches du jour (Semis)</h4>
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg">
-                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#D35400]" />
+                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#D0541F]" />
                             <span className="text-[12px] font-medium text-gray-700">Semer Tomate (Parcelle A)</span>
                             <span className="ml-auto text-[10px] font-bold px-2 py-1 bg-green-100 text-green-700 rounded">Urgent</span>
                           </div>
                           <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg">
-                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#D35400]" />
+                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#D0541F]" />
                             <span className="text-[12px] font-medium text-gray-700">Vérifier système d'irrigation</span>
                           </div>
                         </div>
@@ -745,11 +745,11 @@ export default function Home() {
               <div className="w-full lg:w-[45%] flex flex-col items-start text-left z-10">
                 <div className="flex items-center gap-2 mb-6">
                   <img src="/favicon.png" alt="Cultiso" className="w-10 h-10 object-contain" />
-                  <span className="font-unbounded font-bold text-[#052821] text-lg tracking-tight">Cultiseil</span>
+                  <span className="font-unbounded font-bold text-[#00342F] text-lg tracking-tight">Cultiseil</span>
                   <span className="ml-2 px-2.5 py-1 bg-gray-100 text-gray-500 rounded-md text-[10px] font-bold uppercase tracking-wider border border-gray-200">Bientôt disponible</span>
                 </div>
                 
-                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6">
+                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6">
                   Produisez avec précision
                 </h2>
                 
@@ -764,26 +764,26 @@ export default function Home() {
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Diagnostic visuel des maladies et ravageurs</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Diagnostic visuel des maladies et ravageurs</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Analyse des sols et conseils de fertilisation</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Analyse des sols et conseils de fertilisation</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Prévisions météo et alertes climatiques locales</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Prévisions météo et alertes climatiques locales</span>
                   </div>
 
                 </div>
                 
                 {/* Buttons */}
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href="#newsletter" className="bg-white border-2 border-[#052821]/20 text-[#052821] hover:border-[#052821] px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                  <Link href="#newsletter" className="bg-white border-2 border-[#00342F]/20 text-[#00342F] hover:border-[#00342F] px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                     M'avertir du lancement
                   </Link>
@@ -796,9 +796,9 @@ export default function Home() {
                      style={{ transform: 'rotateY(-8deg) rotateX(4deg)', transformStyle: 'preserve-3d' }}>
                   
                   {/* Cultiseil Advisory Dashboard */}
-                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#052821]/10 w-full flex overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#00342F]/10 w-full flex overflow-hidden">
                     {/* Sidebar */}
-                    <div className="w-[52px] bg-[#052821] flex flex-col items-center py-4 gap-4 flex-shrink-0">
+                    <div className="w-[52px] bg-[#00342F] flex flex-col items-center py-4 gap-4 flex-shrink-0">
                       <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                       </div>
@@ -817,7 +817,7 @@ export default function Home() {
                       {/* Top Bar */}
                       <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="font-unbounded font-bold text-[#052821] text-sm">Cultiseil</span>
+                          <span className="font-unbounded font-bold text-[#00342F] text-sm">Cultiseil</span>
                           <span className="text-[10px] text-gray-400 font-medium">Accompagnement Technique</span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -825,25 +825,25 @@ export default function Home() {
                             <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
                             2 alertes
                           </div>
-                          <div className="w-7 h-7 rounded-full bg-[#052821] text-white flex items-center justify-center text-[10px] font-bold">FA</div>
+                          <div className="w-7 h-7 rounded-full bg-[#00342F] text-white flex items-center justify-center text-[10px] font-bold">FA</div>
                         </div>
                       </div>
                       {/* Farm Profile + Weather */}
                       <div className="px-5 pt-4 pb-3 grid grid-cols-2 gap-3">
                         <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 rounded-lg bg-[#052821]/10 flex items-center justify-center">
-                              <svg className="w-4 h-4 text-[#052821]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                            <div className="w-8 h-8 rounded-lg bg-[#00342F]/10 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-[#00342F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                             </div>
                             <div>
-                              <div className="font-bold text-[#052821] text-[11px]">Ferme d{"'"}Avépozo</div>
+                              <div className="font-bold text-[#00342F] text-[11px]">Ferme d{"'"}Avépozo</div>
                               <div className="text-[9px] text-gray-500">Production Mixte • 2 ha</div>
                             </div>
                           </div>
                         </div>
                         <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-center gap-3">
                           <div className="text-center">
-                            <div className="text-xl font-black text-[#052821]">32°C</div>
+                            <div className="text-xl font-black text-[#00342F]">32°C</div>
                             <div className="text-[9px] text-gray-500 font-bold">Humid. 78%</div>
                           </div>
                           <div className="flex-1 flex flex-col gap-1">
@@ -860,15 +860,15 @@ export default function Home() {
                       <div className="px-5 pb-3">
                         <div className="bg-gray-50 rounded-xl border border-gray-100 p-4">
                           <div className="flex items-center justify-between mb-3">
-                            <div className="text-[11px] font-bold text-[#052821]">Itinéraire Technique — Jour 42/90</div>
-                            <div className="text-[10px] font-bold text-[#052821] bg-[#052821]/10 px-2 py-0.5 rounded">47%</div>
+                            <div className="text-[11px] font-bold text-[#00342F]">Itinéraire Technique — Jour 42/90</div>
+                            <div className="text-[10px] font-bold text-[#00342F] bg-[#00342F]/10 px-2 py-0.5 rounded">47%</div>
                           </div>
                           <div className="w-full h-2 rounded-full bg-gray-200 mb-4">
-                            <div className="h-full bg-gradient-to-r from-[#052821] to-[#22c55e] rounded-full" style={{width: "47%"}}></div>
+                            <div className="h-full bg-gradient-to-r from-[#00342F] to-[#22c55e] rounded-full" style={{width: "47%"}}></div>
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-start gap-2.5 opacity-50">
-                              <div className="w-4 h-4 rounded bg-[#052821] flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="w-4 h-4 rounded bg-[#00342F] flex items-center justify-center flex-shrink-0 mt-0.5">
                                 <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                               </div>
                               <div className="text-[11px] font-bold text-gray-500 line-through">Irrigation matinale — 6h00</div>
@@ -889,16 +889,16 @@ export default function Home() {
                       </div>
                       {/* Expert Chat Preview */}
                       <div className="px-5 pb-4">
-                        <div className="bg-[#052821]/5 rounded-xl border border-[#052821]/10 p-3">
+                        <div className="bg-[#00342F]/5 rounded-xl border border-[#00342F]/10 p-3">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-6 h-6 rounded-full bg-[#052821] text-white flex items-center justify-center text-[8px] font-bold">Dr</div>
+                            <div className="w-6 h-6 rounded-full bg-[#00342F] text-white flex items-center justify-center text-[8px] font-bold">Dr</div>
                             <div>
-                              <span className="text-[10px] font-bold text-[#052821]">Dr. Kofi Mensah</span>
+                              <span className="text-[10px] font-bold text-[#00342F]">Dr. Kofi Mensah</span>
                               <span className="text-[9px] text-gray-500 ml-1">• Agronome certifié</span>
                             </div>
                             <div className="ml-auto w-2 h-2 rounded-full bg-green-500"></div>
                           </div>
-                          <div className="bg-white rounded-lg p-2 border border-[#052821]/10 text-[10px] text-gray-600 leading-relaxed">
+                          <div className="bg-white rounded-lg p-2 border border-[#00342F]/10 text-[10px] text-gray-600 leading-relaxed">
                             {"\""}Les tâches observées correspondent à une septoriose précoce. Je recommande un traitement fongique immédiat.{"\""}
                           </div>
                         </div>
@@ -922,11 +922,11 @@ export default function Home() {
               <div className="w-full lg:w-[45%] flex flex-col items-start text-left z-10">
                 <div className="flex items-center gap-2 mb-6">
                   <img src="/favicon.png" alt="Cultiso" className="w-10 h-10 object-contain" />
-                  <span className="font-unbounded font-bold text-[#D35400] text-lg tracking-tight">Cultishop</span>
+                  <span className="font-unbounded font-bold text-[#D0541F] text-lg tracking-tight">Cultishop</span>
                   <span className="ml-2 px-2.5 py-1 bg-gray-100 text-gray-500 rounded-md text-[10px] font-bold uppercase tracking-wider border border-gray-200">Bientôt disponible</span>
                 </div>
                 
-                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6">
+                <h2 className="text-[clamp(32px,4vw,48px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6">
                   Vendez et achetez mieux
                 </h2>
                 
@@ -938,32 +938,32 @@ export default function Home() {
                 <div className="flex flex-col gap-5 mb-10 w-full">
 
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Achat d'intrants et d'équipements</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Achat d'intrants et d'équipements</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Commande simplifiée</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Commande simplifiée</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#D35400] flex items-center justify-center flex-shrink-0 text-white">
+                    <div className="w-6 h-6 rounded-full bg-[#D0541F] flex items-center justify-center flex-shrink-0 text-white">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     </div>
-                    <span className="text-[#052821] font-bold text-[15px] leading-tight">Mise en relation avec des fournisseurs fiables</span>
+                    <span className="text-[#00342F] font-bold text-[15px] leading-tight">Mise en relation avec des fournisseurs fiables</span>
                   </div>
                 </div>
                 
                                 {/* Buttons */}
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href="/register" className="bg-[#D35400] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D35400]/20 flex items-center justify-center gap-2">
+                  <Link href="/register" className="bg-[#D0541F] hover:bg-[#b54700] text-white px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#D0541F]/20 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                     Acheter des intrants
                   </Link>
-                  <Link href="/register" className="bg-transparent border-2 border-[#D35400]/20 text-[#D35400] hover:border-[#D35400] px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2">
+                  <Link href="/register" className="bg-transparent border-2 border-[#D0541F]/20 text-[#D0541F] hover:border-[#D0541F] px-7 h-[48px] rounded-xl font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     Vendre mes récoltes
                   </Link>
@@ -976,11 +976,11 @@ export default function Home() {
                      style={{ transform: 'rotateY(8deg) rotateX(4deg)', transformStyle: 'preserve-3d' }}>
                   
                   {/* Cultishop Marketplace Dashboard */}
-                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#052821]/10 w-full flex flex-col overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-[#00342F]/10 w-full flex flex-col overflow-hidden">
                     {/* Top Bar */}
                     <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="font-unbounded font-bold text-[#052821] text-sm">Cultishop</span>
+                        <span className="font-unbounded font-bold text-[#00342F] text-sm">Cultishop</span>
                         <span className="text-[10px] text-gray-400 font-medium">Marketplace B2B</span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -988,33 +988,33 @@ export default function Home() {
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                           Rechercher...
                         </div>
-                        <div className="w-7 h-7 rounded-full bg-[#052821] text-white flex items-center justify-center text-[10px] font-bold">AK</div>
+                        <div className="w-7 h-7 rounded-full bg-[#00342F] text-white flex items-center justify-center text-[10px] font-bold">AK</div>
                       </div>
                     </div>
                     {/* Tabs */}
                     <div className="px-5 pt-3 pb-0 flex gap-1 border-b border-gray-100">
-                      <div className="px-3 py-2 bg-[#052821] text-white rounded-t-lg text-[10px] font-bold">Offres reçues</div>
+                      <div className="px-3 py-2 bg-[#00342F] text-white rounded-t-lg text-[10px] font-bold">Offres reçues</div>
                       <div className="px-3 py-2 text-gray-500 text-[10px] font-bold hover:bg-gray-50 rounded-t-lg">Mes annonces</div>
                       <div className="px-3 py-2 text-gray-500 text-[10px] font-bold hover:bg-gray-50 rounded-t-lg">Intrants</div>
                     </div>
                     {/* Best Offer Card */}
                     <div className="px-5 pt-4 pb-3">
                       <div className="bg-green-50/60 rounded-xl border border-green-200 p-4 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-[#D35400] text-white text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-bl-lg">Meilleure offre</div>
+                        <div className="absolute top-0 right-0 bg-[#D0541F] text-white text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-bl-lg">Meilleure offre</div>
                         <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-lg bg-[#052821] flex items-center justify-center font-bold text-xs text-white">SR</div>
+                          <div className="w-10 h-10 rounded-lg bg-[#00342F] flex items-center justify-center font-bold text-xs text-white">SR</div>
                           <div>
-                            <div className="font-bold text-[#052821] text-[13px]">Supermarché Ramco</div>
+                            <div className="font-bold text-[#00342F] text-[13px]">Supermarché Ramco</div>
                             <div className="flex items-center gap-1 text-[10px] text-gray-500">
                               <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                               Acheteur vérifié • Lomé
                             </div>
                           </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-2 mb-3 bg-white rounded-lg p-2.5 border border-[#052821]/10">
+                        <div className="grid grid-cols-3 gap-2 mb-3 bg-white rounded-lg p-2.5 border border-[#00342F]/10">
                           <div>
                             <div className="text-[9px] text-gray-500 mb-0.5">Demande</div>
-                            <div className="font-bold text-[#052821] text-[11px]">12 T. de Maïs</div>
+                            <div className="font-bold text-[#00342F] text-[11px]">12 T. de Maïs</div>
                           </div>
                           <div>
                             <div className="text-[9px] text-gray-500 mb-0.5">Prix proposé</div>
@@ -1022,12 +1022,12 @@ export default function Home() {
                           </div>
                           <div>
                             <div className="text-[9px] text-gray-500 mb-0.5">Valeur totale</div>
-                            <div className="font-bold text-[#052821] text-[11px]">5.4M FCFA</div>
+                            <div className="font-bold text-[#00342F] text-[11px]">5.4M FCFA</div>
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <button className="flex-1 bg-[#052821] hover:bg-[#0a4237] text-white font-bold py-2 rounded-lg text-[11px] transition-colors">Accepter l{"'"}offre</button>
-                          <button className="flex-1 bg-white border border-gray-200 text-[#052821] font-bold py-2 rounded-lg text-[11px] transition-colors">Négocier</button>
+                          <button className="flex-1 bg-[#00342F] hover:bg-[#0a4237] text-white font-bold py-2 rounded-lg text-[11px] transition-colors">Accepter l{"'"}offre</button>
+                          <button className="flex-1 bg-white border border-gray-200 text-[#00342F] font-bold py-2 rounded-lg text-[11px] transition-colors">Négocier</button>
                         </div>
                       </div>
                     </div>
@@ -1039,30 +1039,30 @@ export default function Home() {
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-[10px]">CK</div>
                             <div>
-                              <div className="font-bold text-[#052821] text-[11px]">Coop. de Kpalimé</div>
+                              <div className="font-bold text-[#00342F] text-[11px]">Coop. de Kpalimé</div>
                               <div className="text-[9px] text-gray-500">5 Tonnes • 420 F/kg</div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-bold text-[#052821] bg-[#052821]/10 px-2 py-0.5 rounded">2.1M F</span>
+                          <span className="text-[10px] font-bold text-[#00342F] bg-[#00342F]/10 px-2 py-0.5 rounded">2.1M F</span>
                         </div>
                         <div className="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-[10px]">HA</div>
                             <div>
-                              <div className="font-bold text-[#052821] text-[11px]">Hôtel Agbodrafo</div>
+                              <div className="font-bold text-[#00342F] text-[11px]">Hôtel Agbodrafo</div>
                               <div className="text-[9px] text-gray-500">2 Tonnes • 480 F/kg</div>
                             </div>
                           </div>
-                          <span className="text-[10px] font-bold text-[#052821] bg-[#052821]/10 px-2 py-0.5 rounded">960K F</span>
+                          <span className="text-[10px] font-bold text-[#00342F] bg-[#00342F]/10 px-2 py-0.5 rounded">960K F</span>
                         </div>
                       </div>
                     </div>
                     {/* Transaction Status */}
                     <div className="px-5 pb-4">
-                      <div className="bg-[#052821]/5 rounded-xl border border-[#052821]/10 p-3 flex items-center justify-between">
+                      <div className="bg-[#00342F]/5 rounded-xl border border-[#00342F]/10 p-3 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                          <span className="text-[10px] font-bold text-[#052821]">Paiement sécurisé Cultiso</span>
+                          <span className="text-[10px] font-bold text-[#00342F]">Paiement sécurisé Cultiso</span>
                         </div>
                         <span className="text-[10px] font-bold text-green-600">Escrow activé</span>
                       </div>
@@ -1079,16 +1079,16 @@ export default function Home() {
 <section className="w-full bg-[#DEF7F2] px-6 py-24 lg:py-32">
           <div className="max-w-[1000px] mx-auto text-center flex flex-col items-center">
             
-            <h2 className="text-[clamp(32px,5vw,56px)] font-unbounded font-bold text-[#052821] leading-[1.1] mb-6 tracking-[-0.02em]">
+            <h2 className="text-[clamp(32px,5vw,56px)] font-unbounded font-bold text-[#00342F] leading-[1.1] mb-6 tracking-[-0.02em]">
               Prêt à structurer votre projet agricole ?
             </h2>
             
-            <p className="text-[17px] md:text-[19px] text-[#052821]/80 font-manrope mb-12 max-w-[600px] leading-relaxed">
+            <p className="text-[17px] md:text-[19px] text-[#00342F]/80 font-manrope mb-12 max-w-[600px] leading-relaxed">
               Découvrez la puissance de Cultiplan sans créer de compte. Calculez votre rentabilité en quelques minutes et prenez les bonnes décisions avant d'investir.
             </p>
             
             <Link href="/register" className="inline-block group">
-              <button className="px-10 h-[60px] text-[16px] font-bold bg-[#052821] hover:bg-[#0a3f34] text-white rounded-xl shadow-lg shadow-[#052821]/20 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-3 mx-auto">
+              <button className="px-10 h-[60px] text-[16px] font-bold bg-[#00342F] hover:bg-[#0a3f34] text-white rounded-xl shadow-lg shadow-[#00342F]/20 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-3 mx-auto">
                 Démarrer une simulation
                 <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>

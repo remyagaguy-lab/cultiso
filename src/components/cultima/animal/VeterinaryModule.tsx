@@ -27,7 +27,7 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
       {/* Header */}
       <div className="p-4 sm:px-6 sm:py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#0B5345] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-[#007468] flex items-center justify-center">
             <Stethoscope className="w-4 h-4" />
           </div>
           <div>
@@ -42,12 +42,12 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs bg-amber-50 text-amber-900 border border-amber-200/70 px-2.5 py-1 rounded-lg font-medium">
-            <Clock className="w-3.5 h-3.5 text-[#D35400]" />
+            <Clock className="w-3.5 h-3.5 text-[#D0541F]" />
             <span><strong>2 lots</strong> sous délai d'attente actif</span>
           </div>
           <button
             onClick={onNewPrescription}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B5345] hover:bg-[#116a58] text-white text-xs font-bold rounded-lg transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#007468] hover:bg-[#116a58] text-white text-xs font-bold rounded-lg transition"
           >
             <FileText className="w-3.5 h-3.5" />
             <span>Nouvelle Ordonnance</span>
@@ -81,7 +81,7 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
                         {rec.species}
                       </span>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D35400] bg-orange-100 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D0541F] bg-orange-100 px-1.5 py-0.5 rounded">
                       Attente active
                     </span>
                   </div>
@@ -95,7 +95,7 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
 
                   <div className="mt-3 pt-2 border-t border-orange-200/60 flex items-center justify-between text-xs">
                     <span className="text-slate-500 text-[11px]">Fin de délai :</span>
-                    <span className="font-mono font-bold text-[#D35400] flex items-center gap-1">
+                    <span className="font-mono font-bold text-[#D0541F] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {rec.withdrawalEndDate}
                     </span>
@@ -107,7 +107,7 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
           {/* Biosecurity Checklist Pill */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-600 space-y-2">
             <div className="font-bold text-slate-800 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#0B5345]" />
+              <ShieldCheck className="w-4 h-4 text-[#007468]" />
               <span>Contrôle Biosécurité Hebdomadaire</span>
             </div>
             <div className="flex items-center justify-between text-[11px]">
@@ -160,7 +160,7 @@ export const VeterinaryModule: React.FC<VeterinaryModuleProps> = ({
                     </td>
                     <td className="py-2.5 px-3">
                       {r.isWithdrawalActive ? (
-                        <span className="text-[10px] font-bold text-[#D35400] bg-orange-100 px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-bold text-[#D0541F] bg-orange-100 px-2 py-0.5 rounded">
                           Attente ({r.withdrawalPeriodDays}j)
                         </span>
                       ) : (

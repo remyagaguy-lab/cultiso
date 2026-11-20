@@ -16,10 +16,10 @@ import {
 /*  TOKENS                                                             */
 /* ------------------------------------------------------------------ */
 const C = {
-  green: "#0B5345",
+  green: "#007468",
   greenDeep: "#072F27",
   greenSoft: "#E4ECE6",
-  laterite: "#D35400",
+  laterite: "#D0541F",
   lateriteSoft: "#F5D9C2",
   paper: "#F3F5EF",
   card: "#FFFFFF",

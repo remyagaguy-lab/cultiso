@@ -41,8 +41,8 @@ const revenueData = [
 ];
 
 const fleetStatusData = [
-  { name: 'En mission', value: 58, color: '#0B5345' }, // cultima-green
-  { name: 'Maintenance', value: 14, color: '#D35400' }, // cultima-orange
+  { name: 'En mission', value: 58, color: '#007468' }, // cultima-green
+  { name: 'Maintenance', value: 14, color: '#D0541F' }, // cultima-orange
   { name: 'Au dépôt', value: 28, color: '#cbd5e1' }, // slate-300
 ];
 
@@ -222,12 +222,12 @@ export default function ServiceDashboard() {
                   <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorCA" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0B5345" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#0B5345" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#007468" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#007468" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorCharges" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#D35400" stopOpacity={0.1}/>
-                        <stop offset="95%" stopColor="#D35400" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#D0541F" stopOpacity={0.1}/>
+                        <stop offset="95%" stopColor="#D0541F" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
@@ -236,8 +236,8 @@ export default function ServiceDashboard() {
                     <RechartsTooltip 
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
                     />
-                    <Area type="monotone" dataKey="chiffreAffaires" name="CA Brut" stroke="#0B5345" strokeWidth={3} fillOpacity={1} fill="url(#colorCA)" />
-                    <Area type="monotone" dataKey="charges" name="Charges" stroke="#D35400" strokeWidth={2} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorCharges)" />
+                    <Area type="monotone" dataKey="chiffreAffaires" name="CA Brut" stroke="#007468" strokeWidth={3} fillOpacity={1} fill="url(#colorCA)" />
+                    <Area type="monotone" dataKey="charges" name="Charges" stroke="#D0541F" strokeWidth={2} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorCharges)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

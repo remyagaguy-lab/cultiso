@@ -56,7 +56,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-[#0B5345] px-6 py-4 text-white flex items-center justify-between">
+        <div className="bg-[#007468] px-6 py-4 text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
               <PlusCircle className="w-4 h-4 text-emerald-300" />
@@ -95,7 +95,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                     onClick={() => { setEntryType('weighing'); setNumericValue('2450'); }}
                     className={`p-2 rounded-lg border text-center transition flex flex-col items-center gap-1 ${
                       entryType === 'weighing'
-                        ? 'border-[#0B5345] bg-emerald-50 text-[#0B5345] font-bold'
+                        ? 'border-[#007468] bg-emerald-50 text-[#007468] font-bold'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50 text-xs'
                     }`}
                   >
@@ -108,7 +108,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                     onClick={() => { setEntryType('egg_collection'); setNumericValue('38400'); }}
                     className={`p-2 rounded-lg border text-center transition flex flex-col items-center gap-1 ${
                       entryType === 'egg_collection'
-                        ? 'border-[#0B5345] bg-emerald-50 text-[#0B5345] font-bold'
+                        ? 'border-[#007468] bg-emerald-50 text-[#007468] font-bold'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50 text-xs'
                     }`}
                   >
@@ -134,7 +134,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                     onClick={() => { setEntryType('feed'); setNumericValue('2800'); }}
                     className={`p-2 rounded-lg border text-center transition flex flex-col items-center gap-1 ${
                       entryType === 'feed'
-                        ? 'border-[#D35400] bg-orange-50 text-[#D35400] font-bold'
+                        ? 'border-[#D0541F] bg-orange-50 text-[#D0541F] font-bold'
                         : 'border-slate-200 text-slate-600 hover:bg-slate-50 text-xs'
                     }`}
                   >
@@ -165,7 +165,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                 <select
                   value={selectedBatchId}
                   onChange={(e) => setSelectedBatchId(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B5345] bg-white font-medium"
+                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] bg-white font-medium"
                 >
                   {batches.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -185,7 +185,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B5345] font-mono"
+                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono"
                   />
                 </div>
 
@@ -201,7 +201,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                     type="number"
                     value={numericValue}
                     onChange={(e) => setNumericValue(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B5345] font-mono font-bold text-slate-900"
+                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468] font-mono font-bold text-slate-900"
                   />
                 </div>
               </div>
@@ -216,7 +216,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Ex: Température ambiante normale, comportement homogène du cheptel, fientes normales..."
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B5345]"
+                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#007468]"
                 />
               </div>
 
@@ -231,7 +231,7 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0B5345] hover:bg-[#116a58] text-white rounded-lg text-xs font-bold shadow-xs transition"
+                  className="px-4 py-2 bg-[#007468] hover:bg-[#116a58] text-white rounded-lg text-xs font-bold shadow-xs transition"
                 >
                   Valider et Enregistrer
                 </button>

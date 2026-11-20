@@ -27,10 +27,10 @@ export default function CultimaPage() {
           <img src="/favicon.png" alt="Cultiso" className="w-8 h-8 object-contain" />
         </Link>
         <nav className="flex flex-col gap-4 w-full px-3">
-          <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#0B5345] hover:bg-gray-50 transition-colors">
+          <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#007468] hover:bg-gray-50 transition-colors">
             <AppstoreOutlined style={{fontSize:"20px"}} />
           </Link>
-          <div className="relative w-full aspect-square rounded-xl flex items-center justify-center bg-[#0B5345] text-white shadow-sm cursor-default">
+          <div className="relative w-full aspect-square rounded-xl flex items-center justify-center bg-[#007468] text-white shadow-sm cursor-default">
             <DashboardOutlined style={{fontSize:"20px"}} />
           </div>
         </nav>
@@ -49,7 +49,7 @@ export default function CultimaPage() {
           {!config ? (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-20 h-20 bg-white border border-[#DFE4DA] rounded-3xl flex items-center justify-center mb-6 shadow-sm">
-                <BrainCircuit size={40} className="text-[#0B5345]" />
+                <BrainCircuit size={40} className="text-[#007468]" />
               </div>
               <h2 className="font-unbounded text-3xl font-bold text-[#17231F] mb-4">
                 ERP non configuré
@@ -61,15 +61,15 @@ export default function CultimaPage() {
               {/* Temporary demo buttons to trigger dashboard states until backend integration */}
               <div className="flex flex-col gap-3 max-w-sm w-full">
                 <p className="text-xs font-bold text-[#17231F] uppercase mb-2">Simulation de la configuration (Démo)</p>
-                <button onClick={() => setConfig("vegetal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#0B5345] hover:shadow-sm transition-all text-sm font-medium">Charger le profil Végétal</button>
-                <button onClick={() => setConfig("animal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#0B5345] hover:shadow-sm transition-all text-sm font-medium">Charger le profil Animal</button>
-                <button onClick={() => setConfig("mixte")} className="p-3 bg-[#0B5345] text-white border border-transparent rounded-xl hover:bg-[#072F27] transition-all text-sm font-medium shadow-md">Charger le profil Mixte (Recommandé)</button>
+                <button onClick={() => setConfig("vegetal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#007468] hover:shadow-sm transition-all text-sm font-medium">Charger le profil Végétal</button>
+                <button onClick={() => setConfig("animal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#007468] hover:shadow-sm transition-all text-sm font-medium">Charger le profil Animal</button>
+                <button onClick={() => setConfig("mixte")} className="p-3 bg-[#007468] text-white border border-transparent rounded-xl hover:bg-[#072F27] transition-all text-sm font-medium shadow-md">Charger le profil Mixte (Recommandé)</button>
                 <div className="w-full h-[1px] bg-[#DFE4DA] my-2"></div>
-                <button onClick={() => setConfig("transformation")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#0B5345] hover:shadow-sm transition-all text-sm font-medium">Transformation Agroalimentaire</button>
-                <button onClick={() => setConfig("service")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#0B5345] hover:shadow-sm transition-all text-sm font-medium">Services Agricoles</button>
-                <button onClick={() => setConfig("negoce")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#0B5345] hover:shadow-sm transition-all text-sm font-medium">Agro-Commerce & Négoce</button>
+                <button onClick={() => setConfig("transformation")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#007468] hover:shadow-sm transition-all text-sm font-medium">Transformation Agroalimentaire</button>
+                <button onClick={() => setConfig("service")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#007468] hover:shadow-sm transition-all text-sm font-medium">Services Agricoles</button>
+                <button onClick={() => setConfig("negoce")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-[#007468] hover:shadow-sm transition-all text-sm font-medium">Agro-Commerce & Négoce</button>
                 <div className="w-full h-[1px] bg-[#DFE4DA] my-2"></div>
-                <button onClick={() => setConfig("finance")} className="p-3 bg-white border-2 border-[#D35400] text-[#D35400] rounded-xl hover:bg-[#D35400] hover:text-white transition-all text-sm font-bold shadow-sm">💰 Module Trésorerie (NOUVEAU)</button>
+                <button onClick={() => setConfig("finance")} className="p-3 bg-white border-2 border-[#D0541F] text-[#D0541F] rounded-xl hover:bg-[#D0541F] hover:text-white transition-all text-sm font-bold shadow-sm">💰 Module Trésorerie (NOUVEAU)</button>
               </div>
             </div>
           ) : (
@@ -88,13 +88,13 @@ export default function CultimaPage() {
                       Cultisia a fusionné vos activités Végétales et Animales. Vos données financières et opérationnelles sont centralisées.
                     </p>
                   </div>
-                  <div className="border-b-[10px] border-[#D35400]">
+                  <div className="border-b-[10px] border-[#D0541F]">
                     <VegetalDashboard />
                   </div>
                   <div className="bg-slate-50 pt-10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
                       <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-full bg-[#0B5345] text-white flex items-center justify-center text-sm">2</span>
+                        <span className="w-8 h-8 rounded-full bg-[#007468] text-white flex items-center justify-center text-sm">2</span>
                         Supervision Zootechnique
                       </h3>
                     </div>

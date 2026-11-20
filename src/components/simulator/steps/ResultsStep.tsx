@@ -27,8 +27,8 @@ export function ResultsStep() {
       <div className="w-full max-w-md bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 relative overflow-hidden group shadow-2xl">
         
         {/* Blurry Overlay */}
-        <div className="absolute inset-0 z-10 backdrop-blur-sm bg-[#052821]/60 flex flex-col items-center justify-center transition-all">
-          <button className="px-8 py-3.5 bg-[#D35400] text-white rounded-xl font-bold text-sm hover:bg-[#E67E22] transition-all shadow-[0_0_20px_rgba(211,84,0,0.3)] hover:shadow-[0_0_30px_rgba(211,84,0,0.5)] active:scale-[0.98]">
+        <div className="absolute inset-0 z-10 backdrop-blur-sm bg-[#00342F]/60 flex flex-col items-center justify-center transition-all">
+          <button className="px-8 py-3.5 bg-[#D0541F] text-white rounded-xl font-bold text-sm hover:bg-[#E67E22] transition-all shadow-[0_0_20px_rgba(211,84,0,0.3)] hover:shadow-[0_0_30px_rgba(211,84,0,0.5)] active:scale-[0.98]">
             Créer un compte
           </button>
           <div className="text-xs text-white/50 mt-4 hover:text-white transition-colors cursor-pointer">

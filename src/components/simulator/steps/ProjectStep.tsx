@@ -96,7 +96,7 @@ export function ProjectStep() {
           value={locationSearch}
           onChange={handleLocationSearch}
           placeholder="Ex: Kpalimé..."
-          className="w-full bg-[#0A1A14] border border-[#1A3329] text-white rounded-lg p-3 outline-none focus:border-[#D35400] transition-colors"
+          className="w-full bg-[#0A1A14] border border-[#1A3329] text-white rounded-lg p-3 outline-none focus:border-[#D0541F] transition-colors"
         />
         {locationResults.length > 0 && (
           <div className="absolute top-full left-0 right-0 mt-1 bg-[#1A3329] border border-[#2D4A3E] rounded-lg z-10 max-h-48 overflow-y-auto">
@@ -114,7 +114,7 @@ export function ProjectStep() {
       </div>
 
       {detectedSoil && (
-        <div className="p-3 rounded-lg bg-[#0D211A] border border-[#D35400] text-[#D35400] text-sm font-medium">
+        <div className="p-3 rounded-lg bg-[#0D211A] border border-[#D0541F] text-[#D0541F] text-sm font-medium">
           {detectedSoil}
         </div>
       )}
