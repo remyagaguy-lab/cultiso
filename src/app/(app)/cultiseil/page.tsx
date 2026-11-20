@@ -14,6 +14,7 @@ import {
   CameraOutlined
 } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
+import { Logo } from "@/components/ui/Logo";
 
 export default function CultiseilPage() {
   const [messages, setMessages] = useState([
@@ -117,7 +118,7 @@ export default function CultiseilPage() {
       {/* 1. LEFT SIDEBAR (Ultra Minimalist) */}
       <aside className="hidden">
         <Link href="/" className="opacity-80 hover:opacity-100 transition-opacity">
-          <img src="/logo.png" alt="Cultiso" className="w-8 h-8 object-contain" />
+          <Logo variant="symbol" size="sm" tone="on-light" />
         </Link>
         <nav className="flex flex-col gap-4 w-full px-3">
           <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-[#0B5345] hover:bg-gray-50 transition-colors">

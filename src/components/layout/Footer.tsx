@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Logo } from '@/components/ui/Logo';
 
 export const Footer = () => {
   const pathname = usePathname();
@@ -10,12 +11,8 @@ export const Footer = () => {
     <footer className="w-full bg-[#052821] text-white px-6 py-16 md:py-24 mt-auto">
       <div className="max-w-[1200px] mx-auto grid grid-cols-2 lg:grid-cols-5 gap-x-4 gap-y-10 lg:gap-8">
         <div className="col-span-2 lg:col-span-2 space-y-6">
-          <Link href="/" className="block w-[165px] h-[38px] relative">
-            <img 
-              src="/logo.png" 
-              alt="Cultiso Logo" 
-              className="absolute top-1/2 left-0 -translate-y-1/2 w-[195px] max-w-none h-auto object-contain brightness-0 invert"
-            />
+          <Link href="/" aria-label="Cultiso, accueil" className="block w-fit">
+            <Logo variant="horizontal" size="md" tone="on-dark" />
           </Link>
           <p className="text-[15px] text-gray-400 font-manrope leading-relaxed max-w-sm">
             Intelligence Agrobusiness pour la conquête de la souveraineté alimentaire africaine.

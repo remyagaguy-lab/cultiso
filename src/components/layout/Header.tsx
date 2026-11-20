@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Logo } from '@/components/ui/Logo';
 import { usePathname } from 'next/navigation';
 import { Button } from 'antd';
 import { MegaMenuProducts } from './MegaMenuProducts';
@@ -26,12 +27,8 @@ export const Header = () => {
           
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center z-50">
-            <Link href="/" className="block transition-transform active:scale-[0.96] w-[165px] h-[38px] relative" onClick={() => setMobileMenuOpen(false)}>
-              <img 
-                src="/logo.png" 
-                alt="Cultiso Logo" 
-                className="absolute top-1/2 left-0 -translate-y-1/2 w-[195px] max-w-none h-auto object-contain"
-              />
+            <Link href="/" aria-label="Cultiso, accueil" className="block transition-transform active:scale-[0.96]" onClick={() => setMobileMenuOpen(false)}>
+              <Logo variant="horizontal" size="md" tone="on-light" priority />
             </Link>
           </div>
 
