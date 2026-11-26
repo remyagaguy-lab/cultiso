@@ -10,6 +10,9 @@ import { randomUUID } from "node:crypto";
 import { CreditsSupabase } from "../supabase/credits";
 import { DonneesSupabase } from "../supabase/donnees";
 import type { Embeddeur } from "../supabase/embeddings";
+import { appel, FauxModele, texte, usage, type TourScripte } from "../llm/faux-modele";
+import { fabriqueSupabase, traiterCultisia, type FabriqueCultisia } from "../serveur";
+import { lireSSE } from "../test-utils/utilitaires";
 
 const actif = process.env.CULTISIA_BASE_LOCALE === "1";
 const decrire = actif ? describe : describe.skip;
@@ -78,7 +81,8 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
   it("lit les prix sans tenir compte des accents, avec la source", async () => {
     const donnees = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
     for (const terme of ["mais", "maïs", "MAÏS"]) {
-      const lignes = await donnees.chercherPrix(terme);
+      // Seulement les prix du seed : d'autres relevés (annonces importées) peuvent exister en local.
+      const lignes = (await donnees.chercherPrix(terme)).filter((l) => l.source === "Donnée de test locale");
       expect(lignes.map((l) => l.lieu)).toEqual(["Lomé, Adawlato", "Kara"]);
       expect(lignes[0]).toMatchObject({ produit: "Maïs grain", prix: 350, unite: "kg", date: "2026-11-20", source: "Donnée de test locale" });
     }
@@ -131,6 +135,51 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
     expect(ancienne.error).not.toBeNull();
     const negatif = await admin.rpc("debiter_credits", { p_user_id: u.id, p_montant: -5 });
     expect(negatif.error?.message).toMatch(/invalide/);
+  });
+
+  it("de bout en bout : route réelle, Supabase local, faux modèle (aucune dépense)", async () => {
+    Object.assign(process.env, {
+      NEXT_PUBLIC_SUPABASE_URL: statut.API_URL,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: statut.ANON_KEY,
+      SUPABASE_SERVICE_ROLE_KEY: statut.SERVICE_ROLE_KEY,
+      OPENROUTER_API_KEY: "cle-factice-jamais-appelee",
+    });
+    const reelle = fabriqueSupabase();
+    const avecFauxModele = (tours: TourScripte[]): FabriqueCultisia => ({
+      ...reelle,
+      dependances: (jeton) => ({ ...reelle.dependances(jeton), modele: new FauxModele(tours) }),
+    });
+    const u = await creerUtilisateur();
+    const { data: session } = await clientDe(u.jeton).from("chat_sessions").insert({ user_id: u.id, title: "E2E" }).select("id").single();
+    const appeler = (fabrique: FabriqueCultisia, corps: Record<string, unknown>) =>
+      traiterCultisia(
+        new Request("http://localhost/api/cultisia", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${u.jeton}`, "Content-Type": "application/json" },
+          body: JSON.stringify(corps),
+        }),
+        (b) => b,
+        { fabrique },
+      );
+
+    const reponse = await appeler(
+      avecFauxModele([[appel("lire_prix", { produits: ["maïs"], lieu: "Lomé" }), usage(300)], [texte("350 FCFA/kg à Lomé."), usage(200)]]),
+      { module: "cultisia", sessionId: session!.id, messages: [{ role: "user", content: "Prix du maïs à Lomé ?" }] },
+    );
+    expect(reponse.status).toBe(200);
+    const evenements = await lireSSE(reponse.body!);
+    expect(evenements[0]).toMatchObject({ type: "sources" });
+    expect(evenements[0].sources).toEqual(
+      expect.arrayContaining([expect.objectContaining({ file_name: "Cours des prix Cultiso : Maïs grain (2026-11-20)" })]),
+    );
+    expect(evenements.at(-1)).toEqual({ type: "done", jetons: 500, solde: 19500 });
+
+    const { data: rattachee } = await clientDe(u.jeton).from("chat_sessions").select("module").eq("id", session!.id).single();
+    expect(rattachee).toEqual({ module: "cultisia" });
+
+    await new CreditsSupabase(admin).debiter(u.id, 19500);
+    const refus = await appeler(avecFauxModele([]), { module: "cultisia", messages: [{ role: "user", content: "Encore ?" }] });
+    expect(refus.status).toBe(402);
   });
 
   it("rattache une conversation à l'exploitation et au module, et refuse un module inconnu", async () => {
