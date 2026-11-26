@@ -12,7 +12,7 @@ describe("choix du fournisseur de modèle", () => {
 
   it("bascule sur Groq ou xAI, avec le modèle réglable", () => {
     expect(configurationModele({ CULTISIA_FOURNISSEUR: "groq", GROQ_API_KEY: "k" })).toMatchObject({
-      modele: "llama-3.3-70b-versatile",
+      modele: "openai/gpt-oss-120b",
       fournisseur: { urlBase: "https://api.groq.com/openai/v1" },
     });
     expect(configurationModele({ CULTISIA_FOURNISSEUR: "XAI", XAI_API_KEY: "k", CULTISIA_MODEL: "grok-4" })).toMatchObject({

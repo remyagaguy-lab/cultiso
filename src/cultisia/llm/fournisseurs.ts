@@ -32,7 +32,7 @@ export const CATALOGUE: Record<NomFournisseur, Fournisseur> = {
     nom: "groq",
     urlBase: "https://api.groq.com/openai/v1",
     variableCle: "GROQ_API_KEY",
-    modeleParDefaut: "llama-3.3-70b-versatile",
+    modeleParDefaut: "openai/gpt-oss-120b",
     usageEnFlux: false,
   },
   xai: {

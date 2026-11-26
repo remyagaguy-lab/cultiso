@@ -13,7 +13,7 @@ Les tests de `npm run check` utilisent un faux modèle de langage : aucun crédi
 
 ## B. Scénario manuel dans l'interface
 
-**Modèle** : par défaut OpenRouter (payant). Pour tester gratuitement, ajoute dans `.env.local` `CULTISIA_FOURNISSEUR=groq` et `GROQ_API_KEY=...` (offre gratuite de Groq, modèle `llama-3.3-70b-versatile`), ou `CULTISIA_FOURNISSEUR=xai` et `XAI_API_KEY=...` (Grok). `CULTISIA_MODEL` change le modèle.
+**Modèle** : par défaut OpenRouter (payant). Pour tester gratuitement, ajoute dans `.env.local` `CULTISIA_FOURNISSEUR=groq` et `GROQ_API_KEY=...` (offre gratuite de Groq, modèle `openai/gpt-oss-120b`), ou `CULTISIA_FOURNISSEUR=xai` et `XAI_API_KEY=...` (Grok). `CULTISIA_MODEL` change le modèle.
 
 ### Préparation, sur la base locale (rien ne touche la production)
 
