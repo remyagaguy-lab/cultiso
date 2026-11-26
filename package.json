@@ -9,11 +9,11 @@
     "lint": "eslint",
     "test": "jest",
     "scrape:agri": "tsx scripts/scrape_agridigitale.ts",
-    "lint:refonte": "eslint src/cultisia src/app/api/cultisia src/app/api/chat",
+    "lint:refonte": "eslint src/cultisia src/moteurs src/core src/app/api/cultisia src/app/api/chat",
     "check": "tsc --noEmit && npm run lint:refonte && npm run test:refonte",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "test:refonte": "jest src/cultisia",
+    "test:refonte": "jest src/cultisia src/moteurs src/core",
     "test:base-locale": "node scripts/test-base-locale.mjs",
     "test:modele-reel": "node scripts/test-modele-reel.mjs"
   },

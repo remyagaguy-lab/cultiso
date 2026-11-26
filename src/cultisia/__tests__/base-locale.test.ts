@@ -60,8 +60,8 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
     const proprietaire = await creerUtilisateur();
     await creerUtilisateur();
 
-    // Sans `.select()` : la ligne de membre est créée par un déclencheur AFTER INSERT, après le contrôle
-    // RLS du RETURNING ; un insert().select() est donc refusé (à traiter au chantier Cultiplan).
+    // Sans `.select()` : historique. Depuis la migration cultiplan_socle, insert().select() fonctionne aussi
+    // (voir src/core/__tests__/exploitation-base-locale.test.ts).
     exploitationId = randomUUID();
     const { error } = await clientDe(proprietaire.jeton)
       .from("cultisos")

@@ -5,7 +5,27 @@ export type Database = {
   
   "public": {
           Tables: {
-            "business_plans": {
+            "ateliers": {
+                  Row: {
+                    "created_at": string,"cultiso_id": string,"date_demarrage": string | null,"id": string,"libelle": string | null,"speculation_code": string,"taille": number,"unite": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"cultiso_id": string,"date_demarrage"?: string | null,"id"?: string,"libelle"?: string | null,"speculation_code": string,"taille": number,"unite": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"cultiso_id"?: string,"date_demarrage"?: string | null,"id"?: string,"libelle"?: string | null,"speculation_code"?: string,"taille"?: number,"unite"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ateliers_cultiso_id_fkey"
+      columns: ["cultiso_id"]
+isOneToOne: false
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"business_plans": {
                   Row: {
                     "created_at": string,"cultiso_id": string | null,"financial_data": Json | null,"id": string,"market_data": Json | null,"technical_data": Json | null,"title": string,"updated_at": string,"user_id": string
                   }
@@ -60,6 +80,26 @@ isOneToOne: false
                     {
       foreignKeyName: "chat_sessions_exploitation_id_fkey"
       columns: ["exploitation_id"]
+isOneToOne: false
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contexte_terrain": {
+                  Row: {
+                    "cle": string,"cultiso_id": string,"updated_at": string,"valeur": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cle": string,"cultiso_id": string,"updated_at"?: string,"valeur": string
+                  }
+                  Update: {
+                    "cle"?: string,"cultiso_id"?: string,"updated_at"?: string,"valeur"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contexte_terrain_cultiso_id_fkey"
+      columns: ["cultiso_id"]
 isOneToOne: false
       referencedRelation: "cultisos"
       referencedColumns: ["id"]
@@ -143,14 +183,14 @@ isOneToOne: false
                   ]
                 },"cultisos": {
                   Row: {
-                    "created_at": string,"domain": string | null,"id": string,"location": string | null,"name": string,"status": string | null,"surface_area": number | null,"surface_unit": string | null,"updated_at": string,"user_id": string
+                    "created_at": string,"domain": string | null,"id": string,"location": string | null,"name": string,"status": string,"surface_area": number | null,"surface_unit": string | null,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"domain"?: string | null,"id"?: string,"location"?: string | null,"name": string,"status"?: string | null,"surface_area"?: number | null,"surface_unit"?: string | null,"updated_at"?: string,"user_id": string
+                    "created_at"?: string,"domain"?: string | null,"id"?: string,"location"?: string | null,"name": string,"status"?: string,"surface_area"?: number | null,"surface_unit"?: string | null,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "created_at"?: string,"domain"?: string | null,"id"?: string,"location"?: string | null,"name"?: string,"status"?: string | null,"surface_area"?: number | null,"surface_unit"?: string | null,"updated_at"?: string,"user_id"?: string
+                    "created_at"?: string,"domain"?: string | null,"id"?: string,"location"?: string | null,"name"?: string,"status"?: string,"surface_area"?: number | null,"surface_unit"?: string | null,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     
@@ -238,6 +278,9 @@ isOneToOne: false
                            },
 "mes_exploitations":
 { Args: Record<PropertyKey, never>; Returns: string[]
+                           },
+"peut_modifier":
+{ Args: { "p_cultiso_id": string }; Returns: boolean
                            },
 "search_market_prices":
 { Args: { "search_term": string }; Returns: {
