@@ -13,7 +13,7 @@ Les tests de `npm run check` utilisent un faux modèle de langage : aucun crédi
 
 ## B. Scénario manuel dans l'interface
 
-**Coût** : quelques appels réels à OpenRouter (Gemini 2.5 Flash, quelques centimes). À lancer seulement avec ton accord.
+**Modèle** : par défaut OpenRouter (payant). Pour tester gratuitement, ajoute dans `.env.local` `CULTISIA_FOURNISSEUR=groq` et `GROQ_API_KEY=...` (offre gratuite de Groq, modèle `llama-3.3-70b-versatile`), ou `CULTISIA_FOURNISSEUR=xai` et `XAI_API_KEY=...` (Grok). `CULTISIA_MODEL` change le modèle.
 
 ### Préparation, sur la base locale (rien ne touche la production)
 
@@ -25,7 +25,7 @@ Les tests de `npm run check` utilisent un faux modèle de langage : aucun crédi
 $env:NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"; $env:NEXT_PUBLIC_SUPABASE_ANON_KEY="<ANON_KEY local>"; $env:SUPABASE_SERVICE_ROLE_KEY="<SERVICE_ROLE_KEY local>"; npx next dev -p 3100
 ```
 
-   `OPENROUTER_API_KEY` vient de `.env.local`. Les variables du terminal priment sur `.env.local`.
+   La clé du fournisseur vient de `.env.local`. Les variables du terminal priment sur `.env.local`.
 4. Créer un compte sur `http://localhost:3100/register` (en local, pas de confirmation par e-mail).
 5. Facultatif, pour les étapes 9 et 10 : créer une exploitation dans Studio (`http://127.0.0.1:54323`, table `cultisos`, avec ton `user_id`), puis une ou deux lignes dans `transactions`.
 
