@@ -1,0 +1,146 @@
+/**
+ * @jest-environment node
+ *
+ * Test d'intégration sur la base Supabase LOCALE (Docker). Ne touche jamais la base en ligne.
+ * Lancement : `npm run db:start` puis `npm run test:base-locale`. Ignoré dans `npm test`.
+ */
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { execSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
+import { CreditsSupabase } from "../supabase/credits";
+import { DonneesSupabase } from "../supabase/donnees";
+import type { Embeddeur } from "../supabase/embeddings";
+
+const actif = process.env.CULTISIA_BASE_LOCALE === "1";
+const decrire = actif ? describe : describe.skip;
+
+interface StatutLocal {
+  API_URL: string;
+  ANON_KEY: string;
+  SERVICE_ROLE_KEY: string;
+}
+
+const vecteur = (valeur: number) => Array.from({ length: 384 }, (_, i) => (i === 0 ? valeur : 0.01));
+const embeddeurFixe = (v: number[] | null): Embeddeur => ({ requete: async () => v });
+
+decrire("base locale : migration cultisia_noyau et accès aux données", () => {
+  let statut: StatutLocal;
+  let admin: SupabaseClient;
+  const utilisateurs: { id: string; jeton: string }[] = [];
+  let exploitationId: string;
+
+  const clientDe = (jeton: string) =>
+    createClient(statut.API_URL, statut.ANON_KEY, {
+      global: { headers: { Authorization: `Bearer ${jeton}` } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+  async function creerUtilisateur(): Promise<{ id: string; jeton: string }> {
+    const email = `test-${randomUUID()}@cultiso.test`;
+    const motDePasse = randomUUID();
+    const { data, error } = await admin.auth.admin.createUser({ email, password: motDePasse, email_confirm: true });
+    if (error) throw error;
+    const anonyme = createClient(statut.API_URL, statut.ANON_KEY, { auth: { persistSession: false } });
+    const session = await anonyme.auth.signInWithPassword({ email, password: motDePasse });
+    if (session.error) throw session.error;
+    const u = { id: data.user.id, jeton: session.data.session.access_token };
+    utilisateurs.push(u);
+    return u;
+  }
+
+  beforeAll(async () => {
+    statut = JSON.parse(execSync("npx supabase status -o json", { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }));
+    if (!statut.API_URL.includes("127.0.0.1") && !statut.API_URL.includes("localhost")) {
+      throw new Error("Ce test ne tourne que sur la base locale.");
+    }
+    admin = createClient(statut.API_URL, statut.SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+    const proprietaire = await creerUtilisateur();
+    await creerUtilisateur();
+
+    // Sans `.select()` : la ligne de membre est créée par un déclencheur AFTER INSERT, après le contrôle
+    // RLS du RETURNING ; un insert().select() est donc refusé (à traiter au chantier Cultiplan).
+    exploitationId = randomUUID();
+    const { error } = await clientDe(proprietaire.jeton)
+      .from("cultisos")
+      .insert({ id: exploitationId, user_id: proprietaire.id, name: "Ferme test de Tsévié", domain: "maraichage", surface_area: 2, surface_unit: "ha", location: "Tsévié" });
+    if (error) throw error;
+    const op = await clientDe(proprietaire.jeton)
+      .from("transactions")
+      .insert({ cultiso_id: exploitationId, amount: 72000, type: "expense", category: "Engrais", date: "2026-11-10" });
+    if (op.error) throw op.error;
+  }, 120000);
+
+  afterAll(async () => {
+    for (const u of utilisateurs) await admin.auth.admin.deleteUser(u.id);
+    await admin.from("cultisia_knowledge").delete().like("file_name", "Test %");
+  });
+
+  it("lit les prix sans tenir compte des accents, avec la source", async () => {
+    const donnees = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
+    for (const terme of ["mais", "maïs", "MAÏS"]) {
+      const lignes = await donnees.chercherPrix(terme);
+      expect(lignes.map((l) => l.lieu)).toEqual(["Lomé, Adawlato", "Kara"]);
+      expect(lignes[0]).toMatchObject({ produit: "Maïs grain", prix: 350, unite: "kg", date: "2026-11-20", source: "Donnée de test locale" });
+    }
+  });
+
+  it("lit l'exploitation du propriétaire, et rien pour un autre utilisateur (RLS)", async () => {
+    const proprietaire = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
+    const resume = await proprietaire.lireExploitation(exploitationId);
+    expect(resume).toMatchObject({ nom: "Ferme test de Tsévié", surface: 2, uniteSurface: "ha" });
+    expect(resume?.operations).toEqual([{ date: "2026-11-10", type: "expense", categorie: "Engrais", montant: 72000, description: null }]);
+
+    const autre = new DonneesSupabase(clientDe(utilisateurs[1].jeton), embeddeurFixe(null));
+    expect(await autre.lireExploitation(exploitationId)).toBeNull();
+  });
+
+  it("lit le référentiel : cultures, sols, zones", async () => {
+    const donnees = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
+    expect((await donnees.chercherCultures("cassava")).map((c) => c.slug)).toEqual(expect.arrayContaining(["cassava"]));
+    expect((await donnees.chercherSols("sandy loam")).map((s) => s.slug)).toEqual(["sandyloam"]);
+    expect(await donnees.listerZones()).toHaveLength(5);
+  });
+
+  it("ne renvoie que les documents dont la licence est autorisée", async () => {
+    const insertion = await admin.from("cultisia_knowledge").insert([
+      { file_name: "Test guide autorisé", file_hash: "a", chunk_index: 0, content: "Extrait autorisé", metadata: { licence: "autorisee" }, embedding: vecteur(1) },
+      { file_name: "Test guide non trié", file_hash: "b", chunk_index: 0, content: "Extrait non trié", metadata: {}, embedding: vecteur(1) },
+    ]);
+    expect(insertion.error).toBeNull();
+    const donnees = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(vecteur(1)));
+    expect((await donnees.chercherSavoir("question")).map((x) => x.document)).toEqual(["Test guide autorisé"]);
+    const sansEmbeddings = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
+    expect(await sansEmbeddings.chercherSavoir("question")).toEqual([]);
+  });
+
+  it("débite les crédits : 20 000 offerts une fois, débit atomique, pas de recharge", async () => {
+    const u = utilisateurs[1];
+    const credits = new CreditsSupabase(admin);
+    expect(await credits.solde(u.id)).toBe(20000);
+    expect(await credits.debiter(u.id, 120)).toBe(19880);
+    expect(await credits.solde(u.id)).toBe(19880);
+    expect(await credits.debiter(u.id, 19880)).toBe(0);
+    expect(await credits.solde(u.id)).toBe(0);
+  });
+
+  it("réserve debiter_credits au serveur et supprime deduct_tokens", async () => {
+    const u = utilisateurs[0];
+    const parUtilisateur = await clientDe(u.jeton).rpc("debiter_credits", { p_user_id: u.id, p_montant: -1000 });
+    expect(parUtilisateur.error?.message).toMatch(/permission denied/);
+    const ancienne = await clientDe(u.jeton).rpc("deduct_tokens", { deduction_amount: 1 });
+    expect(ancienne.error).not.toBeNull();
+    const negatif = await admin.rpc("debiter_credits", { p_user_id: u.id, p_montant: -5 });
+    expect(negatif.error?.message).toMatch(/invalide/);
+  });
+
+  it("rattache une conversation à l'exploitation et au module, et refuse un module inconnu", async () => {
+    const u = utilisateurs[0];
+    const client = clientDe(u.jeton);
+    const { data: session, error } = await client.from("chat_sessions").insert({ user_id: u.id, title: "Test" }).select("id").single();
+    expect(error).toBeNull();
+    const maj = await client.from("chat_sessions").update({ exploitation_id: exploitationId, module: "cultima" }).eq("id", session!.id);
+    expect(maj.error).toBeNull();
+    const mauvais = await client.from("chat_sessions").update({ module: "cultishop" }).eq("id", session!.id);
+    expect(mauvais.error?.message).toMatch(/chat_sessions_module_check/);
+  });
+});

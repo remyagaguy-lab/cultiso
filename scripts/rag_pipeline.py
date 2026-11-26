@@ -22,7 +22,9 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Initialisation du modle d'embedding (il sera tlcharg au premier lancement)
 print("Chargement du modle IA local (sentence-transformers)...")
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# Modele multilingue, 384 dimensions (meme taille que la colonne). Doit rester identique a
+# src/cultisia/supabase/embeddings.ts (prefixes "passage: " ici, "query: " cote serveur).
+model = SentenceTransformer('intfloat/multilingual-e5-small')
 print("Modle charg !")
 
 SOURCE_DIR = os.path.join("..", "Modules", "Cultisia")
@@ -44,7 +46,8 @@ def get_file_hash(filepath):
         print(f"Erreur lors du hashage (fichier introuvable ou bloque): {e}")
         return None
 
-def chunk_text(text, chunk_size=1000, overlap=100):
+def chunk_text(text, chunk_size=200, overlap=30):
+    # ~200 mots : le modele ne lit que ~256 jetons par morceau.
     """Dcoupe un texte long en petits morceaux (chunks) avec chevauchement."""
     words = text.split()
     chunks = []
@@ -112,7 +115,7 @@ def main():
         # 4. Vectorisation et Insertion
         for idx, chunk in enumerate(chunks):
             # Gnrer le vecteur (384 dimensions)
-            embedding = model.encode(chunk).tolist()
+            embedding = model.encode("passage: " + chunk, normalize_embeddings=True).tolist()
             
             data = {
                 "file_name": filename,
@@ -120,7 +123,8 @@ def main():
                 "chunk_index": idx,
                 "content": chunk,
                 "embedding": embedding,
-                "metadata": {"source_folder": os.path.dirname(filepath)}
+                # Licence a trier : Cultisia ne cite que les documents marques "autorisee".
+                "metadata": {"source_folder": os.path.dirname(filepath), "licence": "a_trier"}
             }
             
             # Envoyer  Supabase
