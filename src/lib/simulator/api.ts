@@ -9,7 +9,8 @@ export interface CropProfile {
   upper_temperature_c: number | null;
   reference_harvest_index_pct: number | null;
   water_productivity_normalized: number | null;
-  default_cycle_days: number | null;
+  /** Absente de la base (types regénérés le 26/11/2026) : toujours vide, l'écran retombe sur 120 jours. */
+  default_cycle_days?: number | null;
 }
 
 export interface SoilProfile {

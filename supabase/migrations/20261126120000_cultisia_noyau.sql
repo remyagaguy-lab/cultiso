@@ -2,7 +2,10 @@
 -- Testée sur la base locale. À appliquer sur la base en ligne UNIQUEMENT avec le feu vert de Remyaga.
 -- Idempotente : peut être rejouée sans erreur.
 
--- 1. Rattrapage : colonne lue par search_market_prices mais créée à la main sur la base en ligne.
+-- 1. Rattrapage (comparaison avec les types de la base en ligne, 26/11/2026) :
+--    - `country` existe en ligne (ajoutée à la main), absente des migrations ;
+--    - `unit` est lue par search_market_prices mais n'existe PAS en ligne : la fonction y échoue.
+ALTER TABLE public.price_records ADD COLUMN IF NOT EXISTS country TEXT;
 ALTER TABLE public.price_records ADD COLUMN IF NOT EXISTS unit TEXT;
 
 -- 2. Mémoire : rattacher une conversation à l'exploitation et au module.
