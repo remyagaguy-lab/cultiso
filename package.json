@@ -8,7 +8,13 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "scrape:agri": "tsx scripts/scrape_agridigitale.ts"
+    "scrape:agri": "tsx scripts/scrape_agridigitale.ts",
+    "lint:refonte": "eslint src/cultisia src/app/api/cultisia src/app/api/chat",
+    "check": "tsc --noEmit && npm run lint:refonte && npm run test:refonte",
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "test:refonte": "jest src/cultisia",
+    "test:base-locale": "node scripts/test-base-locale.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",
@@ -26,7 +32,8 @@
     "react-markdown": "^10.1.0",
     "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -41,6 +48,7 @@
     "eslint-config-next": "16.3.3",
     "jest": "^30.5.0",
     "jest-environment-jsdom": "^30.5.0",
+    "supabase": "^3.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

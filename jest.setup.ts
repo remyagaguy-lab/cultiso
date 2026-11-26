@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 
 // Mock matchMedia for Ant Design and other libraries that use it
-Object.defineProperty(window, 'matchMedia', {
+if (typeof window !== 'undefined') Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
     matches: false,

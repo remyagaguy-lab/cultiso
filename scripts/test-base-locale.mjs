@@ -1,0 +1,9 @@
+// Lance le test d'intégration Cultisia sur la base Supabase LOCALE (npm run db:start avant).
+import { spawnSync } from "node:child_process";
+
+const resultat = spawnSync("npx", ["jest", "src/cultisia/__tests__/base-locale"], {
+  stdio: "inherit",
+  shell: true,
+  env: { ...process.env, CULTISIA_BASE_LOCALE: "1" },
+});
+process.exit(resultat.status ?? 1);
