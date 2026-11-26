@@ -8,7 +8,7 @@ import { z } from "zod";
 import { getSystemPrompt } from "@/lib/personas";
 import { CreditsEpuises } from "./credits";
 import { ENTETES_SSE, fluxSSE, type EvenementCultisia } from "./evenements";
-import { creerModeleOpenRouter } from "./llm/openrouter";
+import { creerModeleConfigure } from "./llm/compatible-openai";
 import { rattacherSession, schemaMessageClient, type StockageSessions } from "./memoire";
 import { MODULES, type Module } from "./modules";
 import { lancerCultisia, type DependancesCultisia } from "./orchestrateur";
@@ -108,7 +108,7 @@ function variable(nom: string): string {
   return valeur;
 }
 
-/** Fabrique de production : Supabase (droits de l'utilisateur pour les données, clé de service pour les crédits) et OpenRouter. */
+/** Fabrique de production : Supabase (droits de l'utilisateur pour les données, clé de service pour les crédits) et le fournisseur de modèle configuré. */
 export function fabriqueSupabase(): FabriqueCultisia {
   let admin: SupabaseClient | null = null;
   const clientAdmin = () =>
@@ -127,8 +127,10 @@ export function fabriqueSupabase(): FabriqueCultisia {
       return error || !data.user ? null : data.user.id;
     },
     dependances(jeton) {
+      const { modele, nomModele } = creerModeleConfigure();
       return {
-        modele: creerModeleOpenRouter(),
+        modele,
+        nomModele,
         registre: registreParDefaut(),
         credits: new CreditsSupabase(clientAdmin()),
         donnees: new DonneesSupabase(clientUtilisateur(jeton), new EmbeddeurHuggingFace(process.env.HUGGINGFACE_API_KEY)),

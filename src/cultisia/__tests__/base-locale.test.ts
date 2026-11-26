@@ -142,6 +142,7 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
       NEXT_PUBLIC_SUPABASE_URL: statut.API_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: statut.ANON_KEY,
       SUPABASE_SERVICE_ROLE_KEY: statut.SERVICE_ROLE_KEY,
+      CULTISIA_FOURNISSEUR: "openrouter",
       OPENROUTER_API_KEY: "cle-factice-jamais-appelee",
     });
     const reelle = fabriqueSupabase();
