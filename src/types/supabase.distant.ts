@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -93,9 +93,11 @@ export type Database = {
       chat_sessions: {
         Row: {
           created_at: string
+          exploitation_id: string | null
           id: string
           is_archived: boolean
           is_pinned: boolean
+          module: string | null
           share_id: string | null
           title: string
           updated_at: string
@@ -103,9 +105,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          exploitation_id?: string | null
           id?: string
           is_archived?: boolean
           is_pinned?: boolean
+          module?: string | null
           share_id?: string | null
           title?: string
           updated_at?: string
@@ -113,15 +117,25 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          exploitation_id?: string | null
           id?: string
           is_archived?: boolean
           is_pinned?: boolean
+          module?: string | null
           share_id?: string | null
           title?: string
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_sessions_exploitation_id_fkey"
+            columns: ["exploitation_id"]
+            isOneToOne: false
+            referencedRelation: "cultisos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cultiplan_crops: {
         Row: {
@@ -183,6 +197,36 @@ export type Database = {
           saturation_vol_pct?: number | null
           slug?: string
           wilting_point_vol_pct?: number | null
+        }
+        Relationships: []
+      }
+      cultiplan_zae_togo: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          rainfall_max_mm: number | null
+          rainfall_min_mm: number | null
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          rainfall_max_mm?: number | null
+          rainfall_min_mm?: number | null
+          zone_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          rainfall_max_mm?: number | null
+          rainfall_min_mm?: number | null
+          zone_id?: string
         }
         Relationships: []
       }
@@ -302,6 +346,7 @@ export type Database = {
           raw_text: string | null
           record_date: string
           source: string
+          unit: string | null
         }
         Insert: {
           country?: string | null
@@ -314,6 +359,7 @@ export type Database = {
           raw_text?: string | null
           record_date: string
           source: string
+          unit?: string | null
         }
         Update: {
           country?: string | null
@@ -326,6 +372,7 @@ export type Database = {
           raw_text?: string | null
           record_date?: string
           source?: string
+          unit?: string | null
         }
         Relationships: [
           {
@@ -410,7 +457,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      deduct_tokens: { Args: { deduction_amount: number }; Returns: number }
+      chercher_savoir_autorise: {
+        Args: { p_embedding: string; p_nombre: number; p_seuil: number }
+        Returns: {
+          content: string
+          file_name: string
+          similarity: number
+        }[]
+      }
+      debiter_credits: {
+        Args: { p_montant: number; p_user_id: string }
+        Returns: number
+      }
+      est_proprietaire: { Args: { p_cultiso_id: string }; Returns: boolean }
+      lire_prix_marche: {
+        Args: { p_terme: string }
+        Returns: {
+          currency: string
+          location: string
+          price: number
+          product_name: string
+          record_date: string
+          source: string
+          unit: string
+        }[]
+      }
       match_cultisia_knowledge: {
         Args: {
           match_count: number
@@ -425,6 +496,7 @@ export type Database = {
           similarity: number
         }[]
       }
+      mes_exploitations: { Args: never; Returns: string[] }
       search_market_prices: {
         Args: { search_term: string }
         Returns: {
