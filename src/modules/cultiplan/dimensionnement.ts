@@ -8,7 +8,8 @@
 // durée d'un jour de travail, besoin en eau) est fourni par l'appelant avec sa source, ou laissé vide ; il est alors listé dans
 // `manques` et la dimension qu'il alimente est « non évaluée ».
 import { z } from "zod";
-import { ErreurMoteur, calculerFinances, genererBudget, type EntreeBudget, type LigneChargeBudget, type ResultatFinance, type Scenario } from "@/moteurs";
+import { ErreurMoteur, calculerFinances, genererBudget, type EntreeBudget, type ResultatFinance, type Scenario } from "@/moteurs";
+import type { LigneChargeBudget } from "@/moteurs/budget";
 import { valider } from "@/moteurs/commun";
 import { confronterExistant, type EcartBesoin, type SpeculationBesoin } from "./besoins";
 import { deduireDuProfil, valeur, type ProfilPorteur } from "./profil";
