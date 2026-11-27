@@ -1,13 +1,14 @@
 /** @jest-environment node */
-import { calculerCredit, calculerFinances, genererBudget, VERSION_MOTEURS } from "@/moteurs";
+import { calculerCredit, calculerFinances, expliquerControle, genererBudget, VERSION_MOTEURS } from "@/moteurs";
+import { versRegleMoteur } from "@/referentiel";
 import { CreditsEnMemoire } from "../credits";
 import type { AccesDonnees } from "../donnees";
 import { appel, FauxModele, texte, usage } from "../llm/faux-modele";
 import { lancerCultisia } from "../orchestrateur";
 import { registreParDefaut } from "../outils";
-import { calculerCreditOutil, calculerPlan, comparerFilieres, enFcfa, enFcfaPrix, enPourcent, trouverSpeculation } from "../outils/calcul";
+import { analyserSensibiliteOutil, calculerCreditOutil, calculerPlan, comparerFilieres, diagnostiquerPlan, enFcfa, enFcfaPrix, enPourcent, trouverSpeculation } from "../outils/calcul";
 import type { ContexteOutil } from "../outils/registre";
-import { fausseBase, REFERENTIEL_TEST } from "../test-utils/fausse-base";
+import { fausseBase, REFERENTIEL_TEST, REGLES_FINANCEURS_TEST } from "../test-utils/fausse-base";
 import { collecter, texteDe } from "../test-utils/utilitaires";
 
 const contexte = (surcharges: Partial<AccesDonnees> = {}, exploitationId?: string, module: ContexteOutil["module"] = "cultiplan"): ContexteOutil => ({
@@ -124,6 +125,91 @@ describe("calculer_plan", () => {
     expect(registre.pour("cultima").map((o) => o.nom)).toContain("calculer_credit");
     expect(registre.pour("cultima").map((o) => o.nom)).not.toContain("calculer_plan");
     expect(registre.pour("cultiplan").map((o) => o.nom)).toEqual(expect.arrayContaining(["calculer_plan", "comparer_filieres", "calculer_credit"]));
+  });
+});
+
+const ATELIER_TOMATE = [{ id: "atelier_1", speculationCode: "tomate", taille: 2, cyclesParAn: 2 }];
+const regleAnpgf = versRegleMoteur(REGLES_FINANCEURS_TEST[0]);
+
+describe("diagnostiquer_plan (S1)", () => {
+  const entree = { ateliers: [{ speculation: "Tomate", taille: 2 }], apport: 100_000, credit: { montant: 900_000, tauxAnnuel: 0.24, dureeMois: 60, differeMois: 18 }, coutVieAnnuel: 900_000, financeur: { organisme: "ANPGF" } };
+
+  it("restitue verdict, ratios, contrôles et alertes tels que calculés par le moteur, avec l'explication simple", async () => {
+    const moteur = attendu(ATELIER_TOMATE, {}, { apport: 100_000, credit: entree.credit, menage: { prelevementsAnnuels: 900_000, revenusExterieursAnnuels: 0 }, regleFinanceur: regleAnpgf });
+    const re = moteur.scenarios.realiste;
+    const r = await diagnostiquerPlan.executer!(entree, contexte());
+    expect(r.contenu).toContain(`- verdict : ${re.statut}`);
+    expect(r.contenu).toContain(`Coût du projet : ${enFcfa(re.ratios.coutProjet)}`);
+    expect(r.contenu).toContain(`Part de ton apport : ${enPourcent(re.ratios.partApport)}`);
+    for (const c of re.controles.filter((x) => x.niveau !== "ok")) {
+      expect(r.contenu).toContain(`- [${c.niveau}] ${c.code}`);
+      expect(r.contenu).toContain(c.message);
+      expect(r.contenu).toContain(expliquerControle(c.code)!.simple);
+    }
+    // Le financeur a été lu dans le référentiel et ses règles contrôlées.
+    expect(re.controles.map((c) => c.code)).toEqual(expect.arrayContaining(["DUREE_HORS_REGLE", "DIFFERE_HORS_REGLE", "APPORT_INSUFFISANT", "ALERTE_APPORT_SOUS_SEUIL"]));
+    expect(r.contenu).toContain("Règles de ANPGF");
+    expect(r.contenu).toContain("brouillon_ia");
+    expect(r.contenu).toContain("à confirmer auprès du financeur");
+    expect(r.contenu).toMatch(/Alertes de prudence déclenchées : .*ALERTE_APPORT_SOUS_SEUIL/);
+    expect(r.sources?.map((s) => s.origine)).toEqual(["moteur", "referentiel"]);
+  });
+
+  it("sans financeur, dit qu'aucune règle n'est contrôlée", async () => {
+    const r = await diagnostiquerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], apport: 100_000 }, contexte());
+    expect(r.contenu).toContain("Aucun financeur visé");
+    expect(r.contenu).not.toContain("DUREE_HORS_REGLE");
+  });
+
+  it("financeur inconnu ou ambigu : le dit, sans inventer de règle ni de chiffre", async () => {
+    const inconnu = await diagnostiquerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], financeur: { organisme: "Banque X" } }, contexte());
+    expect(inconnu.contenu).toMatch(/^FINANCEUR INCONNU DU RÉFÉRENTIEL : Banque X/);
+    expect(inconnu.contenu).toContain("ANPGF (projet_demarrage)");
+    const double = await diagnostiquerPlan.executer!(
+      { ateliers: [{ speculation: "Tomate", taille: 2 }], financeur: { organisme: "ANPGF" } },
+      contexte({ lireReglesFinanceurs: async () => [REGLES_FINANCEURS_TEST[0], { ...REGLES_FINANCEURS_TEST[0], id: "2", produit: "campagne" }] }),
+    );
+    expect(double.contenu).toMatch(/^PLUSIEURS PRODUITS POUR ANPGF : projet_demarrage, campagne/);
+  });
+
+  it("mêmes garde-fous que calculer_plan : atelier manquant, spéculation inconnue, panne", async () => {
+    expect((await diagnostiquerPlan.executer!({}, contexte())).contenu).toMatch(/^AUCUN ATELIER/);
+    expect((await diagnostiquerPlan.executer!({ ateliers: [{ speculation: "cacao", taille: 1 }] }, contexte())).contenu).toMatch(/^SPÉCULATION INCONNUE/);
+    const panne = await diagnostiquerPlan.executer!({ ateliers: [{ speculation: "tomate", taille: 1 }] }, contexte({ preparerBudget: async () => { throw new Error("x"); } }));
+    expect(panne.contenu).toMatch(/^ERREUR D'ACCÈS/);
+  });
+});
+
+describe("analyser_sensibilite (S2)", () => {
+  it("restitue l'équilibre, la grille ±10 / ±20 % et le test du prix bas du moteur", async () => {
+    const moteur = attendu(ATELIER_TOMATE, {}, { apport: 100_000 });
+    const sens = moteur.sensibilite;
+    const r = await analyserSensibiliteOutil.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], apport: 100_000 }, contexte());
+    expect(r.contenu).toContain(`résultat cumulé ${enFcfa(sens.base.resultatCumule)}`);
+    expect(r.contenu).toContain(`l'an ${sens.equilibre.an} est le plus exigeant`);
+    for (const l of sens.equilibre.parLigne) {
+      expect(r.contenu).toContain(`prix d'équilibre ${enFcfaPrix(l.prixEquilibre)} pour un prix prévu de ${enFcfaPrix(l.prixActuel)}`);
+    }
+    for (const v of sens.variations) {
+      expect(r.contenu).toContain(`résultat cumulé ${enFcfa(v.resultatCumule)} (écart ${enFcfa(v.ecartResultat)}), point bas ${enFcfa(v.pointBasTresorerie)}, VAN ${enFcfa(v.van)}`);
+    }
+    for (const pas of ["−20 %", "−10 %", "+10 %", "+20 %"]) expect(r.contenu).toContain(pas);
+    expect(r.contenu).toContain("Test du prix bas");
+    expect(r.contenu).toContain(`statut ${sens.testPrixBas.statut}, résultat cumulé ${enFcfa(sens.testPrixBas.resultatCumule)}`);
+    expect(r.sources?.[0].file_name).toContain(`version ${VERSION_MOTEURS}`);
+  });
+
+  it("reprend l'alerte d'exposition au prix quand le moteur la déclenche", async () => {
+    const entree = { ateliers: [{ speculation: "Tomate", taille: 2 }], apport: 100_000 };
+    const alerte = attendu(ATELIER_TOMATE, {}, { apport: 100_000 }).scenarios.realiste.controles.find((c) => c.code === "ALERTE_EXPOSITION_PRIX");
+    const r = await analyserSensibiliteOutil.executer!(entree, contexte());
+    if (alerte) expect(r.contenu).toContain(`ALERTE DE PRUDENCE ALERTE_EXPOSITION_PRIX : ${alerte.message}`);
+    else expect(r.contenu).toContain("pas d'alerte sur l'exposition au prix");
+  });
+
+  it("financeur inconnu : refus sans chiffre", async () => {
+    const r = await analyserSensibiliteOutil.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], financeur: { organisme: "Banque X" } }, contexte());
+    expect(r.contenu).toMatch(/^FINANCEUR INCONNU/);
   });
 });
 

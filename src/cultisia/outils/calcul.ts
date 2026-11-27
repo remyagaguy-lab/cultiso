@@ -8,16 +8,21 @@ import {
   calculerCredit,
   calculerFinances,
   ErreurMoteur,
+  expliquerControle,
+  expliquerIndicateur,
   genererBudget,
   HORIZON_PAR_DEFAUT,
   TAUX_IMF_PAR_DEFAUT,
   VERSION_MOTEURS,
+  type Controle,
+  type HypotheseCle,
+  type RegleFinanceur,
   type ResultatFinance,
 } from "@/moteurs";
-import { ErreurReferentiel } from "@/referentiel";
+import { ErreurReferentiel, versRegleMoteur, type RegleFinanceurRef } from "@/referentiel";
 import { normaliser, type AccesDonnees, type SpeculationRef } from "../donnees";
 import type { Source } from "../evenements";
-import { definirOutil, type ResultatOutil } from "./registre";
+import { definirOutil, type ContexteOutil, type ResultatOutil } from "./registre";
 
 const ERREUR_ACCES = "ERREUR D'ACCÈS AUX DONNÉES. Dis à l'utilisateur que le calcul est momentanément indisponible, n'invente aucun chiffre.";
 const RAPPEL =
@@ -104,6 +109,13 @@ const schemaFinancementOutil = {
   credit: schemaCreditOutil.omit({ revenuMensuelNet: true }).optional().describe("Crédit envisagé, s'il y en a un"),
   coutVieAnnuel: z.number().min(0).optional().describe("Coût de vie annuel du ménage en FCFA (ce que la famille dépense par an), seulement si l'utilisateur l'a donné"),
   revenusExterieursAnnuels: z.number().min(0).optional().describe("Revenus annuels du ménage hors de ce projet, en FCFA, seulement si l'utilisateur les a donnés"),
+  financeur: z
+    .object({
+      organisme: z.string().min(2).max(80).describe("Nom du financeur visé, par exemple 'ANPGF'"),
+      produit: z.string().min(1).max(80).optional().describe("Code du produit de financement, si l'organisme en a plusieurs"),
+    })
+    .optional()
+    .describe("Financeur visé : ses règles (apport minimum, durée, différé) sont lues dans le référentiel et contrôlées par le moteur"),
 };
 
 interface Simulation {
@@ -116,7 +128,14 @@ async function simuler(
   donnees: AccesDonnees,
   ateliers: { id: string; speculationCode: string; taille: number }[],
   contexte: Record<string, string>,
-  financement: { horizonAnnees?: number; apport?: number; credit?: z.infer<typeof schemaCreditOutil>; coutVieAnnuel?: number; revenusExterieursAnnuels?: number },
+  financement: {
+    horizonAnnees?: number;
+    apport?: number;
+    credit?: z.infer<typeof schemaCreditOutil>;
+    coutVieAnnuel?: number;
+    revenusExterieursAnnuels?: number;
+    regleFinanceur?: RegleFinanceur;
+  },
 ): Promise<Simulation> {
   const budget = genererBudget(await donnees.preparerBudget({ ateliers, contexte }));
   const resultats = calculerFinances({
@@ -125,6 +144,7 @@ async function simuler(
     horizonAnnees: financement.horizonAnnees,
     apport: financement.apport,
     credit: financement.credit,
+    regleFinanceur: financement.regleFinanceur,
     menage:
       financement.coutVieAnnuel === undefined
         ? undefined
@@ -183,6 +203,185 @@ export function resumeControles(r: ResultatFinance): string[] {
   ];
 }
 
+type Financeur = { organisme: string; produit?: string };
+
+/** Règle du financeur visé, lue dans le référentiel (R11). Sans financeur demandé : aucune règle, rien n'est contrôlé. */
+async function reglesDuFinanceur(donnees: AccesDonnees, financeur?: Financeur): Promise<{ regle?: RegleFinanceurRef } | ResultatOutil> {
+  if (!financeur) return {};
+  const trouvees = await donnees.lireReglesFinanceurs(financeur);
+  if (trouvees.length === 0) {
+    const connus = (await donnees.lireReglesFinanceurs()).map((r) => `${r.organisme} (${r.produit})`);
+    return {
+      contenu:
+        `FINANCEUR INCONNU DU RÉFÉRENTIEL : ${financeur.organisme}${financeur.produit ? ` / ${financeur.produit}` : ""}. Aucune règle ne peut être contrôlée pour lui. ` +
+        `Financeurs connus : ${connus.length > 0 ? connus.join(" ; ") : "aucun"}. Dis-le à l'utilisateur, n'invente aucune règle.`,
+    };
+  }
+  if (trouvees.length > 1) return { contenu: `PLUSIEURS PRODUITS POUR ${financeur.organisme} : ${trouvees.map((r) => r.produit).join(", ")}. Demande lequel vise l'utilisateur.` };
+  return { regle: trouvees[0] };
+}
+const estRefus = (x: { regle?: RegleFinanceurRef } | ResultatOutil): x is ResultatOutil => "contenu" in x;
+
+/** Ateliers et contexte d'un calcul : ceux de la demande, sinon ceux de l'exploitation active. */
+async function resoudreAteliers(
+  args: { ateliers?: { speculation: string; taille: number }[]; contexte?: Record<string, string> },
+  { donnees, exploitationId }: Pick<ContexteOutil, "donnees" | "exploitationId">,
+  catalogue: SpeculationRef[],
+): Promise<{ ateliers: { id: string; speculationCode: string; taille: number }[]; contexte: Record<string, string> } | ResultatOutil> {
+  const contexte = args.contexte ?? {};
+  if (args.ateliers) {
+    const introuvables = args.ateliers.filter((a) => !trouverSpeculation(catalogue, a.speculation)).map((a) => a.speculation);
+    if (introuvables.length > 0) return inconnues(introuvables, catalogue);
+    return { ateliers: args.ateliers.map((a, i) => ({ id: `atelier_${i + 1}`, speculationCode: trouverSpeculation(catalogue, a.speculation)!.code, taille: a.taille })), contexte };
+  }
+  if (!exploitationId) return { contenu: "AUCUN ATELIER. Demande à l'utilisateur quelle spéculation et quelle taille, ou de choisir son exploitation." };
+  const e = await donnees.lireAteliersEtContexte(exploitationId);
+  if (!e) return { contenu: "EXPLOITATION INTROUVABLE ou inaccessible pour cet utilisateur." };
+  if (e.ateliers.length === 0) return { contenu: "L'EXPLOITATION N'A AUCUN ATELIER. Demande à l'utilisateur quelle spéculation et quelle taille." };
+  return { ateliers: e.ateliers, contexte: { ...e.contexte, ...contexte } };
+}
+const estRefusAteliers = (x: object): x is ResultatOutil => "contenu" in x;
+
+const schemaPlanOutil = z.object({
+  ateliers: z
+    .array(
+      z.object({
+        speculation: z.string().min(2).max(60).describe("Nom ou code de la spéculation, par exemple 'tomate' ou 'poulet de chair'"),
+        taille: z.number().positive().describe("Taille dans l'unité d'échelle de la spéculation (ha, têtes, étangs, fournées)"),
+      }),
+    )
+    .min(1)
+    .max(5)
+    .optional(),
+  contexte: z.record(z.string(), z.string()).optional().describe("Réponses aux questions de terrain déjà connues (clé : valeur)"),
+  ...schemaFinancementOutil,
+});
+
+const LIBELLE_HYPOTHESE: Record<HypotheseCle, string> = {
+  prix: "prix de vente",
+  rendement: "rendement (quantités produites)",
+  pertes: "pertes",
+  intrants: "coût des intrants",
+  mainOeuvre: "coût de la main d'oeuvre",
+};
+const enVariation = (v: number) => `${v > 0 ? "+" : "−"}${Math.round(Math.abs(v) * 1000) / 10} %`.replace(".", ",");
+const AVERTISSEMENT_ESTIMATIONS = "ATTENTION : une partie des données sont des estimations non encore validées par un expert ; dis-le à l'utilisateur.";
+
+/** Un contrôle : niveau, code, phrase du moteur, et explication simple tirée des textes du langage simple (S8). */
+const ligneControle = (c: Controle): string => {
+  const e = expliquerControle(c.code);
+  return `- [${c.niveau}] ${c.code}${e ? ` (${e.nom})` : ""} : ${c.message}${e ? ` En clair : ${e.simple}` : ""}`;
+};
+const ligneIndicateur = (cle: string, valeur: string): string => {
+  const e = expliquerIndicateur(cle);
+  return `- ${e?.nom ?? cle} : ${valeur}${e ? ` (${e.simple})` : ""}`;
+};
+const rapportFinanceur = (regle?: RegleFinanceurRef): string =>
+  regle
+    ? `Règles de ${regle.organisme} (${regle.libelle}) lues dans le référentiel, statut ${regle.statut}${regle.statut === "validee" ? "" : " : à confirmer auprès du financeur"} ; source : ${regle.source ?? "non indiquée"}.`
+    : "Aucun financeur visé : l'apport, la durée et le différé ne sont contrôlés contre aucune règle.";
+
+export const diagnostiquerPlan = definirOutil({
+  nom: "diagnostiquer_plan",
+  description:
+    "Donne le bilan de santé d'un plan agricole, déjà calculé par les moteurs de Cultiso : verdict, ratios, contrôles nommés (avec niveau et phrase) et alertes de prudence. " +
+    "Les entrées sont les mêmes que calculer_plan ; indique `financeur` pour contrôler apport, durée et différé. Tu expliques ces résultats, tu ne recalcules rien.",
+  famille: "calcul",
+  modules: ["cultisia", "cultiplan"],
+  schema: schemaPlanOutil,
+  executer: (args, contexte) =>
+    protege(async () => {
+      const catalogue = await contexte.donnees.listerSpeculations();
+      const lu = await resoudreAteliers(args, contexte, catalogue);
+      if (estRefusAteliers(lu)) return lu;
+      const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
+      if (estRefus(fin)) return fin;
+
+      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
+      const s = sim.resultats.scenarios.realiste;
+      const v = s.verdict;
+      const r = s.ratios;
+      const parNiveau = (niveau: Controle["niveau"]) => s.controles.filter((c) => c.niveau === niveau);
+      const alertes = s.controles.filter((c) => c.code.startsWith("ALERTE_"));
+      const lignes = [
+        `Bilan de santé du plan (scénario réaliste, horizon ${s.annees.length} ans), calculé par le moteur :`,
+        `- verdict : ${s.statut} ; rentabilité ${v.rentabilite} ; trésorerie toujours positive : ${v.tresorerieToujoursPositive ? "oui" : "non"} ; ` +
+          `ménage couvert : ${v.menageCouvert === null ? "non évalué (coût de vie inconnu)" : v.menageCouvert ? "oui" : "non"}`,
+        `- verdict en scénario pessimiste : ${sim.resultats.scenarios.pessimiste.statut} ; optimiste : ${sim.resultats.scenarios.optimiste.statut}`,
+        "Ratios :",
+        ligneIndicateur("coutProjet", enFcfa(r.coutProjet)),
+        ligneIndicateur("partApport", enPourcent(r.partApport)),
+        ligneIndicateur("endettement", r.endettement === null ? "non calculable" : `${r.endettement.toString().replace(".", ",")} franc emprunté pour 1 franc d'apport`),
+        ligneIndicateur("dettesSurCaf", r.dettesSurCaf === null ? "non calculable" : `${r.dettesSurCaf.toString().replace(".", ",")} an(s) de capacité d'autofinancement`),
+        ligneIndicateur("chargesFinancieresSurCA", enPourcent(r.chargesFinancieresSurCA)),
+        rapportFinanceur(fin.regle),
+        ...(["bloquant", "alerte", "info"] as const).flatMap((n) => (parNiveau(n).length > 0 ? [`Contrôles de niveau ${n} :`, ...parNiveau(n).map(ligneControle)] : [])),
+        `Contrôles en règle : ${parNiveau("ok").map((c) => c.code).join(", ") || "aucun"}.`,
+        alertes.length > 0 ? `Alertes de prudence déclenchées : ${alertes.map((a) => a.code).join(", ")}.` : "Aucune alerte de prudence déclenchée.",
+        ...resumeMenage(sim.resultats),
+        sim.estimations ? AVERTISSEMENT_ESTIMATIONS : "Données du référentiel validées.",
+        sim.ateliersSansModele.length > 0 ? `Ateliers sans données de référence (non chiffrés) : ${sim.ateliersSansModele.join(", ")}.` : "",
+        "Explique d'abord le verdict en une phrase, puis ce qui bloque (niveau bloquant), puis ce qu'il faut corriger. Utilise les phrases « En clair » avec les mots de l'utilisateur.",
+        RAPPEL,
+      ].filter(Boolean);
+      return { contenu: lignes.join("\n"), sources: [sourceMoteur("financier"), { file_name: "Référentiel agricole Cultiso", origine: "referentiel" }] };
+    }),
+});
+
+export const analyserSensibiliteOutil = definirOutil({
+  nom: "analyser_sensibilite",
+  description:
+    "Dit ce qui fait basculer un plan agricole, avec la sensibilité calculée par le moteur de Cultiso : prix et rendement d'équilibre, effet de ±10 % et ±20 % de chaque hypothèse clé, " +
+    "test du prix bas (le projet tient-il encore ?). Mêmes entrées que calculer_plan. Tu expliques, tu ne recalcules rien.",
+  famille: "calcul",
+  modules: ["cultisia", "cultiplan"],
+  schema: schemaPlanOutil,
+  executer: (args, contexte) =>
+    protege(async () => {
+      const catalogue = await contexte.donnees.listerSpeculations();
+      const lu = await resoudreAteliers(args, contexte, catalogue);
+      if (estRefusAteliers(lu)) return lu;
+      const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
+      if (estRefus(fin)) return fin;
+
+      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
+      const sens = sim.resultats.sensibilite;
+      const eq = sens.equilibre;
+      const bas = sens.testPrixBas;
+      const alerte = sim.resultats.scenarios.realiste.controles.find((c) => c.code === "ALERTE_EXPOSITION_PRIX");
+      const origine = { parametre: "baisse demandée", scenario_pessimiste: "écart de prix du scénario pessimiste", grille: "plus forte baisse de la grille" }[bas.origine];
+      const lignes = [
+        "Ce qui fait basculer le plan (scénario réaliste), calculé par le moteur :",
+        `- point de départ : résultat cumulé ${enFcfa(sens.base.resultatCumule)}, point bas de trésorerie ${enFcfa(sens.base.pointBasTresorerie)}, VAN ${enFcfa(sens.base.van)}`,
+        eq.coefficient === null
+          ? "- prix et rendement d'équilibre : non calculables (aucune vente)"
+          : `- l'an ${eq.an} est le plus exigeant : le projet perd de l'argent si le prix ou la production tombe à ${enPourcent(eq.coefficient)} de ce qui est prévu`,
+        ...eq.parLigne.map(
+          (l) => `- ${l.libelle} : prix d'équilibre ${enFcfaPrix(l.prixEquilibre)} pour un prix prévu de ${enFcfaPrix(l.prixActuel)} ; quantité d'équilibre ${l.quantiteEquilibre} pour ${l.quantiteActuelle} prévues`,
+        ),
+        `Hypothèses de la plus influente à la moins influente sur le résultat : ${sens.classement.map((h) => LIBELLE_HYPOTHESE[h]).join(" > ")}.`,
+        ...sens.classement.flatMap((h) => [
+          `Si le ${LIBELLE_HYPOTHESE[h]} varie :`,
+          ...sens.variations
+            .filter((x) => x.hypothese === h)
+            .map(
+              (x) =>
+                `  - ${enVariation(x.variation)} : résultat cumulé ${enFcfa(x.resultatCumule)} (écart ${enFcfa(x.ecartResultat)}), point bas ${enFcfa(x.pointBasTresorerie)}, VAN ${enFcfa(x.van)}`,
+            ),
+        ]),
+        `Test du prix bas (baisse de ${enVariation(bas.baisse)}, ${origine}) : statut ${bas.statut}, résultat cumulé ${enFcfa(bas.resultatCumule)}, point bas de trésorerie ${enFcfa(bas.pointBasTresorerie)}, ` +
+          `${bas.soldeResiduelMin === null ? "ménage non évalué" : `plus petit solde après famille et crédit ${enFcfa(bas.soldeResiduelMin)}`}.`,
+        alerte ? `ALERTE DE PRUDENCE ${alerte.code} : ${alerte.message}` : "Le projet tient au prix bas testé : pas d'alerte sur l'exposition au prix.",
+        expliquerIndicateur("testPrixBas")?.simple ? `En clair : ${expliquerIndicateur("testPrixBas")?.simple}` : "",
+        rapportFinanceur(fin.regle),
+        sim.estimations ? AVERTISSEMENT_ESTIMATIONS : "Données du référentiel validées.",
+        sim.ateliersSansModele.length > 0 ? `Ateliers sans données de référence (non chiffrés) : ${sim.ateliersSansModele.join(", ")}.` : "",
+        RAPPEL,
+      ].filter(Boolean);
+      return { contenu: lignes.join("\n"), sources: [sourceMoteur("de sensibilité"), { file_name: "Référentiel agricole Cultiso", origine: "referentiel" }] };
+    }),
+});
+
 export const calculerPlan = definirOutil({
   nom: "calculer_plan",
   description:
@@ -191,39 +390,17 @@ export const calculerPlan = definirOutil({
     "Rien n'est enregistré : propose ensuite d'ouvrir Cultiplan pour enregistrer et ajuster le plan.",
   famille: "calcul",
   modules: ["cultisia", "cultiplan"],
-  schema: z.object({
-    ateliers: z
-      .array(
-        z.object({
-          speculation: z.string().min(2).max(60).describe("Nom ou code de la spéculation, par exemple 'tomate' ou 'poulet de chair'"),
-          taille: z.number().positive().describe("Taille dans l'unité d'échelle de la spéculation (ha, têtes, étangs, fournées)"),
-        }),
-      )
-      .min(1)
-      .max(5)
-      .optional(),
-    contexte: z.record(z.string(), z.string()).optional().describe("Réponses aux questions de terrain déjà connues (clé : valeur)"),
-    ...schemaFinancementOutil,
-  }),
-  executer: (args, { donnees, exploitationId }) =>
+  schema: schemaPlanOutil,
+  executer: (args, contexte) =>
     protege(async () => {
-      let ateliers: { id: string; speculationCode: string; taille: number }[];
-      let contexte = args.contexte ?? {};
-      const catalogue = await donnees.listerSpeculations();
-      if (args.ateliers) {
-        const introuvables = args.ateliers.filter((a) => !trouverSpeculation(catalogue, a.speculation)).map((a) => a.speculation);
-        if (introuvables.length > 0) return inconnues(introuvables, catalogue);
-        ateliers = args.ateliers.map((a, i) => ({ id: `atelier_${i + 1}`, speculationCode: trouverSpeculation(catalogue, a.speculation)!.code, taille: a.taille }));
-      } else {
-        if (!exploitationId) return { contenu: "AUCUN ATELIER. Demande à l'utilisateur quelle spéculation et quelle taille, ou de choisir son exploitation." };
-        const e = await donnees.lireAteliersEtContexte(exploitationId);
-        if (!e) return { contenu: "EXPLOITATION INTROUVABLE ou inaccessible pour cet utilisateur." };
-        if (e.ateliers.length === 0) return { contenu: "L'EXPLOITATION N'A AUCUN ATELIER. Demande à l'utilisateur quelle spéculation et quelle taille." };
-        ateliers = e.ateliers;
-        contexte = { ...e.contexte, ...contexte };
-      }
+      const catalogue = await contexte.donnees.listerSpeculations();
+      const lu = await resoudreAteliers(args, contexte, catalogue);
+      if (estRefusAteliers(lu)) return lu;
+      const { ateliers } = lu;
+      const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
+      if (estRefus(fin)) return fin;
 
-      const sim = await simuler(donnees, ateliers, contexte, args);
+      const sim = await simuler(contexte.donnees, ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
       const r = sim.resultats;
       const noms = ateliers.map((a) => {
         const s = catalogue.find((c) => c.code === a.speculationCode);
@@ -309,4 +486,4 @@ export const comparerFilieres = definirOutil({
     }),
 });
 
-export const OUTILS_CALCUL = [calculerCreditOutil, calculerPlan, comparerFilieres];
+export const OUTILS_CALCUL = [calculerCreditOutil, calculerPlan, comparerFilieres, diagnostiquerPlan, analyserSensibiliteOutil];

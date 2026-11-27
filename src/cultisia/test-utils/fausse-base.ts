@@ -1,4 +1,5 @@
 import type { EntreeBudget } from "@/moteurs";
+import type { RegleFinanceurRef } from "@/referentiel";
 import { normaliser, type AccesDonnees, type Culture, type LignePrix, type ResumeExploitation, type Sol, type SpeculationRef, type Zone } from "../donnees";
 
 /** Petit référentiel de test (pour 1 unité d'échelle) : tomate à l'hectare, poulet de chair au sujet. */
@@ -19,6 +20,28 @@ export const REFERENTIEL_TEST: Pick<EntreeBudget, "modelesCharges" | "modelesRev
     { id: "g-isole", cleQuestion: "acces", valeur: "isole", effet: "multiplier", cible: { sens: "charge", type: "main_oeuvre" }, coefficient: 1.5, statut: "brouillon_ia" },
   ],
 };
+
+/** Règle de test (même forme que la ligne de départ ANPGF, qui reste en brouillon IA). */
+export const REGLES_FINANCEURS_TEST: RegleFinanceurRef[] = [
+  {
+    id: "f-anpgf",
+    organisme: "ANPGF",
+    produit: "projet_demarrage",
+    libelle: "Projet en démarrage",
+    pays: "TG",
+    apportMinimum: 0.2,
+    dureeMaxMois: 48,
+    dureeInclutDiffere: true,
+    differeMaxMois: 12,
+    tauxIndicatif: null,
+    taxes: [],
+    piecesExigees: ["Plan d'affaires au canevas ANPGF"],
+    formatDossier: "Canevas ANPGF",
+    notes: null,
+    statut: "brouillon_ia",
+    source: "Canevas ANPGF §10.1, §10.3",
+  },
+];
 
 /** Fausse base pour les tests : données fixes, erreurs simulables par surcharge. */
 export function fausseBase(surcharges: Partial<AccesDonnees> = {}): AccesDonnees {
@@ -69,6 +92,8 @@ export function fausseBase(surcharges: Partial<AccesDonnees> = {}): AccesDonnees
         prix: [],
       };
     },
+    lireReglesFinanceurs: async (filtre = {}) =>
+      REGLES_FINANCEURS_TEST.filter((r) => (!filtre.organisme || r.organisme.toLowerCase() === filtre.organisme.toLowerCase()) && (!filtre.produit || r.produit === filtre.produit)),
     lireAteliersEtContexte: async (id) =>
       id === exploitation.id ? { ateliers: [{ id: "at-1", speculationCode: "tomate", taille: 2 }], contexte: { acces: "isole" } } : null,
     chercherPrix: async (terme) => prix.filter((p) => normaliser(p.produit).includes(terme)),

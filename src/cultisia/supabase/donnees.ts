@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { ErreurExploitation, lireExploitation, type ClientBase } from "@/core/exploitation";
 import type { EntreeBudget } from "@/moteurs";
 import { preparerEntreeBudget } from "@/modules/cultiplan/service";
-import { lireSpeculations } from "@/referentiel";
+import { lireReglesFinanceurs as lireReglesFinanceursRef, lireSpeculations, type RegleFinanceurRef } from "@/referentiel";
 import type { AccesDonnees, AtelierSimule, Culture, ExtraitSavoir, LignePrix, ResumeExploitation, Sol, SpeculationRef, Zone } from "../donnees";
 import type { Embeddeur } from "./embeddings";
 
@@ -50,6 +50,10 @@ export class DonneesSupabase implements AccesDonnees {
       uniteEchelle: s.uniteEchelle,
       statut: s.statut,
     }));
+  }
+
+  async lireReglesFinanceurs(filtre: { organisme?: string; produit?: string } = {}): Promise<RegleFinanceurRef[]> {
+    return lireReglesFinanceursRef(this.clientType, filtre);
   }
 
   async preparerBudget(entree: { ateliers: AtelierSimule[]; contexte: Record<string, string> }): Promise<EntreeBudget> {

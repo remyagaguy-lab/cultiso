@@ -1,4 +1,5 @@
 import type { EntreeBudget } from "@/moteurs";
+import type { RegleFinanceurRef } from "@/referentiel";
 
 /**
  * Accès aux données lues par les outils de Cultisia.
@@ -80,6 +81,9 @@ export interface AccesDonnees {
   preparerBudget(entree: { ateliers: AtelierSimule[]; contexte: Record<string, string> }): Promise<EntreeBudget>;
   /** Ateliers et contexte terrain d'une exploitation, lus avec les droits de l'utilisateur ; null si inaccessible. */
   lireAteliersEtContexte(exploitationId: string): Promise<{ ateliers: AtelierSimule[]; contexte: Record<string, string> } | null>;
+
+  /** Règles des financeurs du référentiel (R11), éventuellement d'un organisme (et d'un produit) précis. */
+  lireReglesFinanceurs(filtre?: { organisme?: string; produit?: string }): Promise<RegleFinanceurRef[]>;
 
   chercherPrix(terme: string): Promise<LignePrix[]>;
   /** Lu avec les droits de l'utilisateur : renvoie null si l'exploitation n'existe pas ou ne lui appartient pas. */
