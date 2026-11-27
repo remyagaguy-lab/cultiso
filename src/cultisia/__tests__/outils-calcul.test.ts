@@ -93,6 +93,16 @@ describe("calculer_plan", () => {
     expect(enFcfaPrix(91.43)).toBe("91,43 FCFA");
   });
 
+  it("dit les hypothèses par défaut (horizon, renouvellement) et applique l'interdiction de renouveler", async () => {
+    const defaut = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }] }, contexte());
+    expect(defaut.contenu).toContain(`horizon de ${HORIZON_PAR_DEFAUT} ans (valeur par défaut de l'outil`);
+    expect(defaut.contenu).toContain("équipements rachetés à la fin de leur durée de vie");
+    const sansRachat = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], horizonAnnees: 5, renouvellementEquipements: false }, contexte());
+    expect(sansRachat.contenu).toContain("horizon de 5 ans (modifiable");
+    expect(sansRachat.contenu).toContain("équipements non renouvelés");
+    expect(sansRachat.contenu).not.toContain("valeur par défaut de l'outil");
+  });
+
   it("M4 : restitue les contrôles du moteur à signaler, avec leur phrase", async () => {
     const moteur = attendu([{ id: "atelier_1", speculationCode: "tomate", taille: 2, cyclesParAn: 2 }]);
     const r = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }] }, contexte());

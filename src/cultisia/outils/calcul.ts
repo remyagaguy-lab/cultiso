@@ -30,9 +30,9 @@ const RAPPEL =
   "N'ajoute aucun autre chiffre de ton cru (pourcentage, ratio, total, comparaison chiffrée) : s'il en faut un, appelle un outil.";
 
 const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
-/** Mise en forme d'un montant déjà calculé par un moteur (aucun calcul ici). */
 /** VAN : null quand l'horizon est trop court (moins de deux années complètes). */
 export const enVan = (van: number | null) => (van === null ? "non calculée (horizon de moins de deux ans)" : enFcfa(van));
+/** Mise en forme d'un montant déjà calculé par un moteur (aucun calcul ici). */
 export const enFcfa = (montant: number) => `${nombre.format(montant).replace(/\s/g, " ")} FCFA`;
 const nombrePrix = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 /** Mise en forme d'un prix unitaire déjà calculé (centimes gardés : un kg se vend parfois moins de 100 FCFA). */
@@ -107,6 +107,10 @@ const inconnues = (termes: string[], catalogue: SpeculationRef[]): ResultatOutil
 
 const schemaFinancementOutil = {
   horizonAnnees: z.number().int().min(1).max(10).optional().describe(`Horizon en années (${HORIZON_PAR_DEFAUT} par défaut, 10 au plus)`),
+  renouvellementEquipements: z
+    .boolean()
+    .optional()
+    .describe("Vrai par défaut : les équipements sont rachetés à la fin de leur durée de vie si l'horizon le permet. Mets faux pour l'interdire (aucun rachat)."),
   apport: z.number().min(0).optional().describe("Apport personnel en FCFA"),
   credit: schemaCreditOutil.omit({ revenuMensuelNet: true }).optional().describe("Crédit envisagé, s'il y en a un"),
   coutVieAnnuel: z.number().min(0).optional().describe("Coût de vie annuel du ménage en FCFA (ce que la famille dépense par an), seulement si l'utilisateur l'a donné"),
@@ -121,6 +125,8 @@ const schemaFinancementOutil = {
 };
 
 interface Simulation {
+  /** Hypothèses par défaut appliquées au calcul, à dire à l'utilisateur (horizon, renouvellement des équipements). */
+  hypotheses: string[];
   resultats: ResultatFinance;
   estimations: boolean;
   ateliersSansModele: string[];
@@ -132,6 +138,7 @@ async function simuler(
   contexte: Record<string, string>,
   financement: {
     horizonAnnees?: number;
+    renouvellementEquipements?: boolean;
     apport?: number;
     credit?: z.infer<typeof schemaCreditOutil>;
     coutVieAnnuel?: number;
@@ -140,8 +147,10 @@ async function simuler(
   },
 ): Promise<Simulation> {
   const budget = genererBudget(await donnees.preparerBudget({ ateliers, contexte }));
+  const renouvellement = financement.renouvellementEquipements !== false;
   const resultats = calculerFinances({
-    charges: budget.charges,
+    // `renouvellement` n'est écrit que pour l'interdire : sinon la valeur par défaut du moteur s'applique (voir CONTRAT.md).
+    charges: renouvellement ? budget.charges : budget.charges.map((c) => (c.classe === "investissement" ? { ...c, renouvellement: false } : c)),
     revenus: budget.revenus,
     horizonAnnees: financement.horizonAnnees ?? HORIZON_PAR_DEFAUT,
     apport: financement.apport,
@@ -153,7 +162,14 @@ async function simuler(
         : { prelevementsAnnuels: financement.coutVieAnnuel, revenusExterieursAnnuels: financement.revenusExterieursAnnuels ?? 0 },
   });
   const lignes = [...budget.charges, ...budget.revenus];
-  return { resultats, estimations: lignes.some((l) => l.origine === "estimation"), ateliersSansModele: budget.ateliersSansModele };
+  const horizon = financement.horizonAnnees ?? HORIZON_PAR_DEFAUT;
+  const hypotheses = [
+    `Hypothèses par défaut : horizon de ${horizon} ans (${financement.horizonAnnees === undefined ? `valeur par défaut de l'outil, ${HORIZON_PAR_DEFAUT} ans ; ` : ""}modifiable de 1 à 10 ans) ; ` +
+      (renouvellement
+        ? "équipements rachetés à la fin de leur durée de vie si l'horizon le permet (renouvellementEquipements = faux pour l'interdire)."
+        : "équipements non renouvelés (choix demandé)."),
+  ];
+  return { hypotheses, resultats, estimations: lignes.some((l) => l.origine === "estimation"), ateliersSansModele: budget.ateliersSansModele };
 }
 
 function resumeScenarios(r: ResultatFinance): string[] {
@@ -330,6 +346,7 @@ export const diagnostiquerPlan = definirOutil({
       const alertes = s.controles.filter((c) => c.code.startsWith("ALERTE_"));
       const lignes = [
         `Bilan de santé du plan (scénario réaliste, horizon ${s.annees.length} ans), calculé par le moteur :`,
+        ...sim.hypotheses,
         `- verdict : ${s.statut} ; rentabilité ${v.rentabilite} ; trésorerie toujours positive : ${v.tresorerieToujoursPositive ? "oui" : "non"} ; ` +
           `ménage couvert : ${v.menageCouvert === null ? "non évalué (coût de vie inconnu)" : v.menageCouvert ? "oui" : "non"}`,
         `- verdict en scénario pessimiste : ${sim.resultats.scenarios.pessimiste.statut} ; optimiste : ${sim.resultats.scenarios.optimiste.statut}`,
@@ -437,6 +454,7 @@ export const calculerPlan = definirOutil({
       });
       const lignes = [
         `Plan calculé pour ${noms.join(" ; ")} (horizon ${r.scenarios.realiste.annees.length} ans) :`,
+        ...sim.hypotheses,
         `- investissement total : ${enFcfa(r.investissementTotal)}`,
         `- besoin de financement (investissement + fonds de roulement − apport) : ${enFcfa(r.besoinFinancement)}`,
         ...resumeScenarios(r),
