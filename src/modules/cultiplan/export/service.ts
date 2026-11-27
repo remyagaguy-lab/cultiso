@@ -97,6 +97,8 @@ export async function reunirDonnees(client: ClientBase, plan: Plan, demande: z.o
 
   const financement = demande.financement
     ? (await financerPlan(client, plan.id, demande.financement)).financement
+    : plan.financement.detaille && resultats.financementDetaille
+      ? resultats.financementDetaille
     : calculerFinancement(
         assemblerFinancement(
           plan,

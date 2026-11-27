@@ -1,27 +1,18 @@
 // Financement d'un plan (M6) : relie le moteur de financement (src/moteurs/financement.ts) au plan Cultiplan et au référentiel.
 // Les chiffres d'exploitation viennent du moteur financier (plan.resultats, scénario réaliste) ; ceux du financement, du corps de la demande.
 // Le barème du crédit de campagne vient de ref.baremes_credit_campagne ; sans barème, le plafond reste inconnu et le moteur le dit.
-// Rien n'est enregistré : le financement détaillé se calcule à la demande (voir src/moteurs/CONTRAT-FINANCEMENT.md).
-import { z } from "zod";
+// Le financement détaillé s'enregistre dans le plan (plans.financement.detaille) ; cette route le calcule à la demande sans l'enregistrer.
 import type { ClientBase } from "@/core/exploitation";
-import { calculerFinances, calculerFinancement, plafondCampagne, schemaFinancementComplet, type EntreeFinancement, type ResultatFinancement } from "@/moteurs";
+import { calculerFinancement, plafondCampagne, type EntreeFinancement, type ResultatFinancement } from "@/moteurs";
 import type { MoisFinancement } from "@/moteurs/financement";
-import { schemaCreditCampagne } from "@/moteurs/financement";
-import { choisirBareme, lireBaremesCampagne } from "@/referentiel/financement";
 import { ErreurPlan } from "./erreurs";
 import { verifier } from "./lignes";
+import { resoudreBaremesDetail } from "./baremes-plan";
+import { calculerAvecFinancement } from "./calcul-plan";
+import { schemaDemandeFinancement, type DemandeFinancementValidee } from "./financement-demande";
 import { entreeFinance, lirePlan, type Plan } from "./service";
 
-/** Crédit de campagne tel que demandé : soit un plafond donné, soit une spéculation et une taille pour lire le barème de `ref`. */
-const schemaCampagneDemandee = schemaCreditCampagne.extend({
-  baremeDe: z.object({ speculationCode: z.string().min(1), tailleAtelier: z.number().positive(), organisme: z.string().min(1).optional() }).optional(),
-});
-
-/** Corps de la demande : tout le financement sauf les emplois du démarrage et l'exploitation, qui viennent du plan. */
-export const schemaDemandeFinancement = schemaFinancementComplet
-  .omit({ emploisInitiaux: true, exploitation: true, creditsCampagne: true, horizonMois: true })
-  .extend({ horizonMois: schemaFinancementComplet.shape.horizonMois.optional(), creditsCampagne: z.array(schemaCampagneDemandee).default([]) });
-export type DemandeFinancement = z.input<typeof schemaDemandeFinancement>;
+export { schemaCampagneDemandee, schemaDemandeFinancement, type DemandeFinancement } from "./financement-demande";
 
 export interface BaremeLu {
   plafondParUnite: number;
@@ -64,7 +55,7 @@ export interface ResultatFinancementPlan {
 /** Pur : assemble l'entrée du moteur de financement à partir du plan et des barèmes déjà lus (par identifiant de crédit). */
 export function assemblerFinancement(
   plan: Pick<Plan, "id" | "hypotheses" | "resultats">,
-  demande: z.output<typeof schemaDemandeFinancement>,
+  demande: DemandeFinancementValidee,
   baremes: Map<string, BaremeLu | null>,
 ): { entree: EntreeFinancement; origines: string[]; manques: string[] } {
   const manques: string[] = [];
@@ -108,26 +99,38 @@ export function assemblerFinancement(
   };
 }
 
-/** Service : lit le plan et les barèmes avec les droits de l'utilisateur, puis calcule le financement. */
+/**
+ * Service : calcule, à la demande et sans rien enregistrer, le financement détaillé d'un plan (« et si ? »). Le calcul est celui du plan enregistré
+ * (`calculerAvecFinancement`) : le financement détaillé est branché sur la grille de M1. Pour l'enregistrer, passer `financement: { detaille }` à la modification du plan.
+ */
 export async function financerPlan(client: ClientBase, planId: string, corps: unknown): Promise<ResultatFinancementPlan> {
   const demande = verifier(schemaDemandeFinancement, corps);
   const plan = await lirePlan(client, planId);
-  const baremes = new Map<string, BaremeLu | null>();
-  const manquesLecture: string[] = [];
-  for (const c of demande.creditsCampagne) {
-    if (c.plafond || !c.baremeDe) continue;
-    const lus = await lireBaremesCampagne(client, c.baremeDe.speculationCode);
-    const { bareme, ambigus } = choisirBareme(lus, c.baremeDe.organisme);
-    if (ambigus.length > 0) manquesLecture.push(`Plusieurs barèmes pour ${c.baremeDe.speculationCode} (${ambigus.map((a) => a.organisme ?? "général").join(", ")}) : précise le financeur.`);
-    baremes.set(c.id, bareme ? { plafondParUnite: bareme.plafondParUnite, source: bareme.source, statut: bareme.statut, organisme: bareme.organisme } : null);
-  }
-  const { entree, origines, manques } = assemblerFinancement(plan, demande, baremes);
-  const financement = calculerFinancement(entree);
-  // Exploitation seule : le plan est recalculé SANS son financement simple, que le financement détaillé remplace (sinon l'apport serait compté deux fois).
-  const sansFinancement = calculerFinances({ ...entreeFinance(plan), apport: 0, credit: undefined }).scenarios.realiste;
-  const tresorerie = additionnerFinancement(sansFinancement.tresorerieMensuelle, financement.mois);
-  origines.push("Trésorerie : exploitation du plan recalculée sans apport ni crédit, plus les flux du financement détaillé, moins les retenues de l'acheteur.");
-  return { planId, financement, tresorerie, origines, manques: [...manquesLecture, ...manques] };
+  if (!plan.resultats) throw new ErreurPlan("Ce plan n'a pas encore de résultat : calcule-le d'abord.", "invalide");
+  const { horizonMois: _horizon, ...detail } = demande;
+  const { detaille, origines, manques } = await resoudreBaremesDetail(client, detail);
+  const calcul = calculerAvecFinancement(entreeFinance(plan), detaille);
+  const fin = calcul.financement as ResultatFinancement;
+  const exploitation = calcul.exploitationSeule!.tresorerieMensuelle;
+  const branchee = calcul.resultats.scenarios.realiste.tresorerieMensuelle;
+  const mois: MoisTresorerieFinancee[] = branchee.map((t, m) => ({
+    mois: m,
+    exploitation: exploitation[m].solde,
+    financement: fin.mois[m]?.flux ?? 0,
+    retenuesAcheteur: fin.mois[m]?.retenuesAcheteur ?? 0,
+    solde: t.solde,
+    cumul: t.cumul,
+  }));
+  const bas = mois.reduce((b, x) => (x.cumul < b.cumul ? x : b), mois[0]);
+  const tresorerie: TresorerieFinancee = {
+    mois,
+    pointBas: { montant: bas.cumul, mois: bas.mois },
+    moisTresorerieNegative: mois.filter((x) => x.cumul < 0).map((x) => x.mois),
+    notes: calcul.resultats.scenarios.realiste.avertissements,
+  };
+  origines.unshift("Investissement, besoin en fonds de roulement et CAF : moteur financier, scénario réaliste du plan sans son financement simple.");
+  origines.push("Trésorerie : grille mensuelle du moteur financier (2.1.0) avec le financement détaillé à la place de l'apport et du crédit simples ; la retenue de l'acheteur est déjà dans le flux, elle n'est pas retranchée une seconde fois.");
+  return { planId, financement: fin, tresorerie, origines, manques };
 }
 
 /**

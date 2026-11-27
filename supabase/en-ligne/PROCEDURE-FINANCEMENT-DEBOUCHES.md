@@ -49,3 +49,7 @@ Attendu : six lignes (bord_champ, marche_local, grossiste, transformateur, expor
 ```powershell
 npx supabase db query --remote=redtuedpnhbqziqmyyjc --file supabase/en-ligne/20261127_ref_financement_debouches_retour_arriere.sql
 ```
+
+## Persistance du financement détaillé (moteur 2.1.0) : aucune migration
+
+Le financement détaillé d'un plan s'enregistre dans la colonne existante `plans.financement` (jsonb, contrainte `jsonb_typeof = 'object'`), sous la clé `detaille` ; son résultat calculé est dans `plans.resultats.financementDetaille` (jsonb). **Aucune migration, aucun script en ligne** : la colonne est déjà en ligne. Ce qui doit être en ligne pour que le calcul soit complet : les migrations `20261127190000` (barèmes de campagne : sans elles le plafond n'est pas vérifié, la lecture est tolérante) et `20261127191000` (circuits). Les plans calculés avec un moteur 2.0.x gardent leur version majeure (2) : ils ne sont pas marqués obsolètes, mais n'ont pas les champs 2.1.0 (`fraisFinanciers`, `travailFamilial`...) tant qu'ils ne sont pas recalculés.

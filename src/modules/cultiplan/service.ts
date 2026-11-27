@@ -4,7 +4,10 @@
 // Les résultats sont TOUJOURS ceux du moteur (src/moteurs/), recalculés après chaque changement, jamais saisis.
 import { z } from "zod";
 import { lireExploitation, type ClientBase } from "@/core/exploitation";
-import { calculerFinances, ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
+import { ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
+import { calculerAvecFinancement, type ResultatPlan } from "./calcul-plan";
+import { schemaFinancementDetaille } from "./financement-demande";
+import { resoudreBaremes } from "./baremes-plan";
 import { schemaMontee, type Montee } from "@/moteurs/calendrier";
 import { schemaCredit } from "@/moteurs/credit";
 import { HORIZON_PAR_DEFAUT, schemaEcartsScenarios, schemaFinance, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
@@ -75,12 +78,15 @@ const champsFinancement = {
   moisTirageCredit: z.number().int().min(0).max(120),
   /** Règle du financeur visé (R11) pour les contrôles M4, par exemple { nom: "ANPGF", apportMinimum: 0.2 } ; null = aucune. */
   regleFinanceur: schemaFinance.shape.regleFinanceur.unwrap().nullable(),
+  /** Financement détaillé (M6) : prêts datés, crédit de campagne, chaîne de valeur, subventions, apport en nature, taxe. Quand il existe, il remplace `apport` et `credit` dans la grille (moteur 2.1.0). null = financement simple. */
+  detaille: schemaFinancementDetaille.nullable(),
 };
 export const schemaFinancement = z.object({
   apport: champsFinancement.apport.default(0),
   credit: champsFinancement.credit.default(null),
   moisTirageCredit: champsFinancement.moisTirageCredit.default(0),
   regleFinanceur: champsFinancement.regleFinanceur.default(null),
+  detaille: champsFinancement.detaille.optional(),
 });
 export type Financement = z.output<typeof schemaFinancement>;
 
@@ -133,7 +139,7 @@ export interface ResumePlan {
 export interface Plan extends ResumePlan {
   hypotheses: Hypotheses;
   financement: Financement;
-  resultats: ResultatFinance | null;
+  resultats: ResultatPlan | null;
   generation: InfosGeneration;
   lignes: LignePlan[];
 }
@@ -170,7 +176,7 @@ function versPlan(p: RangeePlan, lignes: LignePlan[]): Plan {
     ...versResume(p),
     hypotheses: schemaHypotheses.parse(p.hypotheses ?? {}),
     financement: schemaFinancement.parse(p.financement ?? {}),
-    resultats: (p.resultats ?? null) as unknown as ResultatFinance | null,
+    resultats: (p.resultats ?? null) as unknown as ResultatPlan | null,
     generation: { ateliersSansModele: generation.ateliersSansModele ?? [], prixMarche: generation.prixMarche ?? [], origineProfil: generation.origineProfil ?? [], calendrier: generation.calendrier ?? { notes: [], aChoisir: [] } },
     lignes,
   };
@@ -323,9 +329,9 @@ export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financ
 export async function recalculer(client: ClientBase, planId: string, { premierCalcul = false } = {}): Promise<Plan> {
   const plan = await lirePlan(client, planId);
   exigerBrouillon(plan);
-  let resultats: ResultatFinance;
+  let resultats: ResultatPlan;
   try {
-    resultats = calculerFinances(entreeFinance(plan));
+    resultats = calculerAvecFinancement(entreeFinance(plan), plan.financement.detaille ?? null).resultats;
   } catch (erreur) {
     if (erreur instanceof ErreurMoteur) throw new ErreurPlan(`Calcul impossible : ${erreur.message}`, "invalide", erreur.details);
     throw erreur;
@@ -359,7 +365,10 @@ export async function modifierPlan(client: ClientBase, planId: string, modificat
   if (m.statut !== undefined) maj.statut = m.statut;
   if (m.hypotheses !== undefined) maj.hypotheses = versJson(schemaHypotheses.parse({ ...plan.hypotheses, ...m.hypotheses }));
   if (m.financement !== undefined) {
-    maj.financement = versJson(verifier(schemaFinancement, { ...plan.financement, ...m.financement }));
+    const financement = verifier(schemaFinancement, { ...plan.financement, ...m.financement });
+    // Le plafond d'un crédit de campagne lu dans un barème de `ref` est (re)résolu à chaque enregistrement.
+    if (financement.detaille) financement.detaille = await resoudreBaremes(client, financement.detaille);
+    maj.financement = versJson(financement);
   }
   const { data, error } = await client.from("plans").update(maj).eq("id", planId).select("id, statut").maybeSingle();
   if (error) throw erreurBase(error);
