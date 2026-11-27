@@ -1,6 +1,6 @@
 // Moteur financier : compte de résultat pluriannuel, trésorerie mensuelle de l'an 1, BFR,
 // seuil de rentabilité, VAN, TRI, délai de récupération, trois scénarios,
-// revenu du ménage et capacité de remboursement (M3), contrôles nommés et ratios (M4).
+// revenu du ménage et capacité de remboursement (M3), contrôles nommés et ratios (M4), sensibilité (M5).
 // Formules par ligne du Cultiso Brouillon (ground truth §II.2), pluriannuel du Stimulateur, crédit d'Agripilot.
 // Le moteur ne connaît aucune filière : seulement des lignes de charges et de revenus.
 //
@@ -16,6 +16,7 @@ import { z } from "zod";
 import { fcfa, somme, taux, valider, VERSION_MOTEURS } from "./commun";
 import { calculerRatios, controler, type Controle, type DonneesControles, type Ratios } from "./controles";
 import { echeancierBrut, schemaCredit } from "./credit";
+import { analyserSensibilite, type Sensibilite } from "./sensibilite";
 
 export const TAUX_ACTUALISATION_PAR_DEFAUT = 0.12;
 export const HORIZON_PAR_DEFAUT = 3;
@@ -75,6 +76,25 @@ export const schemaMenage = z.object({
   moisPrelevements: mois.optional(),
 });
 
+const variation = z.number().min(-0.9, "variation sous −90 %").max(2, "variation au-delà de +200 %");
+const ecart = z.object({ prix: variation.default(0), charges: variation.default(0) });
+
+/** Écarts des scénarios (M5) : le pessimiste et l'optimiste croisent prix, rendement (quantités des lignes) et charges d'exploitation. */
+export const schemaEcartsScenarios = z
+  .object({ pessimiste: ecart.prefault({}), optimiste: ecart.prefault({}) })
+  .refine((x) => x.pessimiste.prix <= x.optimiste.prix && x.pessimiste.charges >= x.optimiste.charges, {
+    message: "le scénario pessimiste doit avoir un prix plus bas et des charges plus hautes que l'optimiste",
+  });
+
+/** Grille de la sensibilité (M5). Les pas suivent les sources (±10 et ±20 % ; tableau du seuil par pas de 5 et 10 %, DOC-00106 p. 13). */
+export const schemaParametresSensibilite = z.object({
+  variations: z.array(variation).min(1).default([-0.2, -0.1, 0.1, 0.2]),
+  /** Baisse de prix du test du prix bas (−0,25 = −25 %). Sinon : l'écart de prix du pessimiste s'il est négatif, ou la plus forte baisse de la grille. */
+  baissePrixBas: z.number().min(-0.9).max(0).optional(),
+  axeRendement: z.array(variation).min(1).default([-0.2, -0.1, 0, 0.1, 0.2]),
+  axeCharges: z.array(variation).min(1).default([-0.1, -0.05, 0, 0.05, 0.1]),
+});
+
 export const schemaFinance = z.object({
   charges: z.array(schemaLigneCharge),
   revenus: z.array(schemaLigneRevenu),
@@ -91,6 +111,8 @@ export const schemaFinance = z.object({
   moisSalaires: mois.optional(),
   /** Impôts et taxes annuels, en attendant la fiscalité par pays (M8) ; répartis sur 12 mois. */
   impotsAnnuels: z.number().min(0).default(0),
+  ecartsScenarios: schemaEcartsScenarios.prefault({}),
+  sensibilite: schemaParametresSensibilite.prefault({}),
   /** Règle du financeur visé (R11), pour les contrôles : par exemple { nom: "ANPGF", apportMinimum: 0.2 }. Aucune valeur par défaut. */
   regleFinanceur: z
     .object({ nom: z.string().min(1), apportMinimum: z.number().min(0).max(1).optional(), source: z.string().optional() })
@@ -217,6 +239,8 @@ export interface ResultatFinance {
   /** Investissement + BFR (scénario réaliste) − apport, jamais négatif. */
   besoinFinancement: number;
   scenarios: Record<Scenario, ResultatScenario>;
+  /** Sensibilité du scénario réaliste (M5). */
+  sensibilite: Sensibilite;
 }
 
 const montantCharge = (c: Charge) => c.quantite * c.prixUnitaire * c.frequence;
@@ -307,7 +331,21 @@ export interface CalculScenario {
   seuilCommercialisation: SeuilCommercialisation;
 }
 
-export function calculerScenarioBrut(e: Entree, scenario: Scenario): CalculScenario {
+/** Applique au pessimiste et à l'optimiste leurs écarts de prix et de charges d'exploitation (salaires compris). */
+function appliquerEcarts(e: Entree, scenario: Scenario): Entree {
+  if (scenario === "realiste") return e;
+  const { prix, charges } = e.ecartsScenarios[scenario];
+  if (prix === 0 && charges === 0) return e;
+  return {
+    ...e,
+    revenus: e.revenus.map((r) => ({ ...r, prixUnitaire: r.prixUnitaire * (1 + prix) })),
+    charges: e.charges.map((c) => (c.classe === "exploitation" ? { ...c, prixUnitaire: c.prixUnitaire * (1 + charges) } : c)),
+    salairesAnnuels: e.salairesAnnuels * (1 + charges),
+  };
+}
+
+export function calculerScenarioBrut(entree: Entree, scenario: Scenario): CalculScenario {
+  const e = appliquerEcarts(entree, scenario);
   const credit = e.credit ? echeancierBrut(e.credit) : null;
   const investissements = e.charges.filter((c) => c.classe === "investissement");
   const exploitation = e.charges.filter((c) => c.classe === "exploitation");
@@ -585,5 +623,9 @@ export function calculerFinances(entree: EntreeFinance): ResultatFinance {
     investissementTotal: fcfa(investissementTotal),
     besoinFinancement: fcfa(Math.max(0, investissementTotal + scenarios.realiste.besoinFondsRoulement - e.apport)),
     scenarios,
+    sensibilite: analyserSensibilite(e, (x) => {
+      const c = calculerScenarioBrut(x, "realiste");
+      return { annees: c.annees, pointBas: c.pointBas.montant, van: van(c.fluxEconomiques, x.tauxActualisation), verdict: c.verdict, statut: statutCombine(c.verdict) };
+    }),
   };
 }

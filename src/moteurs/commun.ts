@@ -4,7 +4,7 @@
 import type { z } from "zod";
 
 /** Version des moteurs, enregistrée avec chaque résultat pour savoir avec quoi un plan a été calculé. */
-export const VERSION_MOTEURS = "1.2.0";
+export const VERSION_MOTEURS = "1.3.0";
 
 /** Erreur levée quand l'entrée d'un moteur est invalide. Le message est en français et lisible par l'utilisateur. */
 export class ErreurMoteur extends Error {

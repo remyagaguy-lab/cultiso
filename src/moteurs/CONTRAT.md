@@ -9,6 +9,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 | 1.0.0 | Budget, finance (résultat pluriannuel, trésorerie de l'an 1, BFR, seuil, VAN, TRI, scénarios sur la production), crédit |
 | 1.1.0 | **M3** : ménage, salaires, impôts ; capacité de remboursement, solde résiduel, CAF disponible ; seuil de commercialisation ; trésorerie avec prélèvements, mois déficitaires, retrait possible, point bas. **Le `statut` change de sens** : il combine rentabilité, trésorerie et ménage |
 | 1.2.0 | **M4** : `controles[]` et `ratios` par scénario ; entrées `regleFinanceur` et `bornesQuantite` (par ligne de revenu) |
+| 1.3.0 | **M5** : `sensibilite` (variations, classement, équilibre, test du prix bas, tableau rendement × charges) ; entrées `ecartsScenarios` (scénarios croisés prix, rendement, charges) et `sensibilite` |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -92,6 +93,18 @@ Les contrôles du §3.6 qui demandent le calendrier, l'itinéraire ou le débouc
 | `dettesSurCaf` | crédit / CAF nette de l'an 1 (null si CAF ≤ 0) |
 | `chargesFinancieresSurCA` | intérêts de l'an 1 / chiffre d'affaires de l'an 1 |
 | `partApport` | apport / coût du projet (Canevas ANPGF §10.1) |
+
+## Sensibilité (`sensibilite`, M5, scénario réaliste)
+
+Entrées : `ecartsScenarios { pessimiste: { prix, charges }, optimiste: { prix, charges } }` (0 par défaut ; le pessimiste doit avoir le prix le plus bas et les charges les plus hautes) appliqués aux prix de vente et aux charges d'exploitation (salaires compris), en plus des quantités propres à chaque scénario (DOC-00011 p. 33, DOC-00106 p. 13) ; `sensibilite { variations = [−0,2, −0,1, 0,1, 0,2], baissePrixBas?, axeRendement = [−0,2…0,2 par 0,1], axeCharges = [−0,1…0,1 par 0,05] }`.
+
+Sorties :
+
+- `base` et `variations[] { hypothese, variation, resultatCumule, pointBasTresorerie, van, ecartResultat, ecartPointBas, ecartVan }` pour `prix`, `rendement`, `pertes`, `intrants` (lignes de type `intrants`), `mainOeuvre` (lignes `main_oeuvre` et `salairesAnnuels`) ;
+- `classement` : hypothèses de la plus influente à la moins influente sur le résultat ;
+- `equilibre { an, coefficient, parLigne[] { prixEquilibre, quantiteEquilibre } }` : prix et rendement qui annulent le résultat l'année la plus exigeante ;
+- `testPrixBas { baisse, origine, statut, verdict, resultatCumule, pointBasTresorerie, soldeResiduelMin }` : baisse explicite, sinon écart de prix du pessimiste, sinon plus forte baisse de la grille ;
+- `tableauSeuil { axeRendement, axeCharges, coefficientsPrix[i][j], lignePrincipale { prixSeuil[i][j] } }` : seuil de commercialisation (M3) pour chaque couple rendement × charges ; la case centrale égale `seuilCommercialisation`.
 
 ## Limites connues (moteur actuel, avant M1)
 

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { lireExploitation, type ClientBase } from "@/core/exploitation";
 import { calculerFinances, ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
 import { schemaCredit } from "@/moteurs/credit";
-import { HORIZON_PAR_DEFAUT, schemaFinance, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
+import { HORIZON_PAR_DEFAUT, schemaEcartsScenarios, schemaFinance, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
 import { preparerBudget } from "@/referentiel";
 import type { Database, Json } from "@/types/supabase";
 import { erreurBase, ErreurPlan } from "./erreurs";
@@ -38,6 +38,9 @@ const champsHypotheses = {
   revenusExterieursAnnuels: z.number().min(0),
   salairesAnnuels: z.number().min(0),
   impotsAnnuels: z.number().min(0),
+  // Sensibilité (M5) : écarts de prix et de charges des scénarios pessimiste et optimiste, baisse du test du prix bas (null = automatique).
+  ecartsScenarios: schemaEcartsScenarios,
+  baissePrixBas: z.number().min(-0.9).max(0).nullable(),
 };
 export const schemaHypotheses = z.object({
   horizonAnnees: champsHypotheses.horizonAnnees.default(HORIZON_PAR_DEFAUT),
@@ -48,6 +51,8 @@ export const schemaHypotheses = z.object({
   revenusExterieursAnnuels: champsHypotheses.revenusExterieursAnnuels.default(0),
   salairesAnnuels: champsHypotheses.salairesAnnuels.default(0),
   impotsAnnuels: champsHypotheses.impotsAnnuels.default(0),
+  ecartsScenarios: champsHypotheses.ecartsScenarios.prefault({}),
+  baissePrixBas: champsHypotheses.baissePrixBas.default(null),
 });
 export type Hypotheses = z.output<typeof schemaHypotheses>;
 
@@ -238,12 +243,13 @@ export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financ
     if ("charge" in m) charges.push(m.charge);
     else revenus.push(m.revenu);
   }
-  const { prelevementsAnnuels, revenusExterieursAnnuels, ...hypotheses } = plan.hypotheses;
+  const { prelevementsAnnuels, revenusExterieursAnnuels, baissePrixBas, ...hypotheses } = plan.hypotheses;
   return {
     charges,
     revenus,
     ...hypotheses,
     menage: prelevementsAnnuels === null ? undefined : { prelevementsAnnuels, revenusExterieursAnnuels },
+    sensibilite: baissePrixBas === null ? undefined : { baissePrixBas },
     apport: plan.financement.apport,
     credit: plan.financement.credit ?? undefined,
     regleFinanceur: plan.financement.regleFinanceur ?? undefined,

@@ -133,6 +133,8 @@ describe("conversions des lignes", () => {
       revenusExterieursAnnuels: 0,
       salairesAnnuels: 0,
       impotsAnnuels: 0,
+      ecartsScenarios: { pessimiste: { prix: 0, charges: 0 }, optimiste: { prix: 0, charges: 0 } },
+      baissePrixBas: null,
     });
     expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null, regleFinanceur: null });
     expect(() => schemaHypotheses.parse({ horizonAnnees: 6 })).toThrow();
@@ -152,6 +154,17 @@ describe("conversions des lignes", () => {
     const r = calculerFinances(avec);
     expect(r.scenarios.realiste.annees[0].prelevementsNets).toBe(600_000);
     expect(r.scenarios.realiste.verdict.menageCouvert).not.toBeNull();
+  });
+
+  it("sensibilité (M5) : écarts des scénarios et baisse du prix bas transmis au moteur", () => {
+    const hypotheses = schemaHypotheses.parse({ ecartsScenarios: { pessimiste: { prix: -0.2, charges: 0.1 } }, baissePrixBas: -0.3 });
+    expect(hypotheses.ecartsScenarios.optimiste).toEqual({ prix: 0, charges: 0 });
+    const e = entreeFinance({ lignes, hypotheses, financement: schemaFinancement.parse({}) });
+    expect(e.sensibilite).toEqual({ baissePrixBas: -0.3 });
+    const r = calculerFinances(e);
+    expect(r.sensibilite.testPrixBas).toMatchObject({ baisse: -0.3, origine: "parametre" });
+    expect(r.scenarios.pessimiste.annees[0].chiffreAffaires).toBeLessThan(calculerFinances({ ...e, ecartsScenarios: undefined }).scenarios.pessimiste.annees[0].chiffreAffaires);
+    expect(() => schemaHypotheses.parse({ ecartsScenarios: { pessimiste: { prix: 0.2 } } })).toThrow();
   });
 
   it("règle du financeur (M4) : transmise au moteur, qui contrôle l'apport", () => {
