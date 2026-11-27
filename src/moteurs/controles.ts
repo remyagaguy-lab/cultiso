@@ -11,6 +11,14 @@ export const CODES_CONTROLE = [
   "MENAGE_NON_COUVERT",
   "MENAGE_NON_RENSEIGNE",
   "APPORT_INSUFFISANT",
+  "DUREE_HORS_REGLE",
+  "DIFFERE_HORS_REGLE",
+  // Alertes de prudence (S5), voir prudence.ts : présentes seulement quand elles se déclenchent.
+  "ALERTE_APPORT_SOUS_SEUIL",
+  "ALERTE_MENAGE_NON_COUVERT",
+  "ALERTE_MOIS_DEFICITAIRES_NON_FINANCES",
+  "ALERTE_POINT_BAS_NON_COUVERT",
+  "ALERTE_EXPOSITION_PRIX",
   "BFR_NON_FINANCE",
   "DERNIERES_ANNEES_DEFICITAIRES",
   "RENDEMENT_HORS_BORNES",
@@ -21,6 +29,22 @@ export const CODES_CONTROLE = [
   "BFR_AMORTI",
 ] as const;
 export type CodeControle = (typeof CODES_CONTROLE)[number];
+
+/** Règle d'un financeur lue dans le référentiel (R11). Tout champ absent veut dire « règle inconnue » : aucun contrôle n'est fait dessus. */
+export interface RegleFinanceur {
+  nom: string;
+  /** Part minimale de l'apport dans le coût du projet (0,2 = 20 %). */
+  apportMinimum?: number;
+  /** Durée maximale du crédit en mois. */
+  dureeMaxMois?: number;
+  /** Le maximum compte-t-il le différé ? Vrai par défaut (lecture prudente). Faux : on compare la durée de remboursement, hors différé. */
+  dureeInclutDiffere?: boolean;
+  /** Différé maximal en mois. */
+  differeMaxMois?: number;
+  source?: string;
+  /** Statut de la donnée du référentiel (brouillon_ia, a_valider, validee), repris dans les valeurs des contrôles. */
+  statut?: string;
+}
 
 export type ValeurControle = number | string | boolean | null | number[] | string[];
 
@@ -52,6 +76,8 @@ const nombrePrecis = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }
 export const enFcfa = (montant: number) => `${nombre.format(montant).replace(/\s/g, " ")} FCFA`;
 const enQuantite = (q: number) => nombrePrecis.format(q).replace(/\s/g, " ");
 const enPourcent = (t: number) => `${nombrePrecis.format(Math.round(t * 1000) / 10).replace(/\s/g, " ")} %`;
+/** Durée en mois, dite en années quand elle tombe juste. */
+const enDuree = (mois: number) => (mois % 12 === 0 ? `${mois / 12} an${mois / 12 > 1 ? "s" : ""}` : `${mois} mois`);
 const listeMois = (m: number[]) => (m.length === 1 ? `au mois ${m[0]}` : `aux mois ${m.join(", ")}`);
 const listeAns = (a: number[]) => (a.length === 1 ? `l'an ${a[0]}` : `les ans ${a.join(", ")}`);
 
@@ -73,12 +99,12 @@ export interface DonneesControles {
   charges: { id: string; libelle: string; typeCharge: string; nature: "fixe" | "variable"; classe: "investissement" | "exploitation"; base: "cycle" | "an"; frequence: number; moisDecaissement?: number[] }[];
   revenus: { id: string; libelle: string; quantite: number; bornesQuantite?: { min?: number; max?: number; source?: string } }[];
   apport: number;
-  credit: { montant: number } | null;
+  credit: { montant: number; dureeMois: number; differeMois: number } | null;
   menageRenseigne: boolean;
   salairesAnnuels: number;
   impotsAnnuels: number;
   listesMois: { nom: string; mois: number[] }[];
-  regleFinanceur?: { nom: string; apportMinimum?: number; source?: string };
+  regleFinanceur?: RegleFinanceur;
   investissementTotal: number;
   besoinFondsRoulement: number;
   annees: { an: number; chiffreAffaires: number; resultat: number; interets: number; cafNette: number; capaciteRemboursement: number; soldeResiduel: number }[];
@@ -153,7 +179,7 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
   // Apport sous le seuil du financeur (seuil passé en paramètre : ANPGF 20 %, à confirmer par R11).
   const regle = d.regleFinanceur;
   if (regle?.apportMinimum !== undefined && ratios.partApport !== null) {
-    const valeurs = { partApport: ratios.partApport, apportMinimum: regle.apportMinimum, financeur: regle.nom, source: regle.source ?? null, apport: d.apport, coutProjet: ratios.coutProjet };
+    const valeurs = { partApport: ratios.partApport, apportMinimum: regle.apportMinimum, financeur: regle.nom, source: regle.source ?? null, statutRegle: regle.statut ?? null, apport: d.apport, coutProjet: ratios.coutProjet };
     if (ratios.partApport < regle.apportMinimum) {
       const manque = Math.ceil(regle.apportMinimum * ratios.coutProjet - d.apport);
       ajouter(
@@ -164,6 +190,38 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
       );
     } else {
       ajouter("APPORT_INSUFFISANT", "ok", valeurs, `Ton apport couvre ${enPourcent(ratios.partApport)} du coût du projet, au-dessus du minimum de ${regle.nom} (${enPourcent(regle.apportMinimum)}).`);
+    }
+  }
+
+  // Durée et différé du crédit contre les règles du financeur (R11).
+  if (regle && d.credit) {
+    const base = { financeur: regle.nom, source: regle.source ?? null, statutRegle: regle.statut ?? null };
+    if (regle.dureeMaxMois !== undefined) {
+      const duree = regle.dureeInclutDiffere === false ? d.credit.dureeMois - d.credit.differeMois : d.credit.dureeMois;
+      const valeurs = { ...base, dureeMois: duree, dureeMaxMois: regle.dureeMaxMois, differeCompris: regle.dureeInclutDiffere !== false };
+      if (duree > regle.dureeMaxMois) {
+        ajouter(
+          "DUREE_HORS_REGLE",
+          "alerte",
+          valeurs,
+          `Ton crédit dure ${enDuree(duree)} ; ${regle.nom} finance au plus sur ${enDuree(regle.dureeMaxMois)}. Raccourcis la durée ou choisis un autre financeur.`,
+        );
+      } else {
+        ajouter("DUREE_HORS_REGLE", "ok", valeurs, `La durée de ton crédit (${enDuree(duree)}) respecte le maximum de ${regle.nom} (${enDuree(regle.dureeMaxMois)}).`);
+      }
+    }
+    if (regle.differeMaxMois !== undefined) {
+      const valeurs = { ...base, differeMois: d.credit.differeMois, differeMaxMois: regle.differeMaxMois };
+      if (d.credit.differeMois > regle.differeMaxMois) {
+        ajouter(
+          "DIFFERE_HORS_REGLE",
+          "alerte",
+          valeurs,
+          `Ton différé est de ${enDuree(d.credit.differeMois)} (période sans rembourser le capital) ; ${regle.nom} accepte au plus ${enDuree(regle.differeMaxMois)}. Réduis le différé.`,
+        );
+      } else {
+        ajouter("DIFFERE_HORS_REGLE", "ok", valeurs, `Ton différé (${enDuree(d.credit.differeMois)}) respecte le maximum de ${regle.nom} (${enDuree(regle.differeMaxMois)}).`);
+      }
     }
   }
 

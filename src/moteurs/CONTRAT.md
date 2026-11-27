@@ -106,6 +106,14 @@ Sorties :
 - `testPrixBas { baisse, origine, statut, verdict, resultatCumule, pointBasTresorerie, soldeResiduelMin }` : baisse explicite, sinon écart de prix du pessimiste, sinon plus forte baisse de la grille ;
 - `tableauSeuil { axeRendement, axeCharges, coefficientsPrix[i][j], lignePrincipale { prixSeuil[i][j] } }` : seuil de commercialisation (M3) pour chaque couple rendement × charges ; la case centrale égale `seuilCommercialisation`.
 
+## Règles des financeurs, alertes de prudence et langage simple (moteur 1.4.0)
+
+**R11.** `regleFinanceur { nom, apportMinimum?, dureeMaxMois?, dureeInclutDiffere?, differeMaxMois?, source?, statut? }` vient du référentiel (`ref.regles_financeurs`, lu par `lireReglesFinanceurs`, converti par `versRegleMoteur`). Aucune valeur par défaut : une règle absente n'est pas contrôlée. Contrôles ajoutés : `DUREE_HORS_REGLE` (durée du crédit, différé compris sauf si `dureeInclutDiffere` vaut faux) et `DIFFERE_HORS_REGLE`. Les valeurs des contrôles portent la source et le statut de la règle (`statutRegle`).
+
+**S5.** `alertesPrudence` (prudence.ts) ajoute aux `controles`, seulement quand elles se déclenchent : `ALERTE_APPORT_SOUS_SEUIL` (reprend `APPORT_INSUFFISANT`), `ALERTE_MENAGE_NON_COUVERT` (solde résiduel négatif), `ALERTE_MOIS_DEFICITAIRES_NON_FINANCES` (solde du mois négatif et caisse déjà négative), `ALERTE_POINT_BAS_NON_COUVERT` (point bas < 0), `ALERTE_EXPOSITION_PRIX` (scénario réaliste : le statut se dégrade, ou le ménage n'est plus couvert, au test du prix bas). L'exposition au prix mesure l'effet d'un prix bas ; le moteur ne compare pas encore à un itinéraire extensif (attend M2 et R1).
+
+**S8.** `donnees/explications.json` : pour chaque indicateur (`indicateurs`) et chaque code de contrôle ou d'alerte (`controles`), un `nom`, une phrase `simple` sans sigle et une version `technique` dépliable ; `lexique` pour l'annexe de l'export (`lexique()`, `lexiqueEnMarkdown()`). Les tests exigent une explication pour tout code de `CODES_CONTROLE` et pour tout champ de résultat.
+
 ## Limites connues (moteur actuel, avant M1)
 
 Une année type répétée ; trésorerie mensuelle de l'an 1 seulement ; prélèvements constants sur l'horizon ; un seul crédit tiré au mois 0 ; pas de fiscalité calculée. Voir `Cultiso/2_Pilotage/03_Produit-et-technologie/ANALYSE-RESSOURCES-MODELISATION.md` §3.3.

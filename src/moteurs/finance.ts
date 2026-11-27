@@ -16,6 +16,7 @@ import { z } from "zod";
 import { fcfa, somme, taux, valider, VERSION_MOTEURS } from "./commun";
 import { calculerRatios, controler, type Controle, type DonneesControles, type Ratios } from "./controles";
 import { echeancierBrut, schemaCredit } from "./credit";
+import { alertesPrudence } from "./prudence";
 import { analyserSensibilite, type Sensibilite } from "./sensibilite";
 
 export const TAUX_ACTUALISATION_PAR_DEFAUT = 0.12;
@@ -115,7 +116,15 @@ export const schemaFinance = z.object({
   sensibilite: schemaParametresSensibilite.prefault({}),
   /** Règle du financeur visé (R11), pour les contrôles : par exemple { nom: "ANPGF", apportMinimum: 0.2 }. Aucune valeur par défaut. */
   regleFinanceur: z
-    .object({ nom: z.string().min(1), apportMinimum: z.number().min(0).max(1).optional(), source: z.string().optional() })
+    .object({
+      nom: z.string().min(1),
+      apportMinimum: z.number().min(0).max(1).optional(),
+      dureeMaxMois: z.number().int().min(1).optional(),
+      dureeInclutDiffere: z.boolean().optional(),
+      differeMaxMois: z.number().int().min(0).optional(),
+      source: z.string().optional(),
+      statut: z.string().optional(),
+    })
     .optional(),
 });
 
@@ -559,7 +568,7 @@ function arrondirScenario(c: CalculScenario, e: Entree, scenario: Scenario): Res
     charges: e.charges,
     revenus: e.revenus.map((r) => ({ id: r.id, libelle: r.libelle, quantite: r.quantite[scenario], bornesQuantite: r.bornesQuantite })),
     apport: e.apport,
-    credit: e.credit ? { montant: e.credit.montant } : null,
+    credit: e.credit ? { montant: e.credit.montant, dureeMois: e.credit.dureeMois, differeMois: e.credit.differeMois ?? 0 } : null,
     menageRenseigne: e.menage !== undefined,
     salairesAnnuels: e.salairesAnnuels,
     impotsAnnuels: e.impotsAnnuels,
@@ -618,14 +627,17 @@ export function calculerFinances(entree: EntreeFinance): ResultatFinance {
   const bruts = Object.fromEntries(SCENARIOS.map((s) => [s, calculerScenarioBrut(e, s)])) as Record<Scenario, CalculScenario>;
   const scenarios = Object.fromEntries(SCENARIOS.map((s) => [s, arrondirScenario(bruts[s], e, s)])) as Record<Scenario, ResultatScenario>;
   const investissementTotal = somme(e.charges.filter((c) => c.classe === "investissement").map(montantCharge));
+  const sensibilite = analyserSensibilite(e, (x) => {
+    const c = calculerScenarioBrut(x, "realiste");
+    return { annees: c.annees, pointBas: c.pointBas.montant, van: van(c.fluxEconomiques, x.tauxActualisation), verdict: c.verdict, statut: statutCombine(c.verdict) };
+  });
+  // S5 : les alertes de prudence s'ajoutent aux contrôles (l'exposition au prix se lit sur le scénario réaliste).
+  for (const s of SCENARIOS) scenarios[s].controles.push(...alertesPrudence(scenarios[s], s === "realiste" ? sensibilite : undefined));
   return {
     versionMoteur: VERSION_MOTEURS,
     investissementTotal: fcfa(investissementTotal),
     besoinFinancement: fcfa(Math.max(0, investissementTotal + scenarios.realiste.besoinFondsRoulement - e.apport)),
     scenarios,
-    sensibilite: analyserSensibilite(e, (x) => {
-      const c = calculerScenarioBrut(x, "realiste");
-      return { annees: c.annees, pointBas: c.pointBas.montant, van: van(c.fluxEconomiques, x.tauxActualisation), verdict: c.verdict, statut: statutCombine(c.verdict) };
-    }),
+    sensibilite,
   };
 }

@@ -12,7 +12,22 @@ export {
   type ResultatFinance,
   type Scenario,
 } from "./finance";
-export { CODES_CONTROLE, type CodeControle, type Controle, type NiveauControle, type Ratios } from "./controles";
+export { CODES_CONTROLE, type CodeControle, type Controle, type NiveauControle, type Ratios, type RegleFinanceur } from "./controles";
+export { alertesPrudence } from "./prudence";
+export {
+  clesIndicateurs,
+  controlesSansExplication,
+  expliquerControle,
+  expliquerControles,
+  expliquerIndicateur,
+  lexique,
+  lexiqueEnMarkdown,
+  VERSION_EXPLICATIONS,
+  type ControleExplique,
+  type EntreeLexique,
+  type Explication,
+} from "./explications";
+export { analyserSensibilite, HYPOTHESES_CLES, type HypotheseCle, type Sensibilite } from "./sensibilite";
 export {
   genererBudget,
   type EntreeBudget,
