@@ -134,7 +134,7 @@ describe("conversions des lignes", () => {
       salairesAnnuels: 0,
       impotsAnnuels: 0,
     });
-    expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null });
+    expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null, regleFinanceur: null });
     expect(() => schemaHypotheses.parse({ horizonAnnees: 6 })).toThrow();
   });
 
@@ -152,5 +152,14 @@ describe("conversions des lignes", () => {
     const r = calculerFinances(avec);
     expect(r.scenarios.realiste.annees[0].prelevementsNets).toBe(600_000);
     expect(r.scenarios.realiste.verdict.menageCouvert).not.toBeNull();
+  });
+
+  it("règle du financeur (M4) : transmise au moteur, qui contrôle l'apport", () => {
+    const regle = { nom: "ANPGF", apportMinimum: 0.2 };
+    const e = entreeFinance({ lignes, hypotheses: schemaHypotheses.parse({}), financement: schemaFinancement.parse({ apport: 1, regleFinanceur: regle }) });
+    expect(e.regleFinanceur).toEqual(regle);
+    const apport = calculerFinances(e).scenarios.realiste.controles.find((c) => c.code === "APPORT_INSUFFISANT");
+    expect(apport).toMatchObject({ niveau: "alerte", valeurs: { financeur: "ANPGF", apportMinimum: 0.2 } });
+    expect(() => schemaFinancement.parse({ regleFinanceur: { nom: "X", apportMinimum: 20 } })).toThrow();
   });
 });

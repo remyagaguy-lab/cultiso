@@ -6,7 +6,7 @@ import { z } from "zod";
 import { lireExploitation, type ClientBase } from "@/core/exploitation";
 import { calculerFinances, ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
 import { schemaCredit } from "@/moteurs/credit";
-import { HORIZON_PAR_DEFAUT, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
+import { HORIZON_PAR_DEFAUT, schemaFinance, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
 import { preparerBudget } from "@/referentiel";
 import type { Database, Json } from "@/types/supabase";
 import { erreurBase, ErreurPlan } from "./erreurs";
@@ -55,10 +55,13 @@ const champsFinancement = {
   apport: z.number().min(0, "l'apport ne peut pas être négatif"),
   /** Entrée du moteur de crédit ; null = pas de crédit. */
   credit: schemaCredit.nullable(),
+  /** Règle du financeur visé (R11) pour les contrôles M4, par exemple { nom: "ANPGF", apportMinimum: 0.2 } ; null = aucune. */
+  regleFinanceur: schemaFinance.shape.regleFinanceur.unwrap().nullable(),
 };
 export const schemaFinancement = z.object({
   apport: champsFinancement.apport.default(0),
   credit: champsFinancement.credit.default(null),
+  regleFinanceur: champsFinancement.regleFinanceur.default(null),
 });
 export type Financement = z.output<typeof schemaFinancement>;
 
@@ -243,6 +246,7 @@ export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financ
     menage: prelevementsAnnuels === null ? undefined : { prelevementsAnnuels, revenusExterieursAnnuels },
     apport: plan.financement.apport,
     credit: plan.financement.credit ?? undefined,
+    regleFinanceur: plan.financement.regleFinanceur ?? undefined,
   };
 }
 

@@ -173,6 +173,16 @@ export function resumeMenage(r: ResultatFinance): string[] {
   return lignes;
 }
 
+/** Contrôles du scénario réaliste qui demandent attention (M4), avec la phrase du moteur. */
+export function resumeControles(r: ResultatFinance): string[] {
+  const aSignaler = r.scenarios.realiste.controles.filter((c) => c.niveau !== "ok");
+  if (aSignaler.length === 0) return ["- contrôles du moteur (scénario réaliste) : rien à signaler"];
+  return [
+    "Contrôles du moteur (scénario réaliste), à expliquer simplement sans les recalculer :",
+    ...aSignaler.map((c) => `- [${c.niveau}] ${c.code} : ${c.message}`),
+  ];
+}
+
 export const calculerPlan = definirOutil({
   nom: "calculer_plan",
   description:
@@ -225,6 +235,7 @@ export const calculerPlan = definirOutil({
         `- besoin de financement (investissement + fonds de roulement − apport) : ${enFcfa(r.besoinFinancement)}`,
         ...resumeScenarios(r),
         ...resumeMenage(r),
+        ...resumeControles(r),
         sim.estimations
           ? "ATTENTION : une partie des données sont des estimations non encore validées par un expert ; dis-le à l'utilisateur."
           : "Données du référentiel validées.",

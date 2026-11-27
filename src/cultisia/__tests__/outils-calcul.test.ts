@@ -92,6 +92,15 @@ describe("calculer_plan", () => {
     expect(enFcfaPrix(91.43)).toBe("91,43 FCFA");
   });
 
+  it("M4 : restitue les contrôles du moteur à signaler, avec leur phrase", async () => {
+    const moteur = attendu([{ id: "atelier_1", speculationCode: "tomate", taille: 2, cyclesParAn: 2 }]);
+    const r = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }] }, contexte());
+    const aSignaler = moteur.scenarios.realiste.controles.filter((c) => c.niveau !== "ok");
+    expect(aSignaler.length).toBeGreaterThan(0);
+    for (const c of aSignaler) expect(r.contenu).toContain(`- [${c.niveau}] ${c.code} : ${c.message}`);
+    expect(r.contenu).not.toContain("[ok]");
+  });
+
   it("sans ateliers, calcule l'exploitation active avec son contexte terrain", async () => {
     const moteur = attendu([{ id: "at-1", speculationCode: "tomate", taille: 2, cyclesParAn: 2 }], { acces: "isole" });
     const r = await calculerPlan.executer!({}, contexte({}, "exp-1"));

@@ -1,6 +1,6 @@
 // Moteur financier : compte de résultat pluriannuel, trésorerie mensuelle de l'an 1, BFR,
 // seuil de rentabilité, VAN, TRI, délai de récupération, trois scénarios,
-// revenu du ménage et capacité de remboursement (M3).
+// revenu du ménage et capacité de remboursement (M3), contrôles nommés et ratios (M4).
 // Formules par ligne du Cultiso Brouillon (ground truth §II.2), pluriannuel du Stimulateur, crédit d'Agripilot.
 // Le moteur ne connaît aucune filière : seulement des lignes de charges et de revenus.
 //
@@ -14,6 +14,7 @@
 // Contrat complet : src/moteurs/CONTRAT.md.
 import { z } from "zod";
 import { fcfa, somme, taux, valider, VERSION_MOTEURS } from "./commun";
+import { calculerRatios, controler, type Controle, type DonneesControles, type Ratios } from "./controles";
 import { echeancierBrut, schemaCredit } from "./credit";
 
 export const TAUX_ACTUALISATION_PAR_DEFAUT = 0.12;
@@ -58,6 +59,10 @@ export const schemaLigneRevenu = z.object({
   cyclesParAn: z.number().positive().default(1),
   /** Mois de vente (1 à 12) ; réparti sur 12 mois sinon. */
   moisVente: mois.optional(),
+  /** Bornes de production du référentiel, dans l'unité et la période de `quantite`, déjà mises à la taille de l'atelier (M4). */
+  bornesQuantite: z
+    .object({ min: z.number().min(0).optional(), max: z.number().min(0).optional(), source: z.string().optional() })
+    .optional(),
 });
 
 /** Le ménage du porteur (M3). Absent : le revenu du ménage n'est pas évalué. */
@@ -86,6 +91,10 @@ export const schemaFinance = z.object({
   moisSalaires: mois.optional(),
   /** Impôts et taxes annuels, en attendant la fiscalité par pays (M8) ; répartis sur 12 mois. */
   impotsAnnuels: z.number().min(0).default(0),
+  /** Règle du financeur visé (R11), pour les contrôles : par exemple { nom: "ANPGF", apportMinimum: 0.2 }. Aucune valeur par défaut. */
+  regleFinanceur: z
+    .object({ nom: z.string().min(1), apportMinimum: z.number().min(0).max(1).optional(), source: z.string().optional() })
+    .optional(),
 });
 
 export type LigneCharge = z.input<typeof schemaLigneCharge>;
@@ -196,6 +205,10 @@ export interface ResultatScenario {
   /** Mois (0 à 12) où la trésorerie cumulée est négative. */
   moisTresorerieNegative: number[];
   seuilCommercialisation: SeuilCommercialisation;
+  // M4
+  /** Contrôles nommés { code, niveau, valeurs, message } (voir controles.ts). */
+  controles: Controle[];
+  ratios: Ratios;
 }
 
 export interface ResultatFinance {
@@ -488,7 +501,7 @@ const arrondirAnnee = (a: AnneeResultat): AnneeResultat => ({
 /** Prix unitaire : arrondi au centime de FCFA près (0,01), car un kg de légume se vend parfois moins de 100 FCFA. */
 const prixArrondi = (p: number) => Math.round(p * 100) / 100;
 
-function arrondirScenario(c: CalculScenario, e: Entree): ResultatScenario {
+function arrondirScenario(c: CalculScenario, e: Entree, scenario: Scenario): ResultatScenario {
   const triBrut = tri(c.fluxEconomiques);
   const delai = delaiRecuperation(c.fluxEconomiques);
   const s = c.seuilCommercialisation;
@@ -501,8 +514,33 @@ function arrondirScenario(c: CalculScenario, e: Entree): ResultatScenario {
     cumul: fcfa(t.cumul),
     retraitPossible: fcfa(t.retraitPossible),
   }));
+  const annees = c.annees.map(arrondirAnnee);
+  const moisTresorerieNegative = c.tresorerie.filter((t) => t.cumul < -DEMI_FCFA).map((t) => t.mois);
+  const pointBasTresorerie = { montant: fcfa(c.pointBas.montant), mois: c.pointBas.mois };
+  const donnees: DonneesControles = {
+    charges: e.charges,
+    revenus: e.revenus.map((r) => ({ id: r.id, libelle: r.libelle, quantite: r.quantite[scenario], bornesQuantite: r.bornesQuantite })),
+    apport: e.apport,
+    credit: e.credit ? { montant: e.credit.montant } : null,
+    menageRenseigne: e.menage !== undefined,
+    salairesAnnuels: e.salairesAnnuels,
+    impotsAnnuels: e.impotsAnnuels,
+    listesMois: [
+      ...e.charges.filter((l) => l.moisDecaissement).map((l) => ({ nom: l.libelle, mois: l.moisDecaissement as number[] })),
+      ...e.revenus.filter((l) => l.moisVente).map((l) => ({ nom: l.libelle, mois: l.moisVente as number[] })),
+      ...(e.moisSalaires ? [{ nom: "Salaires", mois: e.moisSalaires }] : []),
+      ...(e.menage?.moisPrelevements ? [{ nom: "Prélèvements du ménage", mois: e.menage.moisPrelevements }] : []),
+    ],
+    regleFinanceur: e.regleFinanceur,
+    investissementTotal: fcfa(somme(e.charges.filter((x) => x.classe === "investissement").map(montantCharge))),
+    besoinFondsRoulement: fcfa(-c.creux),
+    annees,
+    moisTresorerieNegative,
+    pointBasTresorerie,
+  };
+  const ratios = calculerRatios(donnees);
   return {
-    annees: c.annees.map(arrondirAnnee),
+    annees,
     tresorerieMensuelleAn1: tresorerie,
     besoinFondsRoulement: fcfa(-c.creux),
     seuilRentabilite: { chiffreAffaires: c.seuilCA === null ? null : fcfa(c.seuilCA), moisAtteint: c.moisAtteint },
@@ -512,9 +550,9 @@ function arrondirScenario(c: CalculScenario, e: Entree): ResultatScenario {
     rentabilite: c.rentabilite === null ? null : taux(c.rentabilite),
     statut: statutCombine(c.verdict),
     verdict: c.verdict,
-    pointBasTresorerie: { montant: fcfa(c.pointBas.montant), mois: c.pointBas.mois },
+    pointBasTresorerie,
     moisDeficitaires: c.tresorerie.filter((t) => t.mois > 0 && t.solde < -DEMI_FCFA).map((t) => t.mois),
-    moisTresorerieNegative: c.tresorerie.filter((t) => t.cumul < -DEMI_FCFA).map((t) => t.mois),
+    moisTresorerieNegative,
     seuilCommercialisation: {
       an: s.an,
       besoinAnnuel: fcfa(s.besoinAnnuel),
@@ -528,6 +566,8 @@ function arrondirScenario(c: CalculScenario, e: Entree): ResultatScenario {
         prixSeuil: prixArrondi(l.prixSeuil),
       })),
     },
+    controles: controler(donnees, ratios),
+    ratios,
   };
 }
 
@@ -538,7 +578,7 @@ export type EntreeFinanceValidee = Entree;
 export function calculerFinances(entree: EntreeFinance): ResultatFinance {
   const e = validerFinance(entree);
   const bruts = Object.fromEntries(SCENARIOS.map((s) => [s, calculerScenarioBrut(e, s)])) as Record<Scenario, CalculScenario>;
-  const scenarios = Object.fromEntries(SCENARIOS.map((s) => [s, arrondirScenario(bruts[s], e)])) as Record<Scenario, ResultatScenario>;
+  const scenarios = Object.fromEntries(SCENARIOS.map((s) => [s, arrondirScenario(bruts[s], e, s)])) as Record<Scenario, ResultatScenario>;
   const investissementTotal = somme(e.charges.filter((c) => c.classe === "investissement").map(montantCharge));
   return {
     versionMoteur: VERSION_MOTEURS,

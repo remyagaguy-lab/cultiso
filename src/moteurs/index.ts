@@ -12,6 +12,7 @@ export {
   type ResultatFinance,
   type Scenario,
 } from "./finance";
+export { CODES_CONTROLE, type CodeControle, type Controle, type NiveauControle, type Ratios } from "./controles";
 export {
   genererBudget,
   type EntreeBudget,

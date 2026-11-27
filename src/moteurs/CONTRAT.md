@@ -8,6 +8,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 |---|---|
 | 1.0.0 | Budget, finance (résultat pluriannuel, trésorerie de l'an 1, BFR, seuil, VAN, TRI, scénarios sur la production), crédit |
 | 1.1.0 | **M3** : ménage, salaires, impôts ; capacité de remboursement, solde résiduel, CAF disponible ; seuil de commercialisation ; trésorerie avec prélèvements, mois déficitaires, retrait possible, point bas. **Le `statut` change de sens** : il combine rentabilité, trésorerie et ménage |
+| 1.2.0 | **M4** : `controles[]` et `ratios` par scénario ; entrées `regleFinanceur` et `bornesQuantite` (par ligne de revenu) |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -23,6 +24,8 @@ Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée 
 | `menage` | absent | `{ prelevementsAnnuels, revenusExterieursAnnuels = 0, moisPrelevements? }`. Absent : le ménage n'est pas évalué (`menageCouvert = null`) |
 | `salairesAnnuels`, `moisSalaires` | 0 | Salaires des employés **non saisis en lignes** ; charge fixe d'exploitation |
 | `impotsAnnuels` | 0 | Impôts et taxes, en attendant la fiscalité par pays (M8) ; répartis sur 12 mois |
+| `regleFinanceur` | absente | `{ nom, apportMinimum?, source? }` : règle du financeur visé (R11), par exemple ANPGF 20 %. Absente : pas de contrôle d'apport |
+| `revenus[].bornesQuantite` | absentes | `{ min?, max?, source? }` : bornes de production du référentiel (R10), dans l'unité et la période de `quantite`, à la taille de l'atelier. Absentes : pas de contrôle de rendement |
 
 ## Sorties par scénario (`scenarios.pessimiste | realiste | optimiste`)
 
@@ -58,6 +61,37 @@ Le prix de vente minimum qui couvre les charges décaissées, les impôts, les a
 - `deficitaire` : rentabilité (résultat cumulé / charges cumulées) sous −5 % ;
 - `limite` : rentabilité entre −5 % et +5 %, **ou** rentable mais trésorerie négative un mois de l'an 1, **ou** ménage non couvert (solde résiduel négatif une année) ;
 - `rentable` : rentable, trésorerie jamais négative, ménage couvert ou non renseigné.
+
+### Contrôles nommés (`controles[]`, M4)
+
+Chaque contrôle : `{ code, niveau, valeurs, message }`. `niveau` : `ok` (rien à signaler), `info` (à vérifier), `alerte` (point faible à corriger ou justifier), `bloquant` (le plan ne tient pas en l'état). `valeurs` porte les chiffres du moteur ; `message` est une phrase simple, au tutoiement. Les codes sont stables : l'interface et Cultisia s'appuient dessus.
+
+| Code | Quand | Niveaux |
+|---|---|---|
+| `TRESORERIE_NEGATIVE` | cumul de trésorerie négatif un mois de l'an 1 (`mois`, `pointBas`, `moisPointBas`) | ok, bloquant |
+| `MENAGE_NON_COUVERT` | solde résiduel négatif une année (`annees`, `soldeResiduelMin`, `capaciteMin`) ; le message distingue « même sans crédit » et « pas de quoi payer les échéances » | ok, bloquant |
+| `MENAGE_NON_RENSEIGNE` | pas d'entrée `menage` | info |
+| `APPORT_INSUFFISANT` | apport / coût du projet sous `regleFinanceur.apportMinimum` (`manque`) ; seulement si la règle est fournie | ok, alerte |
+| `BFR_NON_FINANCE` | apport + crédit < investissement + BFR (`manque`) | ok, alerte, bloquant |
+| `DERNIERES_ANNEES_DEFICITAIRES` | résultat négatif les deux dernières années de l'horizon (la seule si horizon d'un an) | ok, bloquant |
+| `RENDEMENT_HORS_BORNES` | quantité du scénario hors de `bornesQuantite`, une entrée par ligne bornée | ok, info (sous le min), alerte (au-dessus du max) |
+| `RESSOURCE_EN_DOUBLE` | crédit supérieur au coût du projet (alerte) ; apport + crédit au-dessus du coût (info) | info, alerte |
+| `POSTE_EN_DOUBLE` | même libellé, type et classe deux fois ; frais financiers saisis avec un crédit ; impôts en ligne et en montant ; salaires à part et main d'oeuvre fixe en ligne (info) | info, alerte |
+| `UNITE_PERIODE` | un mois répété dans une liste de mois ; salaire fixe annuel payé une seule fois (souvent un mois saisi comme un an) | info, alerte |
+| `VARIATION_BFR` | garantie du moteur : le BFR n'est compté qu'une fois (`variations` = BFR l'an 1, 0 ensuite) | ok |
+| `BFR_AMORTI` | ligne d'investissement nommée fonds de roulement, BFR ou imprévus | ok, alerte |
+
+Les contrôles du §3.6 qui demandent le calendrier, l'itinéraire ou le débouché (intrants issus de l'itinéraire, période improductive, consommation sur toute la bande, saisonniers payés 12 mois, volumes vendables) attendent M1, R1, R4, M13 et M14. VAN et TRI sont toujours calculés par le moteur, jamais saisis.
+
+### Ratios (`ratios`, M4)
+
+| Ratio | Formule |
+|---|---|
+| `coutProjet` | investissement + BFR du scénario |
+| `endettement` | crédit / apport (null sans apport) |
+| `dettesSurCaf` | crédit / CAF nette de l'an 1 (null si CAF ≤ 0) |
+| `chargesFinancieresSurCA` | intérêts de l'an 1 / chiffre d'affaires de l'an 1 |
+| `partApport` | apport / coût du projet (Canevas ANPGF §10.1) |
 
 ## Limites connues (moteur actuel, avant M1)
 
