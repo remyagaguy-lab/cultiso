@@ -5,7 +5,67 @@ export type Database = {
   
   "public": {
           Tables: {
-            "ateliers": {
+            "profil_porteur": {
+                  Row: {
+                    "cultiso_id": string,"terre_surface_ha": number | null,"terre_statut": string | null,"terre_piece": string | null,"terre_duree_annees": number | null,"terre_sol": string | null,"terre_pente": string | null,"terre_jachere": boolean | null,"terre_extension_possible": boolean | null,"terre_extension_ha": number | null,"eau_source": string | null,"eau_saison": string | null,"epargne_fcfa": number | null,"apport_especes_fcfa": number | null,"apport_nature_fcfa": number | null,"temps_engagement": string | null,"temps_autre_activite": string | null,"temps_heures_semaine": number | null,"famille_actifs": number | null,"famille_heures_semaine": number | null,"competence_technique": string | null,"competence_gestion": string | null,"competence_vente": string | null,"menage_personnes": number | null,"menage_bouches": number | null,"menage_cout_vie_annuel_fcfa": number | null,"menage_revenus_exterieurs_annuels_fcfa": number | null,"finalites": (string)[] | null,"avancement": string | null,"sans_existant": boolean,"sans_credit": boolean,"inconnus": (string)[],"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cultiso_id": string,"terre_surface_ha"?: number | null,"terre_statut"?: string | null,"terre_piece"?: string | null,"terre_duree_annees"?: number | null,"terre_sol"?: string | null,"terre_pente"?: string | null,"terre_jachere"?: boolean | null,"terre_extension_possible"?: boolean | null,"terre_extension_ha"?: number | null,"eau_source"?: string | null,"eau_saison"?: string | null,"epargne_fcfa"?: number | null,"apport_especes_fcfa"?: number | null,"apport_nature_fcfa"?: number | null,"temps_engagement"?: string | null,"temps_autre_activite"?: string | null,"temps_heures_semaine"?: number | null,"famille_actifs"?: number | null,"famille_heures_semaine"?: number | null,"competence_technique"?: string | null,"competence_gestion"?: string | null,"competence_vente"?: string | null,"menage_personnes"?: number | null,"menage_bouches"?: number | null,"menage_cout_vie_annuel_fcfa"?: number | null,"menage_revenus_exterieurs_annuels_fcfa"?: number | null,"finalites"?: (string)[] | null,"avancement"?: string | null,"sans_existant"?: boolean,"sans_credit"?: boolean,"inconnus"?: (string)[],"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cultiso_id"?: string,"terre_surface_ha"?: number | null,"terre_statut"?: string | null,"terre_piece"?: string | null,"terre_duree_annees"?: number | null,"terre_sol"?: string | null,"terre_pente"?: string | null,"terre_jachere"?: boolean | null,"terre_extension_possible"?: boolean | null,"terre_extension_ha"?: number | null,"eau_source"?: string | null,"eau_saison"?: string | null,"epargne_fcfa"?: number | null,"apport_especes_fcfa"?: number | null,"apport_nature_fcfa"?: number | null,"temps_engagement"?: string | null,"temps_autre_activite"?: string | null,"temps_heures_semaine"?: number | null,"famille_actifs"?: number | null,"famille_heures_semaine"?: number | null,"competence_technique"?: string | null,"competence_gestion"?: string | null,"competence_vente"?: string | null,"menage_personnes"?: number | null,"menage_bouches"?: number | null,"menage_cout_vie_annuel_fcfa"?: number | null,"menage_revenus_exterieurs_annuels_fcfa"?: number | null,"finalites"?: (string)[] | null,"avancement"?: string | null,"sans_existant"?: boolean,"sans_credit"?: boolean,"inconnus"?: (string)[],"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profil_porteur_cultiso_id_fkey"
+      columns: ["cultiso_id"]
+isOneToOne: true
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"profil_existant": {
+                  Row: {
+                    "id": string,"cultiso_id": string,"categorie": string,"libelle": string,"quantite": number | null,"etat": string | null,"annee": number | null,"valeur_estimee_fcfa": number | null,"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"cultiso_id": string,"categorie": string,"libelle": string,"quantite"?: number | null,"etat"?: string | null,"annee"?: number | null,"valeur_estimee_fcfa"?: number | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"cultiso_id"?: string,"categorie"?: string,"libelle"?: string,"quantite"?: number | null,"etat"?: string | null,"annee"?: number | null,"valeur_estimee_fcfa"?: number | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profil_existant_cultiso_id_fkey"
+      columns: ["cultiso_id"]
+isOneToOne: false
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"profil_credits": {
+                  Row: {
+                    "id": string,"cultiso_id": string,"creancier": string | null,"capital_restant_fcfa": number | null,"mensualite_fcfa": number,"mois_restants": number | null,"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"cultiso_id": string,"creancier"?: string | null,"capital_restant_fcfa"?: number | null,"mensualite_fcfa": number,"mois_restants"?: number | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "id"?: string,"cultiso_id"?: string,"creancier"?: string | null,"capital_restant_fcfa"?: number | null,"mensualite_fcfa"?: number,"mois_restants"?: number | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "profil_credits_cultiso_id_fkey"
+      columns: ["cultiso_id"]
+isOneToOne: false
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"ateliers": {
                   Row: {
                     "created_at": string,"cultiso_id": string,"date_demarrage": string | null,"id": string,"libelle": string | null,"speculation_code": string,"taille": number,"unite": string,"updated_at": string
                   }

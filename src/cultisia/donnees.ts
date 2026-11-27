@@ -1,4 +1,5 @@
 import type { EntreeBudget } from "@/moteurs";
+import type { ApportDuProfil } from "@/modules/cultiplan/profil";
 import type { RegleFinanceurRef } from "@/referentiel";
 
 /**
@@ -84,6 +85,9 @@ export interface AccesDonnees {
 
   /** Règles des financeurs du référentiel (R11), éventuellement d'un organisme (et d'un produit) précis. */
   lireReglesFinanceurs(filtre?: { organisme?: string; produit?: string }): Promise<RegleFinanceurRef[]>;
+
+  /** Ce que le profil du porteur (R9) apporte aux moteurs (coût de vie, revenus extérieurs, apport), lu avec les droits de l'utilisateur. Facultatif. */
+  lireProfilPorteur?(exploitationId: string): Promise<ApportDuProfil | null>;
 
   chercherPrix(terme: string): Promise<LignePrix[]>;
   /** Lu avec les droits de l'utilisateur : renvoie null si l'exploitation n'existe pas ou ne lui appartient pas. */

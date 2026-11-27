@@ -81,3 +81,25 @@ describe("couche HTTP de /api/cultiplan", () => {
     remplacerFabrique(async (jeton) => (jeton === "jeton-valide" ? fauxClient : null));
   });
 });
+
+describe("route du profil du porteur", () => {
+  it("refuse sans jeton (401) et renvoie un profil vide, ou 400 sur un champ invalide", async () => {
+    const { GET, PATCH } = await import("@/app/api/cultiplan/exploitations/[id]/profil/route");
+    const { fauxClientProfil } = await import("../test-utils/fausse-base-profil");
+    const { client } = fauxClientProfil();
+    const precedente = remplacerFabrique(async (jeton) => (jeton === "jeton-valide" ? client : null));
+    try {
+      const params = { params: Promise.resolve({ id: "exp-1" }) };
+      expect((await GET(requete(undefined, null), params)).status).toBe(401);
+      const vide = await GET(requete(), params);
+      expect(vide.status).toBe(200);
+      expect((await vide.json()).existe).toBe(false);
+      const ecrit = await PATCH(requete({ epargneFcfa: 100000, eauSource: null }), params);
+      expect(ecrit.status).toBe(200);
+      expect(await ecrit.json()).toMatchObject({ existe: true, inconnus: ["eauSource"] });
+      expect((await PATCH(requete({ epargneFcfa: -1 }), params)).status).toBe(400);
+    } finally {
+      remplacerFabrique(precedente);
+    }
+  });
+});

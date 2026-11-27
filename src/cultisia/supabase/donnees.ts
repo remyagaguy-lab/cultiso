@@ -4,6 +4,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ErreurExploitation, lireExploitation, type ClientBase } from "@/core/exploitation";
 import type { EntreeBudget } from "@/moteurs";
+import { deduireDuProfil, lireProfil, type ApportDuProfil } from "@/modules/cultiplan/profil";
 import { preparerEntreeBudget } from "@/modules/cultiplan/service";
 import { lireReglesFinanceurs as lireReglesFinanceursRef, lireSpeculations, type RegleFinanceurRef } from "@/referentiel";
 import type { AccesDonnees, AtelierSimule, Culture, ExtraitSavoir, LignePrix, ResumeExploitation, Sol, SpeculationRef, Zone } from "../donnees";
@@ -68,6 +69,11 @@ export class DonneesSupabase implements AccesDonnees {
       if (erreur instanceof ErreurExploitation && erreur.code === "introuvable") return null;
       throw erreur;
     }
+  }
+
+  async lireProfilPorteur(exploitationId: string): Promise<ApportDuProfil | null> {
+    // Base pas encore migrée : pas de profil, les outils retombent sur ce que dit l'utilisateur.
+    return deduireDuProfil(await lireProfil(this.clientType, exploitationId, { tolerant: true }));
   }
 
   async chercherPrix(terme: string): Promise<LignePrix[]> {

@@ -242,6 +242,28 @@ async function resoudreAteliers(
 }
 const estRefusAteliers = (x: object): x is ResultatOutil => "contenu" in x;
 
+/** Valeurs du profil du porteur (R9) pour le calcul : coût de vie, revenus extérieurs, apport. Ce que la demande précise l'emporte. */
+async function completerDepuisProfil<A extends { apport?: number; coutVieAnnuel?: number; revenusExterieursAnnuels?: number }>(
+  args: A,
+  { donnees, exploitationId }: Pick<ContexteOutil, "donnees" | "exploitationId">,
+): Promise<{ args: A; origines: string[] }> {
+  if (!exploitationId || !donnees.lireProfilPorteur) return { args, origines: [] };
+  const p = await donnees.lireProfilPorteur(exploitationId);
+  if (!p) return { args, origines: [] };
+  const complete: A = {
+    ...args,
+    apport: args.apport ?? p.financement.apport,
+    coutVieAnnuel: args.coutVieAnnuel ?? p.hypotheses.prelevementsAnnuels,
+    revenusExterieursAnnuels: args.revenusExterieursAnnuels ?? p.hypotheses.revenusExterieursAnnuels,
+  };
+  const reprises = p.origines.filter((o) =>
+    (args.apport === undefined && o.startsWith("Apport")) ||
+    (args.coutVieAnnuel === undefined && o.startsWith("Prélèvements")) ||
+    (args.revenusExterieursAnnuels === undefined && o.startsWith("Revenus extérieurs")),
+  );
+  return { args: complete, origines: reprises.map((o) => "Repris du profil du porteur : " + o) };
+}
+
 const schemaPlanOutil = z.object({
   ateliers: z
     .array(
@@ -297,7 +319,8 @@ export const diagnostiquerPlan = definirOutil({
       const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
       if (estRefus(fin)) return fin;
 
-      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
+      const pf = await completerDepuisProfil(args, contexte);
+      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...pf.args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
       const s = sim.resultats.scenarios.realiste;
       const v = s.verdict;
       const r = s.ratios;
@@ -322,6 +345,7 @@ export const diagnostiquerPlan = definirOutil({
         sim.estimations ? AVERTISSEMENT_ESTIMATIONS : "Données du référentiel validées.",
         sim.ateliersSansModele.length > 0 ? `Ateliers sans données de référence (non chiffrés) : ${sim.ateliersSansModele.join(", ")}.` : "",
         "Explique d'abord le verdict en une phrase, puis ce qui bloque (niveau bloquant), puis ce qu'il faut corriger. Utilise les phrases « En clair » avec les mots de l'utilisateur.",
+        ...pf.origines,
         RAPPEL,
       ].filter(Boolean);
       return { contenu: lignes.join("\n"), sources: [sourceMoteur("financier"), { file_name: "Référentiel agricole Cultiso", origine: "referentiel" }] };
@@ -344,7 +368,8 @@ export const analyserSensibiliteOutil = definirOutil({
       const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
       if (estRefus(fin)) return fin;
 
-      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
+      const pf = await completerDepuisProfil(args, contexte);
+      const sim = await simuler(contexte.donnees, lu.ateliers, lu.contexte, { ...pf.args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
       const sens = sim.resultats.sensibilite;
       const eq = sens.equilibre;
       const bas = sens.testPrixBas;
@@ -376,6 +401,7 @@ export const analyserSensibiliteOutil = definirOutil({
         rapportFinanceur(fin.regle),
         sim.estimations ? AVERTISSEMENT_ESTIMATIONS : "Données du référentiel validées.",
         sim.ateliersSansModele.length > 0 ? `Ateliers sans données de référence (non chiffrés) : ${sim.ateliersSansModele.join(", ")}.` : "",
+        ...pf.origines,
         RAPPEL,
       ].filter(Boolean);
       return { contenu: lignes.join("\n"), sources: [sourceMoteur("de sensibilité"), { file_name: "Référentiel agricole Cultiso", origine: "referentiel" }] };
@@ -400,7 +426,8 @@ export const calculerPlan = definirOutil({
       const fin = await reglesDuFinanceur(contexte.donnees, args.financeur);
       if (estRefus(fin)) return fin;
 
-      const sim = await simuler(contexte.donnees, ateliers, lu.contexte, { ...args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
+      const pf = await completerDepuisProfil(args, contexte);
+      const sim = await simuler(contexte.donnees, ateliers, lu.contexte, { ...pf.args, regleFinanceur: fin.regle ? versRegleMoteur(fin.regle) : undefined });
       const r = sim.resultats;
       const noms = ateliers.map((a) => {
         const s = catalogue.find((c) => c.code === a.speculationCode);
@@ -417,6 +444,7 @@ export const calculerPlan = definirOutil({
           ? "ATTENTION : une partie des données sont des estimations non encore validées par un expert ; dis-le à l'utilisateur."
           : "Données du référentiel validées.",
         sim.ateliersSansModele.length > 0 ? `Ateliers sans données de référence (non chiffrés) : ${sim.ateliersSansModele.join(", ")}.` : "",
+        ...pf.origines,
         RAPPEL,
       ].filter(Boolean);
       return {

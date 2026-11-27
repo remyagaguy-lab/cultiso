@@ -23,6 +23,7 @@ import {
   type LignePlan,
   type NouvelleLigne,
 } from "./lignes";
+import { deduireDuProfil, lireProfil } from "./profil";
 import { injecterPrix, lireRelevesRecents, produitsDesignes } from "./prix";
 
 export const STATUTS_PLAN = ["brouillon", "lance", "archive"] as const;
@@ -96,6 +97,8 @@ export interface InfosGeneration {
   ateliersSansModele: string[];
   /** Prix du marché qui ont remplacé une référence. */
   prixMarche: { produit: string; prix: number; source: string; date: string }[];
+  /** Origine des valeurs reprises du profil du porteur (coût de vie, revenus extérieurs, apport). */
+  origineProfil?: string[];
 }
 
 export interface ResumePlan {
@@ -146,7 +149,7 @@ function versPlan(p: RangeePlan, lignes: LignePlan[]): Plan {
     hypotheses: schemaHypotheses.parse(p.hypotheses ?? {}),
     financement: schemaFinancement.parse(p.financement ?? {}),
     resultats: (p.resultats ?? null) as unknown as ResultatFinance | null,
-    generation: { ateliersSansModele: generation.ateliersSansModele ?? [], prixMarche: generation.prixMarche ?? [] },
+    generation: { ateliersSansModele: generation.ateliersSansModele ?? [], prixMarche: generation.prixMarche ?? [], origineProfil: generation.origineProfil ?? [] },
     lignes,
   };
 }
@@ -185,16 +188,20 @@ export async function genererPlan(
   }
   const entreeBudget = await preparerEntreeBudget(client, exploitation, options);
   const budget = genererBudget(entreeBudget);
+  // Profil du porteur (R9) : coût de vie, revenus extérieurs et apport déclarés alimentent M3, M4 et R11.
+  // Ce que la demande précise elle-même l'emporte sur le profil.
+  const deduit = deduireDuProfil(await lireProfil(client, exploitationId, { tolerant: true }));
 
   const { data: plan, error } = await client
     .from("plans")
     .insert({
       cultiso_id: exploitationId,
       titre: g.titre ?? `Plan de ${exploitation.nom}`,
-      hypotheses: versJson(schemaHypotheses.parse(g.hypotheses ?? {})),
-      financement: versJson(schemaFinancement.parse(g.financement ?? {})),
+      hypotheses: versJson(schemaHypotheses.parse({ ...deduit.hypotheses, ...g.hypotheses })),
+      financement: versJson(schemaFinancement.parse({ ...deduit.financement, ...g.financement })),
       generation: versJson({
         ateliersSansModele: budget.ateliersSansModele,
+        origineProfil: deduit.origines,
         prixMarche: (entreeBudget.prix ?? []).map((p) => ({ produit: p.produitId.split("|")[0], prix: p.prix, source: p.source, date: p.date })),
       } satisfies InfosGeneration),
     })
