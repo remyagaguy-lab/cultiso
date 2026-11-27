@@ -137,7 +137,7 @@ decrire("base locale : plan persistant Cultiplan", () => {
   it("génère le plan depuis l'exploitation : lignes avec origine, prix du marché, règles du terrain, résultats du moteur", async () => {
     plan = await genererPlan(clients.proprietaire, exploitationId, { titre: "Tomate 2 ha", financement: { apport: 200000 } }, { aujourdhui: AUJOURDHUI });
     expect(plan).toMatchObject({ titre: "Tomate 2 ha", version: 1, statut: "brouillon", varianteDe: null, versionMoteur: VERSION_MOTEURS });
-    expect(plan.financement).toEqual({ apport: 200000, credit: null });
+    expect(plan.financement).toEqual({ apport: 200000, credit: null, regleFinanceur: null });
     expect(plan.hypotheses.horizonAnnees).toBe(3);
     expect(plan.lignes).toHaveLength(4);
 
@@ -210,7 +210,9 @@ decrire("base locale : plan persistant Cultiplan", () => {
     const variante = await dupliquerPlan(clients.collaborateur, plan.id, "Et si le prix baisse ?");
     expect(variante).toMatchObject({ varianteDe: plan.id, version: 1, statut: "brouillon", titre: "Et si le prix baisse ?" });
     expect(variante.lignes.map((l) => [l.libelle, l.origine])).toEqual(plan.lignes.map((l) => [l.libelle, l.origine]));
-    expect(variante.resultats).toEqual(plan.resultats);
+    // Les lignes copiées ont de nouveaux identifiants : on compare les résultats sans eux.
+    const sansIds = (r: unknown) => JSON.parse(JSON.stringify(r).replace(/"ligneId":"[^"]*"/g, '"ligneId":""'));
+    expect(sansIds(variante.resultats)).toEqual(sansIds(plan.resultats));
 
     const vente = variante.lignes.find((l) => l.sens === "revenu")!;
     const baisse = await corrigerLigne(clients.collaborateur, variante.id, vente.id, { prixUnitaire: 100 });
