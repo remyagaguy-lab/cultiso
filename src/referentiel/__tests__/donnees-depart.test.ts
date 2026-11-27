@@ -63,7 +63,7 @@ describe("données de départ du référentiel", () => {
     });
     expect(budget.ateliersSansModele).toEqual([]);
     expect(budget.charges.every((c) => c.origine === "estimation")).toBe(true);
-    const f = calculerFinances({ charges: budget.charges, revenus: budget.revenus });
+    const f = calculerFinances({ charges: budget.charges, revenus: budget.revenus, horizonAnnees: 3 });
     const an1 = f.scenarios.realiste.annees[0];
     expect(an1.chiffreAffaires).toBeGreaterThan(0);
     expect(an1.chargesVariables + an1.chargesFixes).toBeGreaterThan(0);

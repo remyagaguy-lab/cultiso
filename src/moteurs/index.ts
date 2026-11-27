@@ -9,9 +9,28 @@ export {
   type EntreeFinance,
   type LigneCharge,
   type LigneRevenu,
+  type AnneeResultat,
+  type MoisTresorerie,
+  type PointBas,
   type ResultatFinance,
+  type ResultatScenario,
   type Scenario,
 } from "./finance";
+export {
+  coefficientProduction,
+  construireGrille,
+  HORIZON_MAX_MOIS,
+  indiceHausse,
+  resoudreHorizon,
+  schemaCalendrierLigne,
+  schemaMontee,
+  type Grille,
+  type Horizon,
+  type InvestissementDate,
+  type LigneGrille,
+  type Montee,
+  type OrigineHorizon,
+} from "./calendrier";
 export { CODES_CONTROLE, type CodeControle, type Controle, type NiveauControle, type Ratios, type RegleFinanceur } from "./controles";
 export { alertesPrudence } from "./prudence";
 export {

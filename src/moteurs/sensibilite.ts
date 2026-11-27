@@ -5,6 +5,7 @@
 // - test du prix bas : le revenu du ménage reste-t-il couvert ? (DOC-00011 p. 33) ;
 // - tableau rendement × charges du seuil de commercialisation (DOC-00106 p. 13).
 // Ce module ne connaît pas le moteur financier : il reçoit la fonction qui calcule un scénario (pas de dépendance circulaire).
+import { indiceHausse } from "./calendrier";
 import { fcfa, somme, taux } from "./commun";
 import type { AnneeResultat, EntreeFinanceValidee, StatutRentabilite, Verdict } from "./finance";
 
@@ -221,9 +222,12 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
   // Équilibre : le résultat est linéaire dans le prix et dans le rendement (pertes et charges inchangées),
   // donc coefficient = (CA − résultat) / CA, sur l'année où il est le plus haut.
   const coef = (a: AnneeResultat) => (a.chiffreAffaires > 0 ? (a.chiffreAffaires - a.resultat) / a.chiffreAffaires : Infinity);
-  const anEq = base.annees.reduce((pire, a) => (coef(a) > coef(pire) ? a : pire), base.annees[0]);
+  // Les années sans vente (l'an 1 d'une plantation) n'ont pas de prix d'équilibre : on les écarte quand il y a des ventes ailleurs.
+  const avecVentes = base.annees.filter((a) => a.chiffreAffaires > 0);
+  const candidatsEq = avecVentes.length > 0 ? avecVentes : base.annees;
+  const anEq = candidatsEq.reduce((pire, a) => (coef(a) > coef(pire) ? a : pire), candidatsEq[0]);
   const kEq = anEq.chiffreAffaires > 0 ? coef(anEq) : null;
-  const hPrixEq = Math.pow(1 + e.haussePrix, anEq.an - 1);
+  const hPrixEq = (r: Entree["revenus"][number]) => indiceHausse(r, e.haussePrix, anEq.an);
   const equilibre: Equilibre = {
     an: anEq.an,
     coefficient: kEq === null ? null : taux(kEq),
@@ -235,8 +239,8 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
             .map((r) => ({
               ligneId: r.id,
               libelle: r.libelle,
-              prixActuel: prixArrondi(r.prixUnitaire * hPrixEq),
-              prixEquilibre: prixArrondi(r.prixUnitaire * hPrixEq * kEq),
+              prixActuel: prixArrondi(r.prixUnitaire * hPrixEq(r)),
+              prixEquilibre: prixArrondi(r.prixUnitaire * hPrixEq(r) * kEq),
               quantiteActuelle: prixArrondi(r.quantite.realiste),
               quantiteEquilibre: prixArrondi(r.quantite.realiste * kEq),
             })),
@@ -266,6 +270,7 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
     let pire: number | null = null;
     for (const a of base.annees) {
       const ca = a.chiffreAffaires * (1 + vr);
+      if (a.chiffreAffaires <= 0 && avecVentes.length > 0) continue; // année sans vente : pas de prix seuil
       if (ca <= 0) return null;
       const c = besoinDecaisse(a, 1 + vc) / ca;
       if (pire === null || c > pire) pire = c;
@@ -276,7 +281,7 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
   // Le prix seuil de la ligne principale suit l'année retenue dans chaque case : on le prend au prix de l'an où la case est atteinte.
   const principale = [...e.revenus].filter((r) => caLigne(r) > 0).sort((a, b) => caLigne(b) - caLigne(a))[0];
   const anCase = (vr: number, vc: number) =>
-    base.annees.reduce((pire, a) => (besoinDecaisse(a, 1 + vc) / (a.chiffreAffaires * (1 + vr)) > besoinDecaisse(pire, 1 + vc) / (pire.chiffreAffaires * (1 + vr)) ? a : pire), base.annees[0]).an;
+    candidatsEq.reduce((pire, a) => (besoinDecaisse(a, 1 + vc) / (a.chiffreAffaires * (1 + vr)) > besoinDecaisse(pire, 1 + vc) / (pire.chiffreAffaires * (1 + vr)) ? a : pire), candidatsEq[0]).an;
   const tableauSeuil: TableauSeuil = {
     axeRendement: p.axeRendement,
     axeCharges: p.axeCharges,
@@ -289,7 +294,7 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
           prixSeuil: p.axeRendement.map((vr, i) =>
             p.axeCharges.map((vc, j) => {
               const c = brut[i][j];
-              return c === null ? null : prixArrondi(principale.prixUnitaire * Math.pow(1 + e.haussePrix, anCase(vr, vc) - 1) * c);
+              return c === null ? null : prixArrondi(principale.prixUnitaire * indiceHausse(principale, e.haussePrix, anCase(vr, vc)) * c);
             }),
           ),
         }

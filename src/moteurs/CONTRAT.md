@@ -14,6 +14,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 | 1.6.0 | **R10** : le générateur de budget met à la taille de l'atelier les bornes de rendement du référentiel (`ModeleRevenu.bornes` → `revenus[].bornesQuantite`, avec source, date et statut) |
 | 1.7.0 | **S5 (intensité)** : `sensibilite.intensite` (part des intrants et de la main d'oeuvre, coût à l'unité vendue, rendement requis pour qu'une hausse d'intensité ne fasse pas perdre d'argent) ; l'alerte `ALERTE_EXPOSITION_PRIX` en reprend les chiffres |
 | 1.8.0 | **M14** : `simulerBandes` (atelier animal à bandes) et `simulerTroupeau` (cheptel en flux), deux moteurs autonomes ; `calculerFinances` est inchangé |
+| **2.0.0** | **M1, M2, M17** : moteur calendaire. Grille mensuelle sur tout l'horizon (jusqu'à 120 mois), trésorerie mensuelle pluriannuelle, investissements et prêts datés avec renouvellement, amortissement au prorata, point bas avec et sans financement, montée en production, hausses par ligne, horizon libre. **Changements de sens** : voir « Moteur calendaire » ci-dessous. Les plans calculés avec une version 1.x sont **à recalculer** (`versionMoteur` < 2) |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -22,7 +23,13 @@ Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée 
 | Champ | Défaut | Sens |
 |---|---|---|
 | `charges[]`, `revenus[]` | | Lignes (voir `schemaLigneCharge`, `schemaLigneRevenu`) |
-| `horizonAnnees` | 3 | 1 à 5 ans, l'an 1 répété (pas de calendrier : M1) |
+| `horizonAnnees`, `horizonMois`, `horizonCycles` | voir M17 | Horizon libre (M17). `horizonMois` (1 à 120) l'emporte sur `horizonCycles` (nombre du plus long cycle des lignes), qui l'emporte sur `horizonAnnees` (1 à 10). Sans aucun des trois : le plus long entre un cycle, la durée du crédit (mois du tirage + durée) et le plein régime, arrondi à l'année (12 mois au moins). `HORIZON_PAR_DEFAUT` (3) n'est plus le défaut du moteur : c'est celui du service Cultiplan et des outils de Cultisia |
+| `montee[]` | aucune | M2 : `{ atelierId, coefficientsRendement?[], tauxUtilisation?[], debutant?: { coefficientAn1 }, origine? }`, tableaux par année (index 0 = an 1) ; au-delà du dernier élément, la dernière valeur se prolonge |
+| `moisTirageCredit` | 0 | Mois où le crédit est tiré ; les échéances suivent |
+| `charges[].moisAcquisition`, `charges[].renouvellement` | 0, vrai | Investissement : mois de l'achat (0 = démarrage) ; renouvelé à la fin de la durée de vie si l'horizon le permet |
+| `charges[].atelierId`, `revenus[].atelierId` | absent | Rattache la ligne à la montée en production d'un atelier |
+| `lignes[].hausseAnnuelle`, `lignes[].hausseParAn[]` | absentes | M2 : hausse propre à la ligne (prix pour un revenu, coût pour une charge) ; `hausseParAn[j]` = passage de l'an j+1 à l'an j+2 ; sinon `hausseAnnuelle`, sinon `haussePrix` / `hausseCharges` |
+| `lignes[].calendrier` | absent | R1 : `{ debutMois = 1, parts[], origine? }` ; ligne par cycle seulement ; `parts` (somme = 1) = part du montant du cycle à chaque mois du cycle ; remplace `moisDecaissement` / `moisVente` |
 | `tauxActualisation` | 0,12 | Pour la VAN |
 | `hausseCharges`, `haussePrix` | 0 | Hausse annuelle uniforme |
 | `apport`, `credit` | 0, aucun | Financement |
@@ -35,7 +42,7 @@ Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée 
 | `charges[].referenceItineraire` | absente | `{ quantite, source? }` : quantité attendue d'après l'itinéraire, dans l'unité et la période de `quantite` |
 | `charges[].couverture` | absente | `{ moisCouverts, dureeBandeMois }` : ce que couvre la quantité budgétée, et la durée de la bande |
 | `charges[].emploi` | absent | `{ effectif, salaireMensuel?, saisonnier = faux, moisTravailles? }` |
-| `revenus[].perenne` | absent | `{ anneeEntreeProduction? }` : culture pérenne ; sa seule présence rend la déclaration obligatoire |
+| `revenus[].perenne` | absent | `{ anneeEntreeProduction? }` : culture pérenne ou cheptel à constituer ; sa seule présence rend la déclaration obligatoire. **Depuis 2.0.0, aucune vente n'est comptée avant l'année indiquée** (les charges courent) |
 | `revenus[].debouche` | absent | `{ volumeAbsorbable, source? }` : volume que le marché ou un contrat absorbe (unité et période de `quantite`) |
 | `seuilsControles` | absents | `{ ecartIntrants?, ecartMasseSalariale?, concentrationMax? }`, en décimal. **Aucune valeur par défaut** : sans seuil, le contrôle donne la mesure en niveau `info`, sans jugement |
 
@@ -56,11 +63,11 @@ Les champs historiques (chiffre d'affaires, charges variables et fixes, marge br
 | `soldeResiduel` | capacité − annuités ; doit rester positif | DOC-00006 p. 24 |
 | `cafDisponible` | excédent brut − annuités − prélèvements nets | guide SPBN-AFOCG |
 
-### Trésorerie de l'an 1 (`tresorerieMensuelleAn1[]`, mois 0 à 12)
+### Trésorerie mensuelle (`tresorerieMensuelle[]`, mois 0 à N ; `tresorerieMensuelleAn1[]` = ses 13 premiers mois)
 
 `entrees`, `sorties` (investissements au mois 0 ; charges, salaires, impôts, échéances ensuite), `prelevementsNets`, `solde = entrees − sorties − prelevementsNets`, `cumul`, et `retraitPossible` : l'argent que le ménage peut retirer ce mois-là sans que la trésorerie devienne négative avant la fin de l'an 1 (le plus bas des cumuls de ce mois à décembre, jamais négatif ; DOC-00686).
 
-Autour : `pointBasTresorerie { montant, mois }`, `moisDeficitaires` (solde du mois négatif, DOC-00011 p. 39-42), `moisTresorerieNegative` (cumul négatif). Le BFR reste le creux de la trésorerie **d'exploitation** (sans financement ni ménage).
+Autour : `pointBasTresorerie { montant, mois, an, moisDansAn }` (sur **tout l'horizon**, financement et ménage compris), `pointBasSansFinancement` (même forme : sans apport, sans crédit, investissements, impôts et ménage compris), `moisDeficitaires` (solde du mois négatif, DOC-00011 p. 39-42), `moisTresorerieNegative` (cumul négatif), tous sur l'horizon. Le BFR reste le creux de la trésorerie **d'exploitation** (sans financement, investissements ni ménage), cette fois sur l'horizon. `retraitPossible` : le plus bas des cumuls du mois à la **fin de l'horizon**, jamais négatif.
 
 ### Seuil de commercialisation (`seuilCommercialisation`, DOC-00106 p. 4-5)
 
@@ -160,6 +167,24 @@ Conventions du modèle source (DOC-00686) : mortalité, consommation et producti
 
 Service Cultiplan : `simulerAtelierAnimal` (`src/modules/cultiplan/atelier-animal.ts`) prend la variante de courbes, la durée de bande et les jours par mois du référentiel (ou de l'appelant, avec sa source) ; sans courbe ou sans durée, l'atelier est « non évalué » et la liste de ce qui manque est donnée. Outil Cultisia `simuler_atelier_animal`, routes `POST /api/cultiplan/elevage/bandes` et `/elevage/troupeau`.
 
-## Limites connues (moteur actuel, avant M1)
+## Moteur calendaire (M1, M2, M17, R1, R4 ; moteur 2.0.0)
 
-Une année type répétée ; trésorerie mensuelle de l'an 1 seulement ; prélèvements constants sur l'horizon ; un seul crédit tiré au mois 0 ; pas de fiscalité calculée. Voir `Cultiso/2_Pilotage/03_Produit-et-technologie/ANALYSE-RESSOURCES-MODELISATION.md` §3.3.
+`src/moteurs/calendrier.ts` (`construireGrille`, `resoudreHorizon`) construit la grille ; `finance.ts` en tire les années, la trésorerie et les indicateurs. **Aucune valeur de référence dans le code** : coefficients de montée, profils de cycle et hausses arrivent en paramètres.
+
+**Conventions.** Mois 0 = démarrage ; mois 1 à N = grille ; l'an 1 = mois 1 à 12 (le mois 0 n'appartient à aucune année de résultat) ; la dernière année est **partielle** si N n'est pas un multiple de 12 (`annees[].mois`). Une ligne sans `calendrier` reste annuelle et se répète à l'identique chaque année (comportement 1.x : `moisDecaissement` et `moisVente` valent pour chaque année). Avec `calendrier`, le cycle k démarre au mois `debutMois + arrondi(k × 12 / cyclesParAn)` ; la part d'un cycle hors de l'horizon n'est pas comptée.
+
+**Investissements.** Décaissés au mois `moisAcquisition` (0 par défaut), amortis en linéaire **par mois** à partir du mois suivant (prorata : un achat au mois 7 donne 5 mois d'amortissement l'an 1), **renouvelés** à la fin de la durée de vie (au prix de l'année, avec la hausse de la ligne) tant que le renouvellement tombe avant la fin de l'horizon ; `renouvellement: false` l'interdit. `investissementTotal` reste l'achat initial (les renouvellements se financent par l'exploitation) ; `investissementsDates[]` liste achats et renouvellements ; un achat ou un tirage après l'horizon n'est pas compté et `avertissements[]` le dit.
+
+**Montée en production (M2).** Vente de l'année = quantité × `coefficientsRendement[an]` × `tauxUtilisation[an]` × (`debutant.coefficientAn1` en an 1) ; les **charges variables** de l'atelier suivent `tauxUtilisation` seulement (un rendement faible ne baisse pas le coût) ; un `perenne.anneeEntreeProduction` n'est vendu qu'à partir de cette année. Le seuil de commercialisation et l'équilibre de la sensibilité ignorent les années sans vente.
+
+**Horizon et indicateurs annuels (M17).** `horizon { mois, annees, anneesCompletes, origine ("mois" | "cycles" | "annees" | "defaut"), cycleMois, creditMois, pleinRegimeMois, indicateursAnnuels }` est dans chaque scénario et dans `ResultatFinance`. **`van`, `tri` et `delaiRecuperationAns` valent `null` (et `indicateursAnnuels` est faux) s'il y a moins de deux années complètes.** Les flux annuels sont : −achats du mois 0, puis excédent brut − investissements de chaque année complète (renouvellements compris), sans valeur résiduelle.
+
+**Sorties ajoutées.** `horizon`, `tresorerieMensuelle`, `grille.lignes[] { id, libelle, sens, classe, nature, atelierId, mensuel[0..N] }` (toutes les lignes, mois par mois), `investissementsDates`, `avertissements`, `pointBasSansFinancement`, `annees[].mois`, `annees[].investissements`. **Changements de sens** : `pointBasTresorerie` (avant : an 1) porte sur tout l'horizon et gagne `an` et `moisDansAn` ; `moisDeficitaires`, `moisTresorerieNegative`, `verdict.tresorerieToujoursPositive` et le statut portent sur tout l'horizon ; `van` peut être `null` ; `HORIZON_PAR_DEFAUT` n'est plus le défaut du moteur ; un investissement de durée de vie plus courte que l'horizon est renouvelé.
+
+**Contrôles.** `HORIZON_INSUFFISANT` (nouveau : horizon plus court que le crédit = alerte, plus court que le plein régime = info). `PERIODE_IMPRODUCTIVE` change de sens : le moteur compte désormais zéro vente avant l'année d'entrée en production (`info`, valeurs `anneesSansProduction`), alerte si l'entrée tombe après l'horizon ; `anneesSurestimees` disparaît. `TRESORERIE_NEGATIVE` parle de tout le plan.
+
+**Moteurs autonomes.** `bandes.ts`, `troupeau.ts` (M14) et `financement.ts` (M6) gardent leur grille mensuelle (mois 0 = démarrage, mois 1 à N, mêmes conventions que la grille de M1). Leur raccord à la grille est décrit dans « Raccord des moteurs autonomes » (service Cultiplan).
+
+## Limites connues (moteur 2.0.0)
+
+Prélèvements du ménage constants sur l'horizon (sans hausse) ; un seul crédit tiré dans `calculerFinances` (les prêts multiples, crédits de campagne et subventions sont dans `financement.ts`) ; pas de fiscalité calculée ; pas de valeur résiduelle dans la VAN ; le coefficient d'un cycle suit l'année du mois où le montant tombe. Voir `Cultiso/2_Pilotage/03_Produit-et-technologie/ANALYSE-RESSOURCES-MODELISATION.md` §3.3.

@@ -13,6 +13,8 @@ describe("moteur financier", () => {
     expect(reel.annees).toHaveLength(3);
     expect(reel.annees[0]).toEqual({
       an: 1,
+      mois: 12,
+      investissements: 600_000,
       chiffreAffaires: 3_150_000,
       chargesVariables: 1_200_000,
       chargesFixes: 120_000,
@@ -107,8 +109,18 @@ describe("moteur financier", () => {
   });
 
   it("amortissement arrêté à la fin de la durée de vie", () => {
-    const a = calculerFinances({ ...tomate2ha, horizonAnnees: 5 });
+    const sansRenouvellement = { ...tomate2ha, horizonAnnees: 5, charges: tomate2ha.charges.map((c) => (c.id === "pompe" ? { ...c, renouvellement: false } : c)) };
+    const a = calculerFinances(sansRenouvellement);
     expect(a.scenarios.realiste.annees.map((x) => x.amortissements)).toEqual([200_000, 200_000, 200_000, 0, 0]);
+  });
+
+  it("renouvellement : la motopompe de 3 ans est rachetée au mois 36 et amortie ensuite", () => {
+    const a = calculerFinances({ ...tomate2ha, horizonAnnees: 5 }).scenarios.realiste;
+    expect(a.annees.map((x) => x.amortissements)).toEqual([200_000, 200_000, 200_000, 200_000, 200_000]);
+    expect(a.investissementsDates.map((i) => [i.mois, i.montant, i.renouvellement])).toEqual([[0, 600_000, false], [36, 600_000, true]]);
+    expect(a.annees.map((x) => x.investissements)).toEqual([600_000, 0, 600_000, 0, 0]);
+    expect(a.tresorerieMensuelle).toHaveLength(61);
+    expect(a.tresorerieMensuelle[36].sorties).toBeGreaterThanOrEqual(600_000);
   });
 
   it("plusieurs cycles par an", () => {

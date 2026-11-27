@@ -1,18 +1,34 @@
-// Moteur financier : compte de résultat pluriannuel, trésorerie mensuelle de l'an 1, BFR,
-// seuil de rentabilité, VAN, TRI, délai de récupération, trois scénarios,
+// Moteur financier (version 2.0.0, moteur calendaire M1) : grille mensuelle sur tout l'horizon (calendrier.ts), compte de résultat
+// annuel tiré de la grille, trésorerie mensuelle pluriannuelle, BFR, seuil de rentabilité, VAN, TRI, délai de récupération, trois scénarios,
 // revenu du ménage et capacité de remboursement (M3), contrôles nommés et ratios (M4), sensibilité (M5).
 // Formules par ligne du Cultiso Brouillon (ground truth §II.2), pluriannuel du Stimulateur, crédit d'Agripilot.
 // Le moteur ne connaît aucune filière : seulement des lignes de charges et de revenus.
 //
 // Conventions :
 // - une ligne « cycle » compte par cycle de production et se répète `cyclesParAn` fois ; une ligne « an » compte par an ;
-// - les investissements sont décaissés au démarrage (mois 0) et amortis en linéaire sur leur durée de vie ;
-// - VAN et TRI portent sur les flux économiques (avant financement) : −investissement, puis l'excédent brut de chaque année ;
-//   aucune valeur résiduelle n'est comptée (choix prudent) ;
+// - les investissements sont décaissés au mois d'acquisition (le démarrage par défaut), amortis en linéaire par mois (prorata) et
+//   renouvelés à la fin de leur durée de vie tant que l'horizon le permet ;
+// - VAN et TRI portent sur les flux économiques (avant financement) : −investissement initial, puis l'excédent brut de chaque année
+//   complète moins les investissements et renouvellements de l'année ; aucune valeur résiduelle n'est comptée (choix prudent) ;
+//   ils ne sont calculés que si l'horizon compte au moins deux années complètes ;
 // - pas d'impôt calculé sur le résultat (fiscalité par pays : M8) ; un montant d'impôts annuel peut être fourni ;
 // - le ménage (prélèvements, revenus extérieurs) est constant d'une année sur l'autre, sans hausse.
 // Contrat complet : src/moteurs/CONTRAT.md.
 import { z } from "zod";
+import {
+  champsHausseLigne,
+  coefficientProduction,
+  construireGrille,
+  HORIZON_MAX_MOIS,
+  indiceHausse,
+  schemaCalendrierLigne,
+  schemaHorizon,
+  schemaMontee,
+  sommeAnnee,
+  type Horizon,
+  type InvestissementDate,
+  type LigneGrille,
+} from "./calendrier";
 import { fcfa, somme, taux, valider, VERSION_MOTEURS } from "./commun";
 import { calculerRatios, controler, type Controle, type DonneesControles, type Ratios } from "./controles";
 import { echeancierBrut, schemaCredit } from "./credit";
@@ -44,6 +60,15 @@ export const schemaLigneCharge = z
     dureeVieAns: z.number().positive().optional(),
     /** Mois de décaissement (1 à 12, relatifs au démarrage) ; réparti sur 12 mois sinon. */
     moisDecaissement: mois.optional(),
+    /** Atelier de la ligne : rattache la ligne à la montée en production de cet atelier (M2). */
+    atelierId: z.string().min(1).optional(),
+    ...champsHausseLigne,
+    /** Profil mensuel du cycle (R1) : remplace `moisDecaissement` pour une ligne par cycle. */
+    calendrier: schemaCalendrierLigne.optional(),
+    /** Investissement : mois de l'achat (0 = démarrage, 1 à 120). */
+    moisAcquisition: z.number().int().min(0).max(HORIZON_MAX_MOIS).optional(),
+    /** Investissement : renouvelé à la fin de sa durée de vie si l'horizon le permet (vrai par défaut). */
+    renouvellement: z.boolean().default(true),
     /** Fournisseur de la ligne, pour mesurer la concentration des achats (M4). */
     fournisseur: z.string().min(1).optional(),
     /** Quantité attendue d'après l'itinéraire technique du référentiel, dans l'unité et la période de `quantite` : sert à signaler un écart (M4, §3.6). */
@@ -76,6 +101,11 @@ export const schemaLigneRevenu = z.object({
   cyclesParAn: z.number().positive().default(1),
   /** Mois de vente (1 à 12) ; réparti sur 12 mois sinon. */
   moisVente: mois.optional(),
+  /** Atelier de la ligne : rattache la ligne à la montée en production de cet atelier (M2). */
+  atelierId: z.string().min(1).optional(),
+  ...champsHausseLigne,
+  /** Profil mensuel du cycle (R1) : remplace `moisVente` pour une ligne par cycle. */
+  calendrier: schemaCalendrierLigne.optional(),
   /** Bornes de production du référentiel, dans l'unité et la période de `quantite`, déjà mises à la taille de l'atelier (M4). */
   bornesQuantite: z
     .object({
@@ -88,7 +118,8 @@ export const schemaLigneRevenu = z.object({
     .optional(),
   /** Client principal de la ligne, pour mesurer la concentration des ventes (M4). */
   client: z.string().min(1).optional(),
-  /** Culture pérenne : année où la plantation produit (1 = dès la première année). Le moteur répète encore une année type (M1, R4). */
+  /** Culture pérenne ou cheptel à constituer : année où l'atelier produit (1 = dès la première année). Le moteur ne compte aucune vente avant cette année (M1, R4) ;
+   *  la seule présence de `perenne` oblige à déclarer l'année. */
   perenne: z.object({ anneeEntreeProduction: z.number().int().min(1).optional() }).optional(),
   /** Débouché justifié : volume que le marché ou un contrat absorbe, dans l'unité et la période de `quantite`, pertes déduites (M13 attendu pour le dimensionnement à rebours). */
   debouche: z.object({ volumeAbsorbable: z.number().min(0), source: z.string().optional() }).optional(),
@@ -136,7 +167,12 @@ export const schemaParametresSensibilite = z.object({
 export const schemaFinance = z.object({
   charges: z.array(schemaLigneCharge),
   revenus: z.array(schemaLigneRevenu),
-  horizonAnnees: z.number().int().min(1).max(5).default(HORIZON_PAR_DEFAUT),
+  /** Horizon libre (M17) : `horizonMois`, `horizonCycles` ou `horizonAnnees` ; sans aucun des trois, le plus long entre un cycle, la durée du crédit et le plein régime. */
+  ...schemaHorizon,
+  /** Montée en production par atelier (M2, R4) : coefficients de rendement et d'utilisation par année, rendement du débutant. */
+  montee: z.array(schemaMontee).default([]),
+  /** Mois où le crédit est tiré (0 = démarrage). Les échéances suivent ce mois. */
+  moisTirageCredit: z.number().int().min(0).max(HORIZON_MAX_MOIS).default(0),
   tauxActualisation: z.number().min(0).max(1).default(TAUX_ACTUALISATION_PAR_DEFAUT),
   hausseCharges: z.number().min(-0.5).max(1).default(0),
   haussePrix: z.number().min(-0.5).max(1).default(0),
@@ -176,6 +212,10 @@ type Revenu = z.output<typeof schemaLigneRevenu>;
 
 export interface AnneeResultat {
   an: number;
+  /** Mois de la grille que couvre cette année (12, sauf la dernière année d'un horizon qui n'est pas un multiple de 12). */
+  mois: number;
+  /** Investissements décaissés dans l'année (achats datés et renouvellements ; l'achat du démarrage compte dans l'an 1). */
+  investissements: number;
   chiffreAffaires: number;
   chargesVariables: number;
   /** Charges fixes d'exploitation, salaires des employés compris. */
@@ -252,13 +292,34 @@ export interface Verdict {
   menageCouvert: boolean | null;
 }
 
+/** Un point bas de trésorerie, daté : mois de la grille (0 = démarrage), année et mois dans l'année (0 pour le démarrage). */
+export interface PointBas {
+  montant: number;
+  mois: number;
+  an: number;
+  moisDansAn: number;
+}
+
 export interface ResultatScenario {
   annees: AnneeResultat[];
-  /** Mois 0 (démarrage : apport, crédit, investissements) puis mois 1 à 12. */
+  /** Horizon résolu (M17) : mois, années, origine, cycle, crédit, plein régime, indicateurs annuels disponibles. */
+  horizon: Horizon;
+  /** Trésorerie mensuelle sur tout l'horizon : mois 0 (démarrage : apport, crédit, investissements) puis mois 1 à N. */
+  tresorerieMensuelle: MoisTresorerie[];
+  /** Les 13 premiers mois de `tresorerieMensuelle` (mois 0 à 12), conservés pour les lecteurs de la version 1. */
   tresorerieMensuelleAn1: MoisTresorerie[];
+  /** Grille mensuelle de toutes les lignes (revenus, charges d'exploitation, investissements avec renouvellements), mois 0 à N. */
+  grille: { lignes: LigneGrille[] };
+  /** Investissements et renouvellements datés. */
+  investissementsDates: InvestissementDate[];
+  /** Ce que le moteur n'a pas pu placer (achat ou tirage après l'horizon). */
+  avertissements: string[];
+  /** Vrai si l'horizon compte au moins deux années complètes : sinon VAN, TRI et délai de récupération sont null. */
+  indicateursAnnuels: boolean;
   besoinFondsRoulement: number;
   seuilRentabilite: { chiffreAffaires: number | null; moisAtteint: number | null };
-  van: number;
+  /** null si l'horizon est trop court (`indicateursAnnuels` faux). */
+  van: number | null;
   tri: number | null;
   delaiRecuperationAns: number | null;
   rentabilite: number | null;
@@ -267,11 +328,13 @@ export interface ResultatScenario {
   statut: StatutRentabilite;
   // M3
   verdict: Verdict;
-  /** Point bas de la trésorerie cumulée de l'an 1 (mois 0 à 12) et le premier mois où il est atteint. */
-  pointBasTresorerie: { montant: number; mois: number };
-  /** Mois (1 à 12) dont le solde est négatif (on dépense plus qu'on ne reçoit ce mois-là). */
+  /** Point bas de la trésorerie cumulée sur tout l'horizon (financement et prélèvements compris) et le premier mois où il est atteint. */
+  pointBasTresorerie: PointBas;
+  /** Point bas sans financement : ni apport, ni crédit (tirage et échéances), investissements, impôts et ménage compris. */
+  pointBasSansFinancement: PointBas;
+  /** Mois (1 à N) dont le solde est négatif (on dépense plus qu'on ne reçoit ce mois-là). */
   moisDeficitaires: number[];
-  /** Mois (0 à 12) où la trésorerie cumulée est négative. */
+  /** Mois (0 à N) où la trésorerie cumulée est négative. */
   moisTresorerieNegative: number[];
   seuilCommercialisation: SeuilCommercialisation;
   // M4
@@ -282,6 +345,8 @@ export interface ResultatScenario {
 
 export interface ResultatFinance {
   versionMoteur: string;
+  /** Horizon résolu (M17), identique pour les trois scénarios. */
+  horizon: Horizon;
   investissementTotal: number;
   /** Investissement + BFR (scénario réaliste) − apport, jamais négatif. */
   besoinFinancement: number;
@@ -290,20 +355,12 @@ export interface ResultatFinance {
   sensibilite: Sensibilite;
 }
 
-const montantCharge = (c: Charge) => c.quantite * c.prixUnitaire * c.frequence;
 const parAn = (montant: number, l: { base: "cycle" | "an"; cyclesParAn: number }) =>
   l.base === "an" ? montant : montant * l.cyclesParAn;
+const montantCharge = (c: Charge) => c.quantite * c.prixUnitaire * c.frequence;
 const quantiteVendueAn = (r: Revenu, scenario: Scenario) => parAn(r.quantite[scenario] * (1 - r.pertes), r);
 /** Tolérance d'arrondi pour comparer des montants en FCFA. */
 const DEMI_FCFA = 0.5;
-
-/** Répartit un montant annuel sur des mois (index 1 à 12). */
-function repartir(montant: number, moisListe: number[] | undefined): number[] {
-  const tableau = new Array<number>(13).fill(0);
-  const cibles = moisListe && moisListe.length > 0 ? moisListe : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  for (const m of cibles) tableau[m] += montant / cibles.length;
-  return tableau;
-}
 
 /** VAN de flux annuels (index 0 = démarrage). */
 export function van(flux: readonly number[], tauxActualisation: number): number {
@@ -367,6 +424,8 @@ export function statutCombine(v: Verdict): StatutRentabilite {
 /** Calcul brut (non arrondi) d'un scénario, réutilisé par la sensibilité. */
 export interface CalculScenario {
   annees: AnneeResultat[];
+  horizon: Horizon;
+  grille: ReturnType<typeof construireGrille>;
   tresorerie: MoisTresorerie[];
   creux: number;
   seuilCA: number | null;
@@ -374,7 +433,8 @@ export interface CalculScenario {
   fluxEconomiques: number[];
   rentabilite: number | null;
   verdict: Verdict;
-  pointBas: { montant: number; mois: number };
+  pointBas: PointBas;
+  pointBasSansFinancement: PointBas;
   seuilCommercialisation: SeuilCommercialisation;
 }
 
@@ -391,37 +451,25 @@ function appliquerEcarts(e: Entree, scenario: Scenario): Entree {
   };
 }
 
+const datation = (mois: number) => ({ an: mois <= 0 ? 1 : Math.ceil(mois / 12), moisDansAn: mois <= 0 ? 0 : ((mois - 1) % 12) + 1 });
+
 export function calculerScenarioBrut(entree: Entree, scenario: Scenario): CalculScenario {
   const e = appliquerEcarts(entree, scenario);
-  const credit = e.credit ? echeancierBrut(e.credit) : null;
-  const investissements = e.charges.filter((c) => c.classe === "investissement");
-  const exploitation = e.charges.filter((c) => c.classe === "exploitation");
-  const investissementTotal = somme(investissements.map(montantCharge));
-  const caAn1 = (r: Revenu) => parAn(r.quantite[scenario] * r.prixUnitaire * (1 - r.pertes), r);
-  const prelevementsNets = e.menage ? e.menage.prelevementsAnnuels - e.menage.revenusExterieursAnnuels : 0;
+  const g = construireGrille(e, scenario);
+  const N = g.horizon.mois;
+  const annuel = (serie: readonly number[], an: number) => sommeAnnee(serie, an, N);
 
   const annees: AnneeResultat[] = [];
-  for (let an = 1; an <= e.horizonAnnees; an++) {
-    const hPrix = Math.pow(1 + e.haussePrix, an - 1);
-    const hCharges = Math.pow(1 + e.hausseCharges, an - 1);
-    const chiffreAffaires = somme(e.revenus.map(caAn1)) * hPrix;
-    const coutAn = (nature: "fixe" | "variable") =>
-      somme(exploitation.filter((c) => c.nature === nature).map((c) => parAn(montantCharge(c), c))) * hCharges;
-    const salaires = e.salairesAnnuels * hCharges;
-    const chargesVariables = coutAn("variable");
-    const chargesFixes = coutAn("fixe") + salaires;
-    const amortissements = somme(
-      investissements.map((c) => {
-        const duree = c.dureeVieAns as number;
-        // Amortissement linéaire ; la dernière année peut être partielle.
-        const deja = Math.min(an - 1, duree);
-        return (montantCharge(c) * Math.max(0, Math.min(1, duree - deja))) / duree;
-      }),
-    );
-    const echeancesAn = credit ? credit.echeancier.filter((x) => Math.ceil(x.mois / 12) === an) : [];
-    const interets = somme(echeancesAn.map((x) => x.interets));
-    const remboursementCapital = somme(echeancesAn.map((x) => x.amortissement));
-    const impots = e.impotsAnnuels;
+  for (let an = 1; an <= g.horizon.annees; an++) {
+    const chiffreAffaires = annuel(g.chiffreAffaires, an);
+    const chargesVariables = annuel(g.chargesVariables, an);
+    const chargesFixes = annuel(g.chargesFixes, an);
+    const salaires = annuel(g.salaires, an);
+    const amortissements = annuel(g.amortissements, an);
+    const interets = annuel(g.interets, an);
+    const remboursementCapital = annuel(g.capitalRembourse, an);
+    const impots = annuel(g.impots, an);
+    const prelevementsNets = annuel(g.menage, an);
     const excedentBrut = chiffreAffaires - chargesVariables - chargesFixes;
     const resultat = excedentBrut - amortissements - interets - impots;
     const cafNette = resultat + amortissements;
@@ -430,6 +478,8 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
     const capaciteRemboursement = margeAvantISA - salaires - prelevementsNets - impots;
     annees.push({
       an,
+      mois: Math.min(12, N - (an - 1) * 12),
+      investissements: annuel(g.investissements, an) + (an === 1 ? g.investissements[0] : 0),
       chiffreAffaires,
       chargesVariables,
       chargesFixes,
@@ -452,43 +502,30 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
     });
   }
 
-  // Trésorerie mensuelle de l'an 1.
-  const entreesExploitation = new Array<number>(13).fill(0);
-  const sortiesExploitation = new Array<number>(13).fill(0);
-  for (const r of e.revenus) repartir(caAn1(r), r.moisVente).forEach((v, m) => (entreesExploitation[m] += v));
-  for (const c of exploitation)
-    repartir(parAn(montantCharge(c), c), c.moisDecaissement).forEach((v, m) => (sortiesExploitation[m] += v));
-  repartir(e.salairesAnnuels, e.moisSalaires).forEach((v, m) => (sortiesExploitation[m] += v));
-  const impotsMois = repartir(e.impotsAnnuels, undefined);
-  const echeances = new Array<number>(13).fill(0);
-  for (const x of credit?.echeancier ?? []) if (x.mois <= 12) echeances[x.mois] += x.echeance;
-  const menageMois = new Array<number>(13).fill(0);
-  if (e.menage) {
-    repartir(e.menage.prelevementsAnnuels, e.menage.moisPrelevements).forEach((v, m) => (menageMois[m] += v));
-    repartir(e.menage.revenusExterieursAnnuels, undefined).forEach((v, m) => (menageMois[m] -= v));
-  }
-
+  // Trésorerie mensuelle sur tout l'horizon, avec et sans financement.
   const lignesTreso: Omit<MoisTresorerie, "retraitPossible">[] = [];
   let cumul = 0;
+  let cumulSans = 0;
   let cumulExploitation = 0;
   let creux = 0;
-  for (let m = 0; m <= 12; m++) {
-    const entrees = m === 0 ? e.apport + (e.credit?.montant ?? 0) : entreesExploitation[m];
-    const sorties = m === 0 ? investissementTotal : sortiesExploitation[m] + impotsMois[m] + echeances[m];
-    const solde = entrees - sorties - menageMois[m];
+  let pointBas: PointBas = { montant: 0, mois: 0, ...datation(0) };
+  let pointBasSans: PointBas = { montant: 0, mois: 0, ...datation(0) };
+  for (let m = 0; m <= N; m++) {
+    const entrees = g.apport[m] + g.tirageCredit[m] + g.chiffreAffaires[m];
+    const sorties = g.investissements[m] + g.chargesExploitation[m] + g.impots[m] + g.echeances[m];
+    const solde = entrees - sorties - g.menage[m];
     cumul += solde;
-    lignesTreso.push({ mois: m, entrees, sorties, prelevementsNets: menageMois[m], solde, cumul });
+    cumulSans += g.chiffreAffaires[m] - g.investissements[m] - g.chargesExploitation[m] - g.impots[m] - g.menage[m];
+    lignesTreso.push({ mois: m, entrees, sorties, prelevementsNets: g.menage[m], solde, cumul });
+    if (m === 0 || cumul < pointBas.montant) pointBas = { montant: cumul, mois: m, ...datation(m) };
+    if (m === 0 || cumulSans < pointBasSans.montant) pointBasSans = { montant: cumulSans, mois: m, ...datation(m) };
     if (m > 0) {
-      cumulExploitation += entreesExploitation[m] - sortiesExploitation[m];
+      cumulExploitation += g.chiffreAffaires[m] - g.chargesExploitation[m];
       creux = Math.min(creux, cumulExploitation);
     }
   }
   const retraits = retraitsPossibles(lignesTreso.map((t) => t.cumul));
   const tresorerie: MoisTresorerie[] = lignesTreso.map((t, m) => ({ ...t, retraitPossible: retraits[m] }));
-  const pointBas = tresorerie.reduce((bas, t) => (t.cumul < bas.montant ? { montant: t.cumul, mois: t.mois } : bas), {
-    montant: tresorerie[0].cumul,
-    mois: 0,
-  });
 
   // Seuil de rentabilité de l'an 1 : charges fixes (amortissements, intérêts et impôts compris) / taux de marge sur coûts variables.
   const a1 = annees[0];
@@ -498,13 +535,15 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
   let moisAtteint: number | null = null;
   if (seuilCA !== null) {
     let caCumule = 0;
-    for (let m = 1; m <= 12 && moisAtteint === null; m++) {
-      caCumule += entreesExploitation[m];
+    for (let m = 1; m <= Math.min(12, N) && moisAtteint === null; m++) {
+      caCumule += g.chiffreAffaires[m];
       if (caCumule >= seuilCA - DEMI_FCFA) moisAtteint = m;
     }
   }
 
-  const fluxEconomiques = [-investissementTotal, ...annees.map((a) => a.excedentBrut)];
+  // Flux économiques annuels : −investissement du démarrage, puis excédent brut − investissements de chaque année complète.
+  const fluxEconomiques = [-g.investissements[0]];
+  for (let an = 1; an <= g.horizon.anneesCompletes; an++) fluxEconomiques.push(annees[an - 1].excedentBrut - annuel(g.investissements, an));
   const chargesCumulees = somme(annees.map((a) => a.chargesVariables + a.chargesFixes + a.amortissements + a.interets + a.impots));
   const resultatCumule = somme(annees.map((a) => a.resultat));
   const rentabilite = chargesCumulees > 0 ? resultatCumule / chargesCumulees : null;
@@ -516,6 +555,8 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
 
   return {
     annees,
+    horizon: g.horizon,
+    grille: g,
     tresorerie,
     creux,
     seuilCA,
@@ -524,6 +565,7 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
     rentabilite,
     verdict,
     pointBas,
+    pointBasSansFinancement: pointBasSans,
     seuilCommercialisation: seuilCommercialisation(e, scenario, annees),
   };
 }
@@ -533,35 +575,37 @@ export const besoinCommercialisation = (a: Pick<AnneeResultat, "chargesVariables
   a.chargesVariables + a.chargesFixes + a.impots + a.annuites + a.prelevementsNets;
 
 function seuilCommercialisation(e: Entree, scenario: Scenario, annees: AnneeResultat[]): SeuilCommercialisation {
-  // L'année la plus exigeante : coefficient le plus haut (ou besoin le plus haut s'il n'y a aucune vente).
+  // L'année la plus exigeante : coefficient le plus haut, parmi les années où il y a des ventes (une année sans vente, comme l'an 1 d'une
+  // plantation, n'a pas de prix seuil) ; sans aucune vente, le besoin le plus haut.
   const coef = (a: AnneeResultat) => (a.chiffreAffaires > 0 ? besoinCommercialisation(a) / a.chiffreAffaires : Infinity);
-  const retenue = annees.reduce((pire, a) => {
+  const avecVentes = annees.filter((a) => a.chiffreAffaires > 0);
+  const candidats = avecVentes.length > 0 ? avecVentes : annees;
+  const retenue = candidats.reduce((pire, a) => {
     const c = coef(a);
     const p = coef(pire);
     return c > p || (c === p && besoinCommercialisation(a) > besoinCommercialisation(pire)) ? a : pire;
-  }, annees[0]);
+  }, candidats[0]);
   const besoin = besoinCommercialisation(retenue);
   const coefficientPrix = retenue.chiffreAffaires > 0 ? besoin / retenue.chiffreAffaires : null;
-  const hPrix = Math.pow(1 + e.haussePrix, retenue.an - 1);
+  const vendue = (r: Revenu) => quantiteVendueAn(r, scenario) * coefficientProduction(e, r, retenue.an);
   return {
     an: retenue.an,
     besoinAnnuel: besoin,
     chiffreAffaires: retenue.chiffreAffaires,
     coefficientPrix,
     parLigne: e.revenus
-      .filter((r) => quantiteVendueAn(r, scenario) > 0)
-      .map((r) => ({
-        ligneId: r.id,
-        libelle: r.libelle,
-        quantiteVendue: quantiteVendueAn(r, scenario),
-        prixActuel: r.prixUnitaire * hPrix,
-        prixSeuil: coefficientPrix === null ? 0 : r.prixUnitaire * hPrix * coefficientPrix,
-      })),
+      .filter((r) => vendue(r) > 0)
+      .map((r) => {
+        const prixActuel = r.prixUnitaire * indiceHausse(r, e.haussePrix, retenue.an);
+        return { ligneId: r.id, libelle: r.libelle, quantiteVendue: vendue(r), prixActuel, prixSeuil: coefficientPrix === null ? 0 : prixActuel * coefficientPrix };
+      }),
   };
 }
 
 const arrondirAnnee = (a: AnneeResultat): AnneeResultat => ({
   an: a.an,
+  mois: a.mois,
+  investissements: fcfa(a.investissements),
   chiffreAffaires: fcfa(a.chiffreAffaires),
   chargesVariables: fcfa(a.chargesVariables),
   chargesFixes: fcfa(a.chargesFixes),
@@ -601,7 +645,9 @@ function arrondirScenario(c: CalculScenario, e: Entree, scenario: Scenario): Res
   }));
   const annees = c.annees.map(arrondirAnnee);
   const moisTresorerieNegative = c.tresorerie.filter((t) => t.cumul < -DEMI_FCFA).map((t) => t.mois);
-  const pointBasTresorerie = { montant: fcfa(c.pointBas.montant), mois: c.pointBas.mois };
+  const pointBasTresorerie = { ...c.pointBas, montant: fcfa(c.pointBas.montant) };
+  const pointBasSansFinancement = { ...c.pointBasSansFinancement, montant: fcfa(c.pointBasSansFinancement.montant) };
+  const indicateursAnnuels = c.horizon.indicateursAnnuels;
   const donnees: DonneesControles = {
     charges: e.charges.map((c) => ({ ...c, montantAnnuel: parAn(montantCharge(c), c) })),
     revenus: e.revenus.map((r) => ({
@@ -633,20 +679,28 @@ function arrondirScenario(c: CalculScenario, e: Entree, scenario: Scenario): Res
     annees,
     moisTresorerieNegative,
     pointBasTresorerie,
+    horizon: c.horizon,
   };
   const ratios = calculerRatios(donnees);
   return {
     annees,
-    tresorerieMensuelleAn1: tresorerie,
+    horizon: c.horizon,
+    tresorerieMensuelle: tresorerie,
+    tresorerieMensuelleAn1: tresorerie.slice(0, 13),
+    grille: { lignes: c.grille.lignes.map((l) => ({ ...l, mensuel: l.mensuel.map(fcfa) })) },
+    investissementsDates: c.grille.investissementsDates.map((i) => ({ ...i, montant: fcfa(i.montant) })),
+    avertissements: c.grille.avertissements,
+    indicateursAnnuels,
     besoinFondsRoulement: fcfa(-c.creux),
     seuilRentabilite: { chiffreAffaires: c.seuilCA === null ? null : fcfa(c.seuilCA), moisAtteint: c.moisAtteint },
-    van: fcfa(van(c.fluxEconomiques, e.tauxActualisation)),
-    tri: triBrut === null ? null : taux(triBrut),
-    delaiRecuperationAns: delai === null ? null : Math.round(delai * 100) / 100,
+    van: indicateursAnnuels ? fcfa(van(c.fluxEconomiques, e.tauxActualisation)) : null,
+    tri: !indicateursAnnuels || triBrut === null ? null : taux(triBrut),
+    delaiRecuperationAns: !indicateursAnnuels || delai === null ? null : Math.round(delai * 100) / 100,
     rentabilite: c.rentabilite === null ? null : taux(c.rentabilite),
     statut: statutCombine(c.verdict),
     verdict: c.verdict,
     pointBasTresorerie,
+    pointBasSansFinancement,
     moisDeficitaires: c.tresorerie.filter((t) => t.mois > 0 && t.solde < -DEMI_FCFA).map((t) => t.mois),
     moisTresorerieNegative,
     seuilCommercialisation: {
@@ -684,6 +738,7 @@ export function calculerFinances(entree: EntreeFinance): ResultatFinance {
   for (const s of SCENARIOS) scenarios[s].controles.push(...alertesPrudence(scenarios[s], s === "realiste" ? sensibilite : undefined));
   return {
     versionMoteur: VERSION_MOTEURS,
+    horizon: scenarios.realiste.horizon,
     investissementTotal: fcfa(investissementTotal),
     besoinFinancement: fcfa(Math.max(0, investissementTotal + scenarios.realiste.besoinFondsRoulement - e.apport)),
     scenarios,

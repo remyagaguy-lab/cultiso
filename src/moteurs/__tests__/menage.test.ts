@@ -98,7 +98,8 @@ describe("M3 : seuil de commercialisation (DOC-00106 p. 5)", () => {
 });
 
 describe("M3 : trésorerie mensuelle de l'an 1 avec le ménage", () => {
-  const s = calculerFinances(finance).scenarios.realiste;
+  // Horizon d'un an : sur plusieurs années, les mois déficitaires et le retrait possible couvrent tout l'horizon (moteur 2.0.0).
+  const s = calculerFinances({ ...finance, horizonAnnees: 1 }).scenarios.realiste;
   const t = s.tresorerieMensuelleAn1;
 
   it("prélèvements nets mois par mois et cumul", () => {
@@ -112,7 +113,7 @@ describe("M3 : trésorerie mensuelle de l'an 1 avec le ménage", () => {
   it("mois déficitaires, trésorerie négative et point bas", () => {
     expect(s.moisDeficitaires).toEqual([1, 2, 3, 6, 7, 8, 9, 10, 11, 12]);
     expect(s.moisTresorerieNegative).toEqual([3]);
-    expect(s.pointBasTresorerie).toEqual({ montant: -150_000, mois: 3 });
+    expect(s.pointBasTresorerie).toEqual({ montant: -150_000, mois: 3, an: 1, moisDansAn: 3 });
     expect(s.verdict.tresorerieToujoursPositive).toBe(false);
     expect(s.statut).toBe("limite");
   });

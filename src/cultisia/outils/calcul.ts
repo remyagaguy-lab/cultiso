@@ -31,6 +31,8 @@ const RAPPEL =
 
 const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
 /** Mise en forme d'un montant déjà calculé par un moteur (aucun calcul ici). */
+/** VAN : null quand l'horizon est trop court (moins de deux années complètes). */
+export const enVan = (van: number | null) => (van === null ? "non calculée (horizon de moins de deux ans)" : enFcfa(van));
 export const enFcfa = (montant: number) => `${nombre.format(montant).replace(/\s/g, " ")} FCFA`;
 const nombrePrix = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
 /** Mise en forme d'un prix unitaire déjà calculé (centimes gardés : un kg se vend parfois moins de 100 FCFA). */
@@ -104,7 +106,7 @@ const inconnues = (termes: string[], catalogue: SpeculationRef[]): ResultatOutil
 });
 
 const schemaFinancementOutil = {
-  horizonAnnees: z.number().int().min(1).max(5).optional().describe(`Horizon en années (${HORIZON_PAR_DEFAUT} par défaut, 5 au plus)`),
+  horizonAnnees: z.number().int().min(1).max(10).optional().describe(`Horizon en années (${HORIZON_PAR_DEFAUT} par défaut, 10 au plus)`),
   apport: z.number().min(0).optional().describe("Apport personnel en FCFA"),
   credit: schemaCreditOutil.omit({ revenuMensuelNet: true }).optional().describe("Crédit envisagé, s'il y en a un"),
   coutVieAnnuel: z.number().min(0).optional().describe("Coût de vie annuel du ménage en FCFA (ce que la famille dépense par an), seulement si l'utilisateur l'a donné"),
@@ -141,7 +143,7 @@ async function simuler(
   const resultats = calculerFinances({
     charges: budget.charges,
     revenus: budget.revenus,
-    horizonAnnees: financement.horizonAnnees,
+    horizonAnnees: financement.horizonAnnees ?? HORIZON_PAR_DEFAUT,
     apport: financement.apport,
     credit: financement.credit,
     regleFinanceur: financement.regleFinanceur,
@@ -160,7 +162,7 @@ function resumeScenarios(r: ResultatFinance): string[] {
     const an1 = s.annees[0];
     return (
       `- ${nom} : chiffre d'affaires an 1 ${enFcfa(an1.chiffreAffaires)}, résultat an 1 ${enFcfa(an1.resultat)}, ` +
-      `VAN ${enFcfa(s.van)}, TRI ${enPourcent(s.tri)}, délai de récupération ${s.delaiRecuperationAns === null ? "au-delà de l'horizon" : `${s.delaiRecuperationAns} ans`}, ` +
+      `VAN ${enVan(s.van)}, TRI ${enPourcent(s.tri)}, délai de récupération ${s.delaiRecuperationAns === null ? "au-delà de l'horizon" : `${s.delaiRecuperationAns} ans`}, ` +
       `besoin en fonds de roulement ${enFcfa(s.besoinFondsRoulement)}, statut ${s.statut}`
     );
   });
@@ -485,7 +487,7 @@ export const comparerFilieres = definirOutil({
       for (const demande of args.speculations) {
         const s = trouverSpeculation(catalogue, demande.speculation)!;
         const taille = demande.taille ?? 1;
-        const sim = await simuler(donnees, [{ id: s.code, speculationCode: s.code, taille }], args.contexte ?? {}, { horizonAnnees: args.horizonAnnees });
+        const sim = await simuler(donnees, [{ id: s.code, speculationCode: s.code, taille }], args.contexte ?? {}, { horizonAnnees: args.horizonAnnees ?? HORIZON_PAR_DEFAUT });
         estimations ||= sim.estimations;
         if (sim.ateliersSansModele.length > 0) {
           lignes.push(`- ${s.nom} (${taille} ${s.uniteEchelle}) : aucune donnée de référence, non chiffré`);
@@ -496,7 +498,7 @@ export const comparerFilieres = definirOutil({
         lignes.push(
           `- ${s.nom} (${taille} ${s.uniteEchelle}) : investissement ${enFcfa(sim.resultats.investissementTotal)}, ` +
             `chiffre d'affaires an 1 ${enFcfa(re.annees[0].chiffreAffaires)}, résultat an 1 ${enFcfa(re.annees[0].resultat)}, ` +
-            `VAN ${enFcfa(re.van)}, TRI ${enPourcent(re.tri)}, statut réaliste ${re.statut}, statut pessimiste ${pe.statut}`,
+            `VAN ${enVan(re.van)}, TRI ${enPourcent(re.tri)}, statut réaliste ${re.statut}, statut pessimiste ${pe.statut}`,
         );
       }
       return {

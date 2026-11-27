@@ -31,6 +31,7 @@ export const CODES_CONTROLE = [
   "INTRANTS_ECART_ITINERAIRE",
   "CONSOMMATION_BANDE",
   "PERIODE_IMPRODUCTIVE",
+  "HORIZON_INSUFFISANT",
   "MAIN_OEUVRE_SAISONNIERE",
   "MASSE_SALARIALE",
   "VOLUME_HORS_DEBOUCHE",
@@ -148,6 +149,8 @@ export interface DonneesControles {
   annees: { an: number; chiffreAffaires: number; resultat: number; interets: number; cafNette: number; capaciteRemboursement: number; soldeResiduel: number }[];
   moisTresorerieNegative: number[];
   pointBasTresorerie: { montant: number; mois: number };
+  /** Horizon de la grille (M17), pour dater les contrôles. */
+  horizon?: { mois: number; pleinRegimeMois: number; creditMois: number; cycleMois: number };
 }
 
 export function calculerRatios(d: DonneesControles): Ratios {
@@ -175,7 +178,7 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
       "TRESORERIE_NEGATIVE",
       "bloquant",
       { mois: d.moisTresorerieNegative, pointBas: d.pointBasTresorerie.montant, moisPointBas: d.pointBasTresorerie.mois },
-      `Ta caisse passe sous zéro ${listeMois(d.moisTresorerieNegative)} de la première année. ` +
+      `Ta caisse passe sous zéro ${listeMois(d.moisTresorerieNegative)}${d.moisTresorerieNegative.every((m) => m <= 12) ? " de la première année" : ""}. ` +
         `Au plus bas (mois ${d.pointBasTresorerie.mois}), il manque ${enFcfa(-d.pointBasTresorerie.montant)} : il faut plus d'apport, un crédit de campagne ou décaler des dépenses.`,
     );
   } else {
@@ -183,8 +186,21 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
       "TRESORERIE_NEGATIVE",
       "ok",
       { mois: [], pointBas: d.pointBasTresorerie.montant, moisPointBas: d.pointBasTresorerie.mois },
-      `Ta caisse reste positive tous les mois de la première année (au plus bas : ${enFcfa(d.pointBasTresorerie.montant)} au mois ${d.pointBasTresorerie.mois}).`,
+      `Ta caisse reste positive tous les mois ${d.horizon && d.horizon.mois > 12 ? "du plan" : "de la première année"} (au plus bas : ${enFcfa(d.pointBasTresorerie.montant)} au mois ${d.pointBasTresorerie.mois}).`,
     );
+  }
+
+  // Horizon : le plan doit durer au moins autant que le crédit et la montée en production.
+  if (d.horizon) {
+    const h = d.horizon;
+    const valeurs = { horizonMois: h.mois, creditMois: h.creditMois, pleinRegimeMois: h.pleinRegimeMois, cycleMois: h.cycleMois };
+    if (h.mois < h.creditMois) {
+      ajouter("HORIZON_INSUFFISANT", "alerte", valeurs, `Ton plan s'arrête après ${enDuree(h.mois)}, avant la fin du crédit (${enDuree(h.creditMois)}). Les dernières échéances ne sont pas dans les calculs : allonge l'horizon.`);
+    } else if (h.mois < h.pleinRegimeMois) {
+      ajouter("HORIZON_INSUFFISANT", "info", valeurs, `Ton plan s'arrête après ${enDuree(h.mois)}, avant que l'activité atteigne son plein régime (${enDuree(h.pleinRegimeMois)}). Les résultats montrent seulement le début.`);
+    } else {
+      ajouter("HORIZON_INSUFFISANT", "ok", valeurs, `Ton plan dure ${enDuree(h.mois)} : assez pour le crédit et pour atteindre le plein régime.`);
+    }
   }
 
   // Revenu du ménage.
@@ -449,13 +465,23 @@ function controlesLignes(d: DonneesControles, ajouter: Ajouter): void {
     } else if (an === 1) {
       ajouter("PERIODE_IMPRODUCTIVE", "info", { ligneId: r.id, anneeEntreeProduction: an }, `${r.libelle} : tu comptes une production dès la première année. Vérifie que les arbres ou les plants sont déjà adultes.`);
     } else {
-      const surestimees = Array.from({ length: Math.min(an - 1, horizon) }, (_, i) => i + 1);
-      ajouter(
-        "PERIODE_IMPRODUCTIVE",
-        "alerte",
-        { ligneId: r.id, anneeEntreeProduction: an, anneesSurestimees: surestimees },
-        `${r.libelle} : la plantation ne produit qu'à partir de l'an ${an}, mais les calculs comptent encore une production complète ${listeAns(surestimees)}. Les résultats de ces années sont trop optimistes.`,
-      );
+      // Depuis le moteur 2.0.0, aucune vente n'est comptée avant l'année d'entrée en production ; les charges, elles, courent.
+      const sansProduction = Array.from({ length: Math.min(an - 1, horizon) }, (_, i) => i + 1);
+      if (an > horizon) {
+        ajouter(
+          "PERIODE_IMPRODUCTIVE",
+          "alerte",
+          { ligneId: r.id, anneeEntreeProduction: an, anneesSansProduction: sansProduction },
+          `${r.libelle} : la production ne commence qu'à l'an ${an}, après la fin du plan (${horizon} an${horizon > 1 ? "s" : ""}). Le plan ne montre aucune vente : allonge l'horizon pour voir la suite.`,
+        );
+      } else {
+        ajouter(
+          "PERIODE_IMPRODUCTIVE",
+          "info",
+          { ligneId: r.id, anneeEntreeProduction: an, anneesSansProduction: sansProduction },
+          `${r.libelle} : la production ne commence qu'à l'an ${an}, donc aucune vente n'est comptée ${listeAns(sansProduction)}, alors que les dépenses courent. Vérifie que ta caisse tient jusque-là (point bas : ${enFcfa(d.pointBasTresorerie.montant)}, mois ${d.pointBasTresorerie.mois}).`,
+        );
+      }
     }
   }
 

@@ -56,8 +56,8 @@ describe("contrôles du §3.6 sur lignes enrichies", () => {
     const non = trouver(realiste(avecRevenu({ perenne: {} })).controles, "PERIODE_IMPRODUCTIVE");
     expect(non[0].niveau).toBe("alerte");
     const trois = trouver(realiste(avecRevenu({ perenne: { anneeEntreeProduction: 3 } })).controles, "PERIODE_IMPRODUCTIVE");
-    expect(trois[0].niveau).toBe("alerte");
-    expect(trois[0].valeurs).toMatchObject({ anneeEntreeProduction: 3, anneesSurestimees: [1, 2] });
+    expect(trois[0].niveau).toBe("info");
+    expect(trois[0].valeurs).toMatchObject({ anneeEntreeProduction: 3, anneesSansProduction: [1, 2] });
     const un = trouver(realiste(avecRevenu({ perenne: { anneeEntreeProduction: 1 } })).controles, "PERIODE_IMPRODUCTIVE");
     expect(un[0].niveau).toBe("info");
   });

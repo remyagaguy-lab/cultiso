@@ -6,6 +6,7 @@ import type { EntreeFinance } from "../finance";
 // Charges variables 1 200 000 (semences 300 000, engrais 400 000, main-d'œuvre 500 000),
 // charges fixes 120 000 (location de terre), motopompe 600 000 amortie sur 3 ans (200 000 par an).
 export const tomate2ha: EntreeFinance = {
+  horizonAnnees: 3,
   charges: [
     { id: "semences", libelle: "Semences", typeCharge: "intrants", quantite: 2, prixUnitaire: 150_000, nature: "variable", classe: "exploitation", moisDecaissement: [1] },
     { id: "engrais", libelle: "Engrais NPK", typeCharge: "intrants", quantite: 2, prixUnitaire: 200_000, nature: "variable", classe: "exploitation", moisDecaissement: [2, 3] },

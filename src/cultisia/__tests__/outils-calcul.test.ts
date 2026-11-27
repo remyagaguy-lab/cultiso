@@ -1,12 +1,12 @@
 /** @jest-environment node */
-import { calculerCredit, calculerFinances, expliquerControle, genererBudget, VERSION_MOTEURS } from "@/moteurs";
+import { calculerCredit, calculerFinances, expliquerControle, genererBudget, HORIZON_PAR_DEFAUT, VERSION_MOTEURS } from "@/moteurs";
 import { versRegleMoteur } from "@/referentiel";
 import { CreditsEnMemoire } from "../credits";
 import type { AccesDonnees } from "../donnees";
 import { appel, FauxModele, texte, usage } from "../llm/faux-modele";
 import { lancerCultisia } from "../orchestrateur";
 import { registreParDefaut } from "../outils";
-import { analyserSensibiliteOutil, calculerCreditOutil, calculerPlan, comparerFilieres, diagnostiquerPlan, enFcfa, enFcfaPrix, enPourcent, trouverSpeculation } from "../outils/calcul";
+import { analyserSensibiliteOutil, calculerCreditOutil, calculerPlan, comparerFilieres, diagnostiquerPlan, enFcfa, enFcfaPrix, enPourcent, enVan, trouverSpeculation } from "../outils/calcul";
 import type { ContexteOutil } from "../outils/registre";
 import { fausseBase, REFERENTIEL_TEST, REGLES_FINANCEURS_TEST } from "../test-utils/fausse-base";
 import { collecter, texteDe } from "../test-utils/utilitaires";
@@ -28,7 +28,7 @@ function attendu(ateliers: { id: string; speculationCode: string; taille: number
     regles: REFERENTIEL_TEST.regles,
     contexte: contexteTerrain,
   });
-  return calculerFinances({ charges: budget.charges, revenus: budget.revenus, ...finance });
+  return calculerFinances({ charges: budget.charges, revenus: budget.revenus, horizonAnnees: HORIZON_PAR_DEFAUT, ...finance });
 }
 
 let espion: jest.SpyInstance;
@@ -68,7 +68,7 @@ describe("calculer_plan", () => {
     expect(r.contenu).toContain("Plan calculé pour Tomate : 2 ha (horizon 3 ans)");
     expect(r.contenu).toContain(`investissement total : ${enFcfa(moteur.investissementTotal)}`);
     expect(r.contenu).toContain(`besoin de financement (investissement + fonds de roulement − apport) : ${enFcfa(moteur.besoinFinancement)}`);
-    expect(r.contenu).toContain(`- realiste : chiffre d'affaires an 1 ${enFcfa(re.annees[0].chiffreAffaires)}, résultat an 1 ${enFcfa(re.annees[0].resultat)}, VAN ${enFcfa(re.van)}, TRI ${enPourcent(re.tri)}`);
+    expect(r.contenu).toContain(`- realiste : chiffre d'affaires an 1 ${enFcfa(re.annees[0].chiffreAffaires)}, résultat an 1 ${enFcfa(re.annees[0].resultat)}, VAN ${enVan(re.van)}, TRI ${enPourcent(re.tri)}`);
     expect(r.contenu).toContain("chiffre d'affaires an 1 3 840 000 FCFA");
     expect(r.contenu).toContain("ATTENTION : une partie des données sont des estimations");
     expect(r.sources?.map((s) => s.origine)).toEqual(["moteur", "referentiel"]);
@@ -220,7 +220,7 @@ describe("comparer_filieres", () => {
     const r = await comparerFilieres.executer!({ speculations: [{ speculation: "tomate" }, { speculation: "poulet de chair", taille: 500 }] }, contexte());
     expect(r.contenu).toContain(`- Tomate (1 ha) : investissement ${enFcfa(tomate.investissementTotal)}, chiffre d'affaires an 1 ${enFcfa(tomate.scenarios.realiste.annees[0].chiffreAffaires)}`);
     expect(r.contenu).toContain(`- Poulet de chair (500 sujets) : investissement ${enFcfa(poulet.investissementTotal)}`);
-    expect(r.contenu).toContain(`VAN ${enFcfa(poulet.scenarios.realiste.van)}`);
+    expect(r.contenu).toContain(`VAN ${enVan(poulet.scenarios.realiste.van)}`);
     expect(r.contenu).toContain(`statut pessimiste ${poulet.scenarios.pessimiste.statut}`);
   });
 
