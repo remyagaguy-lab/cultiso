@@ -9,6 +9,7 @@ import { appeler } from "../appeler";
 import { ChoixFinanceur } from "../ChoixFinanceur";
 import { IndicateurExplique } from "../IndicateurExplique";
 import { Carte, Section, fcfa, pourcent } from "../commun";
+import { PlanFinancement } from "./PlanFinancement";
 import { usePlan } from "./PlanContext";
 
 const memeRegle = (a: RegleFinanceur | null | undefined, b: RegleFinanceur): boolean => JSON.stringify(a ?? null) === JSON.stringify(b);
@@ -64,7 +65,7 @@ export function FinancementPlan() {
           </div>
           <Carte>
             <p className="m-0 text-sm">
-              Après ton apport, il reste <strong>{fcfa(plan.resultats.besoinFinancement)}</strong> à trouver. Le plan de financement complet (épargne, crédit, subvention, apport en nature) viendra avec le calendrier mensuel.
+              Après ton apport, il reste <strong>{fcfa(plan.resultats.besoinFinancement)}</strong> à trouver. Monte ton plan de financement plus bas.
             </p>
           </Carte>
         </Section>
@@ -76,6 +77,8 @@ export function FinancementPlan() {
           <Alert type="info" showIcon title={`Financeur enregistré : ${regle.nom}. Il n'est plus dans le référentiel actuel, ou ses règles ont changé.`} />
         )}
       </Section>
+
+      <PlanFinancement />
 
       {regle && (
         <Section id="regles" titre={`Ce que ${regle.nom} contrôle`}>

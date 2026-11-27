@@ -1,9 +1,10 @@
 import { configure, render, screen, within } from "@testing-library/react";
-import { calculerFinances } from "@/moteurs";
+import { calculerFinances, calculerFinancement } from "@/moteurs";
 import { tomate2ha } from "@/moteurs/test-utils/tomate";
 import { VueAccueil } from "./AccueilPlan";
 import { VueBilan } from "./BilanSante";
 import { VueMenage } from "./MenagePlan";
+import { VuePlanFinancement } from "./PlanFinancement";
 import { VueScenarios } from "./ScenariosPlan";
 import { verdictEnUnePhrase } from "./verdict";
 
@@ -73,5 +74,22 @@ describe("écrans du plan", () => {
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(screen.getAllByText(/Rien à signaler|À surveiller|À régler|Pour information/).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Trésorerie" })).toBeInTheDocument();
+  });
+});
+
+describe("plan de financement (M6)", () => {
+  it("montre ressources, emplois, apport et phrases du moteur", () => {
+    const financement = calculerFinancement({
+      horizonMois: 12,
+      emploisInitiaux: { investissement: 600_000, bfr: 400_000 },
+      apportEspeces: 300_000,
+      apportsNature: [{ libelle: "Terre", valeur: 200_000 }],
+      prets: [{ id: "p", libelle: "Prêt", moisTirage: 0, credit: { montant: 500_000, tauxAnnuel: 0.1, dureeMois: 24, differeMois: 0, typeDiffere: "partiel" } }],
+    });
+    render(<VuePlanFinancement r={{ planId: "x", financement, origines: ["Plan réaliste"], manques: [] }} />);
+    expect(screen.getByRole("heading", { name: /Emplois/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Ressources/ })).toBeInTheDocument();
+    expect(screen.getByText(/Ton apport total/)).toBeInTheDocument();
+    expect(screen.getByText(/sans pièce|Sans pièce/i)).toBeInTheDocument();
   });
 });
