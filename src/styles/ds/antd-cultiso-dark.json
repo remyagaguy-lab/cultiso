@@ -1,0 +1,30 @@
+{
+ "_commentaire": "Généré par outillage/build_adaptateurs.py. À passer à <ConfigProvider theme={{ token, algorithm }}> d'Ant Design 5. Valeurs résolues (Ant en dérive des nuances). Les rayons et la police viennent des variables CSS.",
+ "token": {
+  "colorPrimary": "#FEB69B",
+  "colorSuccess": "#80DA95",
+  "colorWarning": "#FFB95B",
+  "colorError": "#FFB4AB",
+  "colorInfo": "#9ACBFE",
+  "colorBgBase": "#031F1B",
+  "colorTextBase": "#D7E9E6",
+  "colorBgContainer": "#072420",
+  "colorBgLayout": "#041815",
+  "colorBgElevated": "#0A2622",
+  "colorTextLightSolid": "#5A1C01",
+  "colorBorder": "#719891",
+  "colorBorderSecondary": "#274D47",
+  "colorText": "#D7E9E6",
+  "colorTextSecondary": "#A5CFC7",
+  "colorTextDisabled": "#546C68",
+  "colorLink": "#70D8C8",
+  "colorLinkHover": "#80DBCD",
+  "borderRadius": 8,
+  "fontFamily": "var(--ork-use-font-text)",
+  "controlHeight": 48,
+  "wireframe": false
+ },
+ "algorithme": "dark",
+ "marque": "cultiso",
+ "theme": "dark"
+}

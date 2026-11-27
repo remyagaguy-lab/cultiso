@@ -47,7 +47,7 @@ export function Logo({ variant = "horizontal", size = "md", tone = "on-light", d
   const { src, width, height } = logoSpec(variant, size, tone);
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} width={width} height={height} alt={decorative ? "" : "Cultiso"} className={className} loading={priority ? "eager" : "lazy"} decoding="async" style={{ display: "block", height: "auto", maxWidth: "100%" }} />
+    <img src={src} width={width} height={height} alt={decorative ? "" : "Cultiso"} className={className || "block"} loading={priority ? "eager" : "lazy"} decoding="async" style={{ height: "auto", maxWidth: "100%" }} />
   );
 }
 

@@ -166,47 +166,47 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
           </div>
 
           {/* Results Bento Box */}
-          <div className="bg-gradient-to-br from-slate-900 to-[#07382e] rounded-xl p-5 text-white shadow-md">
+          <div className="bg-gradient-to-br from-[var(--ork-ref-primary-10)] to-[var(--ork-ref-primary-20)] rounded-[var(--ork-use-radius-card)] p-5 text-white shadow-overlay">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--ork-ref-primary-70)]">
                 Gain Économique Direct pour la Bande
               </span>
-              <span className="text-xs bg-brand-orange text-white font-bold px-2 py-0.5 rounded font-mono">
+              <span className="text-xs bg-action text-on-action font-bold px-2 py-0.5 rounded-[var(--ork-use-radius-badge)] font-mono">
                 +{((financialGain / currentGrossMarginFeed) * 100).toFixed(1)}% Marge
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 text-center sm:text-left">
               <div>
-                <span className="text-[11px] text-emerald-200/80 block uppercase font-medium">
-                  Économie d'Aliment
+                <span className="text-[11px] text-white/75 block uppercase font-medium">
+                  Économie d&apos;Aliment
                 </span>
                 <span className="text-2xl font-black font-mono text-white">
                   {feedSavedTons.toFixed(1)} T
                 </span>
-                <span className="text-[10px] text-emerald-300 block">de provende économisée</span>
+                <span className="text-[10px] text-[var(--ork-ref-primary-70)] block">de provende économisée</span>
               </div>
 
               <div>
-                <span className="text-[11px] text-emerald-200/80 block uppercase font-medium">
+                <span className="text-[11px] text-white/75 block uppercase font-medium">
                   Gain Trésorerie Net
                 </span>
-                <span className="text-2xl font-black font-mono text-emerald-400">
+                <span className="text-2xl font-black font-mono text-[var(--ork-ref-primary-70)]">
                   +{financialGain.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
                 </span>
-                <span className="text-[10px] text-emerald-300 block">
+                <span className="text-[10px] text-[var(--ork-ref-primary-70)] block">
                   soit +{(financialGain / headCount).toFixed(2)} € / sujet
                 </span>
               </div>
 
               <div>
-                <span className="text-[11px] text-emerald-200/80 block uppercase font-medium">
+                <span className="text-[11px] text-white/75 block uppercase font-medium">
                   Seuil Rentabilité IC Max
                 </span>
-                <span className="text-2xl font-black font-mono text-amber-300">
+                <span className="text-2xl font-black font-mono text-[var(--ork-ref-secondary-70)]">
                   {breakEvenFcr.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-amber-200 block">
+                <span className="text-[10px] text-[var(--ork-ref-secondary-80)] block">
                   Au-delà, le lot est déficitaire
                 </span>
               </div>
@@ -215,13 +215,13 @@ export const ZootechSimulatorModal: React.FC<ZootechSimulatorModalProps> = ({ is
         </div>
 
         {/* Footer */}
-        <div className="bg-slate-50 border-t border-slate-200 px-6 py-3 flex items-center justify-between">
-          <span className="text-xs text-slate-500 font-medium">
-            Biomasse totale simulée : <strong>{totalBiomassKg.toLocaleString('fr-FR')} kg vif</strong>
+        <div className="bg-sunken border-t border-border px-6 py-3 flex items-center justify-between">
+          <span className="text-xs text-muted font-medium">
+            Biomasse totale simulée : <strong className="text-foreground">{totalBiomassKg.toLocaleString('fr-FR')} kg vif</strong>
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-brand-green hover:bg-[#116a58] text-white text-xs font-bold rounded-lg transition"
+            className="px-4 py-2 bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand text-xs font-bold rounded-[var(--ork-use-radius-button)] transition"
           >
             Fermer le simulateur
           </button>

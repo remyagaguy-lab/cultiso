@@ -76,9 +76,8 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
   ];
 
   return (
-    <div className="bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5">
-      <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <div className="flex items-center gap-2">
+    <div className="bg-surface border-b border-border px-4 sm:px-6 lg:px-8 py-3">
+      <div className="max-w-[1360px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isSelected = selectedSpecies === tab.id;
@@ -86,52 +85,49 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
             return (
               <button
                 key={tab.id}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => onSelect(tab.id)}
-                className={`flex items-center gap-3 px-3.5 py-2 rounded-xl text-left transition whitespace-nowrap border ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-[var(--ork-use-radius-card)] text-left transition border min-w-0 ${
                   isSelected
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/10'
-                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                    ? 'bg-selected text-foreground border-[var(--ork-use-border-selected)] ring-1 ring-inset ring-[var(--ork-use-border-selected)]'
+                    : 'bg-surface hover:bg-[var(--ork-use-background-neutral-default-hover)] text-foreground border-border hover:border-[var(--ork-use-border-selected)]'
                 }`}
               >
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center transition ${
+                  className={`w-8 h-8 rounded-[var(--ork-use-radius-control)] flex items-center justify-center shrink-0 transition ${
                     isSelected
                       ? tab.id === 'swine'
-                        ? 'bg-brand-orange text-white'
-                        : 'bg-brand-green text-white'
-                      : 'bg-slate-100 text-slate-600'
+                        ? 'bg-action text-on-action'
+                        : 'bg-brand text-on-brand'
+                      : 'bg-[var(--ork-use-background-brand-subtle)] text-t-brand'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
                 </div>
 
-                <div className="pr-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-slate-900'}`}>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span className={`text-xs font-bold truncate ${isSelected ? 'text-t-brand' : 'text-foreground'}`}>
                       {tab.label}
                     </span>
                     <span
-                      className={`text-[11px] font-mono px-1.5 py-0.2 rounded font-semibold ${
+                      className={`text-[10.5px] font-mono-numbers px-1.5 py-0.5 rounded-[var(--ork-use-radius-badge)] font-semibold shrink-0 whitespace-nowrap ${
                         isSelected
-                          ? 'bg-white/20 text-white'
-                          : 'bg-slate-100 text-slate-700'
+                          ? 'bg-[var(--ork-use-background-brand-subtle)] text-t-brand'
+                          : 'bg-sunken text-muted'
                       }`}
                     >
-                      {tab.count.toLocaleString('fr-FR')} têtes
+                      {tab.count.toLocaleString('fr-FR')}
                     </span>
                   </div>
-                  <div
-                    className={`text-[10px] truncate max-w-[190px] font-medium ${
-                      isSelected ? 'text-slate-300' : 'text-slate-500'
-                    }`}
-                  >
+                  <div className="text-[10.5px] truncate font-medium mt-0.5 text-muted">
                     {tab.highlight}
                   </div>
                 </div>
               </button>
             );
           })}
-        </div>
       </div>
     </div>
   );

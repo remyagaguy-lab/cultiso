@@ -16,26 +16,28 @@ import {
 /*  TOKENS                                                             */
 /* ------------------------------------------------------------------ */
 const C = {
-  green: "#007468",
-  greenDeep: "#072F27",
-  greenSoft: "#E4ECE6",
-  laterite: "#D0541F",
-  lateriteSoft: "#F5D9C2",
-  paper: "#F3F5EF",
-  card: "#FFFFFF",
-  ink: "#17231F",
-  sage: "#6E8A75",
-  gold: "#C99A3E",
-  goldSoft: "#F2E6CB",
-  alert: "#A23B2E",
-  alertSoft: "#F0DAD5",
-  water: "#3F7A8C",
-  waterSoft: "#DCE7E9",
-  line: "#DFE4DA",
+  green: "var(--ork-use-text-brand)",
+  greenFill: "var(--ork-use-text-brand)",
+  greenDeep: "var(--ork-ref-primary-15)",
+  greenSoft: "var(--ork-use-background-brand-subtle)",
+  laterite: "var(--ork-use-text-action)",
+  lateriteFill: "var(--ork-use-data-2-mark)",
+  lateriteSoft: "var(--ork-use-background-action-subtle)",
+  paper: "var(--ork-use-surface-sunken)",
+  card: "var(--ork-use-surface-raised)",
+  ink: "var(--ork-use-text-default)",
+  sage: "var(--ork-use-text-subtle)",
+  gold: "var(--ork-use-text-warning)",
+  goldSoft: "var(--ork-use-background-warning-subtle)",
+  alert: "var(--ork-use-text-danger)",
+  alertSoft: "var(--ork-use-background-danger-subtle)",
+  water: "var(--ork-use-data-3-mark)",
+  waterSoft: "var(--ork-use-data-3-subtle)",
+  line: "var(--ork-use-border-default)",
 };
 
-const serif = "'Zilla Slab', serif";
-const sans = "'IBM Plex Sans', sans-serif";
+const serif = "var(--ork-use-font-title)";
+const sans = "var(--ork-use-font-text)";
 
 const statusColor = (s: string) =>
   s === "bon" || s === "Bon" ? C.green
@@ -68,7 +70,14 @@ const stocks = [
 
 const months = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 const stageLabel: any = { prep: "Préparation sol", semis: "Semis / Plantation", croissance: "Croissance", floraison: "Floraison", recolte: "Récolte", repos: "Repos / Jachère" };
-const stageColor: any = { prep: "#DCE3D6", semis: "#7A9B76", croissance: C.green, floraison: C.gold, recolte: C.laterite, repos: "#ECE9E0" };
+const stageColor: any = {
+  prep: "var(--ork-use-border-bold)",
+  semis: "var(--ork-use-data-3-mark)",
+  croissance: C.greenFill,
+  floraison: "var(--ork-use-data-4-mark)",
+  recolte: C.lateriteFill,
+  repos: "var(--ork-use-border-default)",
+};
 
 const calendar = [
   { parcelle: "Maïs — Zone Nord", ha: 12, stages: ["repos","prep","semis","croissance","croissance","floraison","recolte","prep","semis","croissance","recolte","repos"] },
@@ -192,7 +201,7 @@ function Pill({ children, tone = "green" }: any) {
   const map: any = {
     green: { bg: C.greenSoft, fg: C.green },
     laterite: { bg: C.lateriteSoft, fg: C.laterite },
-    gold: { bg: C.goldSoft, fg: "#8A6A24" },
+    gold: { bg: C.goldSoft, fg: C.gold },
     alert: { bg: C.alertSoft, fg: C.alert },
   };
   const t = map[tone] || map.green;
@@ -212,7 +221,7 @@ function SectionCard({ title, subtitle, right, className = "", children, flat = 
   return (
     <div
       className={`rounded-xl p-5 md:p-6 ${className}`}
-      style={{ background: C.card, border: `1px solid ${C.line}`, boxShadow: flat ? "none" : "0 1px 2px rgba(11,83,69,0.06)" }}
+      style={{ background: C.card, border: `1px solid ${C.line}`, boxShadow: flat ? "none" : "var(--ork-use-elevation-raised)" }}
     >
       {(title || right) && (
         <div className="flex items-start justify-between mb-4 gap-3">
@@ -235,11 +244,11 @@ function Sidebar({ active, setActive }: any) {
   return (
     <aside
       className="hidden lg:flex flex-col shrink-0 min-h-screen"
-      style={{ width: 240, background: `linear-gradient(180deg, ${C.green}, ${C.greenDeep})`, color: "#fff" }}
+      style={{ width: 240, background: "linear-gradient(180deg, var(--ork-ref-primary-15), var(--ork-ref-primary-10))", color: "var(--ork-ref-neutral-98)" }}
     >
-      <div className="flex items-center gap-2.5 px-6 h-16 border-b" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-        <div className="flex items-center justify-center rounded-lg" style={{ width: 32, height: 32, background: C.laterite }}>
-          <Sprout size={18} color="#fff" />
+      <div className="flex items-center gap-2.5 px-6 h-16 border-b border-white/15">
+        <div className="flex items-center justify-center rounded-lg" style={{ width: 32, height: 32, background: "var(--ork-use-background-action-bold)" }}>
+          <Sprout size={18} className="text-on-action" />
         </div>
         <span style={{ fontFamily: serif }} className="text-lg font-semibold tracking-tight">Cultima</span>
       </div>
@@ -251,12 +260,9 @@ function Sidebar({ active, setActive }: any) {
             <button
               key={label}
               onClick={() => setActive(label)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors"
-              style={{
-                background: isActive ? "rgba(255,255,255,0.12)" : "transparent",
-                color: isActive ? "#fff" : "rgba(255,255,255,0.72)",
-                borderLeft: isActive ? `3px solid ${C.laterite}` : "3px solid transparent",
-              }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-left transition-colors ${
+                isActive ? "bg-white/15 text-white ring-1 ring-inset ring-white/25" : "text-white/75 hover:bg-white/10"
+              }`}
             >
               <Icon size={17} />
               <span className="font-medium">{label}</span>
@@ -265,10 +271,10 @@ function Sidebar({ active, setActive }: any) {
         })}
       </nav>
 
-      <div className="px-4 pb-5 pt-3 mx-3 mb-4 rounded-lg" style={{ background: "rgba(255,255,255,0.08)" }}>
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>Exploitation</p>
+      <div className="px-4 pb-5 pt-3 mx-3 mb-4 rounded-lg bg-white/10">
+        <p className="text-xs text-white/65">Exploitation</p>
         <p className="text-sm font-medium mt-0.5">Ferme Ndjaba — 57 ha</p>
-        <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.55)" }}>5 parcelles actives</p>
+        <p className="text-xs mt-1 text-white/60">5 parcelles actives</p>
       </div>
     </aside>
   );
@@ -276,14 +282,14 @@ function Sidebar({ active, setActive }: any) {
 
 function Topbar({ active }: any) {
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between gap-4 px-5 lg:px-8 h-16 border-b" style={{ background: "rgba(243,245,239,0.92)", backdropFilter: "blur(6px)", borderColor: C.line }}>
+    <header className="sticky top-0 z-10 flex items-center justify-between gap-4 px-5 lg:px-8 h-16 border-b" style={{ background: C.card, backdropFilter: "blur(6px)", borderColor: C.line }}>
       <div className="flex items-center gap-2 min-w-0">
         <span className="text-sm hidden md:inline" style={{ color: C.sage }}>Cultima</span>
         <ChevronRight size={14} style={{ color: C.sage }} className="hidden md:inline" />
         <span className="text-sm font-semibold truncate" style={{ color: C.ink }}>{active}</span>
       </div>
 
-      <div className="flex-1 max-w-md hidden md:flex items-center gap-2 rounded-lg px-3 py-2" style={{ background: "#fff", border: `1px solid ${C.line}` }}>
+      <div className="flex-1 max-w-md hidden md:flex items-center gap-2 rounded-lg px-3 py-2" style={{ background: C.paper, border: `1px solid ${C.line}` }}>
         <Search size={15} style={{ color: C.sage }} />
         <input
           placeholder="Rechercher une parcelle, un intrant, un chantier…"
@@ -295,20 +301,20 @@ function Topbar({ active }: any) {
       <div className="flex items-center gap-3 lg:gap-4">
         <div className="hidden sm:flex items-center gap-1.5 text-xs" style={{ color: C.sage }}>
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: C.green }} />
-            <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: C.green }} />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: C.greenFill }} />
+            <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: C.greenFill }} />
           </span>
           Synchronisé — 08 sept, 07:42
         </div>
-        <button className="relative p-2 rounded-lg" style={{ background: "#fff", border: `1px solid ${C.line}` }}>
+        <button className="relative p-2 rounded-lg" style={{ background: C.card, border: `1px solid ${C.line}` }}>
           <Bell size={16} style={{ color: C.ink }} />
-          <span className="absolute -top-1 -right-1 text-[10px] font-semibold rounded-full flex items-center justify-center" style={{ width: 15, height: 15, background: C.laterite, color: "#fff" }}>3</span>
+          <span className="absolute -top-1 -right-1 text-[10px] font-semibold rounded-full flex items-center justify-center bg-action text-on-action" style={{ width: 15, height: 15 }}>3</span>
         </button>
         <div className="flex items-center gap-2 pl-1">
-          <div className="rounded-full flex items-center justify-center font-semibold text-sm" style={{ width: 34, height: 34, background: C.green, color: "#fff" }}>KA</div>
+          <div className="rounded-full flex items-center justify-center font-semibold text-sm bg-brand text-on-brand" style={{ width: 34, height: 34 }}>KA</div>
           <div className="hidden xl:block leading-tight">
             <p className="text-sm font-medium" style={{ color: C.ink }}>Kodjo Adjovi</p>
-            <p className="text-xs" style={{ color: C.sage }}>Directeur d'exploitation</p>
+            <p className="text-xs" style={{ color: C.sage }}>Directeur d&apos;exploitation</p>
           </div>
         </div>
       </div>
@@ -335,27 +341,27 @@ function AlertBar() {
 /* ------------------------------------------------------------------ */
 function Hero() {
   return (
-    <div className="rounded-xl p-6 md:p-8" style={{ background: `linear-gradient(120deg, ${C.greenDeep} 0%, ${C.green} 60%)`, color: "#fff" }}>
+    <div className="rounded-xl p-6 md:p-8 text-white" style={{ background: "linear-gradient(120deg, var(--ork-ref-primary-12) 0%, var(--ork-ref-primary-20) 65%)" }}>
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="max-w-md">
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>Bonjour Kodjo — campagne 2026, semaine 36</p>
+          <p className="text-sm text-white/75">Bonjour Kodjo — campagne 2026, semaine 36</p>
           <div className="flex items-baseline gap-3 mt-2">
             <span style={{ fontFamily: serif }} className="text-5xl font-semibold tracking-tight">48,6 t</span>
-            <span className="text-sm inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-medium" style={{ background: "rgba(211,84,0,0.28)", color: "#FCE2CE" }}>
+            <span className="text-sm inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-medium bg-[var(--ork-ref-secondary-30)] text-[var(--ork-ref-secondary-90)]">
               <ArrowUpRight size={13} /> 6,2 % vs objectif
             </span>
           </div>
-          <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.68)" }}>Rendement prévisionnel global — toutes cultures confondues</p>
+          <p className="text-sm mt-1 text-white/70">Rendement prévisionnel global — toutes cultures confondues</p>
           <div style={{ height: 46, width: 220 }} className="mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparkline}>
                 <defs>
                   <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.laterite} stopOpacity={0.55} />
-                    <stop offset="100%" stopColor={C.laterite} stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--ork-ref-secondary-60)" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="var(--ork-ref-secondary-60)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Area type="monotone" dataKey="v" stroke="#F2A65A" strokeWidth={2} fill="url(#sparkFill)" />
+                <Area type="monotone" dataKey="v" stroke="var(--ork-ref-secondary-70)" strokeWidth={2} fill="url(#sparkFill)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -368,10 +374,10 @@ function Hero() {
             { Icon: AlertTriangle, label: "Alertes actives", value: "3 à traiter" },
             { Icon: CloudSun, label: "Météo — Zone Nord", value: "29 °C, ensoleillé" },
           ].map(({ Icon, label, value }, i) => (
-            <div key={i} className="rounded-lg px-3.5 py-3" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.14)" }}>
-              <Icon size={16} style={{ color: "#F2C89E" }} />
+            <div key={i} className="rounded-lg px-3.5 py-3 bg-white/10 border border-white/15">
+              <Icon size={16} style={{ color: "var(--ork-ref-secondary-80)" }} />
               <p className="text-sm font-semibold mt-2 leading-tight">{value}</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.62)" }}>{label}</p>
+              <p className="text-xs mt-0.5 text-white/65">{label}</p>
             </div>
           ))}
         </div>
@@ -392,12 +398,12 @@ function FinanceCard({ className }: any) {
       right={<Pill tone="green"><ArrowUpRight size={12} /> +8,3 % vs mois dernier</Pill>}
     >
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <p style={{ fontFamily: serif, color: C.ink }} className="text-3xl font-semibold">42,5 M FCFA</p>
           <p className="text-xs mt-1" style={{ color: C.sage }}>Solde de trésorerie disponible</p>
           <div style={{ height: 168 }} className="mt-4 -ml-2">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={financeSeries} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+              <AreaChart data={financeSeries} margin={{ top: 4, right: 24, bottom: 0, left: 0 }}>
                 <defs>
                   <linearGradient id="recFill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={C.green} stopOpacity={0.28} />
@@ -408,8 +414,10 @@ function FinanceCard({ className }: any) {
                 <XAxis dataKey="mois" tick={{ fontSize: 11, fill: C.sage }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: C.sage }} axisLine={false} tickLine={false} width={28} />
                 <Tooltip
-                  formatter={(v) => [`${v} M FCFA`, ""]}
-                  contentStyle={{ borderRadius: 8, border: `1px solid ${C.line}`, fontSize: 12, fontFamily: sans }}
+                  formatter={(v, name) => [`${v} M FCFA`, name]}
+                  labelStyle={{ color: C.ink, fontWeight: 600 }}
+                  itemStyle={{ color: C.ink }}
+                  contentStyle={{ borderRadius: 8, border: `1px solid ${C.line}`, backgroundColor: "var(--ork-use-surface-overlay)", color: C.ink, fontSize: 12, fontFamily: sans }}
                 />
                 <Area type="monotone" dataKey="recettes" name="Recettes" stroke={C.green} strokeWidth={2.5} fill="url(#recFill)" />
                 <Area type="monotone" dataKey="charges" name="Charges" stroke={C.laterite} strokeWidth={2} strokeDasharray="4 3" fill="none" />
@@ -422,7 +430,7 @@ function FinanceCard({ className }: any) {
           </div>
         </div>
 
-        <div className="flex md:flex-col items-center md:items-stretch justify-around gap-4 md:w-40 md:border-l md:pl-6" style={{ borderColor: C.line }}>
+        <div className="flex md:flex-col items-center md:items-stretch justify-around gap-4 md:w-44 shrink-0 md:border-l md:pl-6" style={{ borderColor: C.line }}>
           <RadialGauge value={63} color={C.green} valueLabel="63 %" label="Budget campagne exécuté" />
           <div className="text-center md:text-left">
             <p className="text-xs" style={{ color: C.sage }}>Charges cumulées</p>
@@ -465,16 +473,16 @@ function CulturalCalendarCard() {
       right={<span className="text-xs hidden sm:flex items-center gap-1.5" style={{ color: C.sage }}><CalendarDays size={14} />12 mois glissants</span>}
     >
       <div className="overflow-x-auto">
-        <div style={{ minWidth: 720 }}>
-          <div className="grid mb-1.5" style={{ gridTemplateColumns: "180px repeat(12, 1fr)" }}>
+        <div style={{ minWidth: 760 }}>
+          <div className="grid mb-1.5" style={{ gridTemplateColumns: "220px repeat(12, 1fr)" }}>
             <div />
             {months.map((m) => (
               <div key={m} className="text-center text-[11px] font-medium" style={{ color: C.sage }}>{m}</div>
             ))}
           </div>
           {calendar.map((row) => (
-            <div key={row.parcelle} className="grid items-center mb-1.5" style={{ gridTemplateColumns: "180px repeat(12, 1fr)" }}>
-              <div className="pr-3 text-sm font-medium truncate" style={{ color: C.ink }}>
+            <div key={row.parcelle} className="grid items-center mb-1.5" style={{ gridTemplateColumns: "220px repeat(12, 1fr)" }}>
+              <div className="pr-3 text-sm font-medium leading-snug" style={{ color: C.ink }}>
                 {row.parcelle}
                 <span className="block text-[11px] font-normal" style={{ color: C.sage }}>{row.ha} ha</span>
               </div>
@@ -510,9 +518,9 @@ function WeatherCard({ className }: any) {
             <p className="text-xs mt-1" style={{ color: C.sage }}>Ensoleillé, vent modéré</p>
           </div>
         </div>
-        <div className="text-right text-xs" style={{ color: C.sage }}>
-          <p className="flex items-center gap-1.5 justify-end"><Droplets size={13} />Humidité air 62 %</p>
-          <p className="flex items-center gap-1.5 justify-end mt-1"><Wind size={13} />Vent 14 km/h</p>
+        <div className="text-right text-xs shrink-0" style={{ color: C.sage }}>
+          <p className="flex items-center gap-1.5 justify-end whitespace-nowrap"><Droplets size={13} className="shrink-0" />Humidité air 62 %</p>
+          <p className="flex items-center gap-1.5 justify-end mt-1 whitespace-nowrap"><Wind size={13} className="shrink-0" />Vent 14 km/h</p>
         </div>
       </div>
 
@@ -553,16 +561,18 @@ function YieldCard({ className }: any) {
     >
       <div style={{ height: 230 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={yields} barGap={4} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+          <BarChart data={yields} barGap={4} margin={{ top: 4, right: 8, bottom: 0, left: 6 }}>
             <CartesianGrid vertical={false} stroke={C.line} />
             <XAxis dataKey="culture" tick={{ fontSize: 11, fill: C.sage }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: C.sage }} axisLine={false} tickLine={false} width={28} unit="t" />
+            <YAxis tick={{ fontSize: 11, fill: C.sage }} axisLine={false} tickLine={false} width={38} unit="t" />
             <Tooltip
-              formatter={(v) => [`${v} t`, ""]}
-              contentStyle={{ borderRadius: 8, border: `1px solid ${C.line}`, fontSize: 12, fontFamily: sans }}
+              formatter={(v, name) => [`${v} t`, name]}
+              labelStyle={{ color: C.ink, fontWeight: 600 }}
+              itemStyle={{ color: C.ink }}
+              contentStyle={{ borderRadius: 8, border: `1px solid ${C.line}`, backgroundColor: "var(--ork-use-surface-overlay)", color: C.ink, fontSize: 12, fontFamily: sans }}
             />
-            <Bar dataKey="prevu" name="Prévu" fill={C.green} radius={[4, 4, 0, 0]} maxBarSize={26} />
-            <Bar dataKey="objectif" name="Objectif" fill={C.lateriteSoft} stroke={C.laterite} strokeWidth={1.5} radius={[4, 4, 0, 0]} maxBarSize={26} />
+            <Bar dataKey="prevu" name="Prévu" fill={C.greenFill} radius={[4, 4, 0, 0]} maxBarSize={26} />
+            <Bar dataKey="objectif" name="Objectif" fill={C.lateriteSoft} stroke={C.lateriteFill} strokeWidth={1.5} radius={[4, 4, 0, 0]} maxBarSize={26} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -608,13 +618,13 @@ function PestCard({ className }: any) {
       <div className="space-y-4">
         {pests.map((p) => (
           <div key={p.nom} className="flex items-center gap-3">
-            <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: 34, height: 34, background: `${riskColor(p.risque)}1A` }}>
+            <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: 34, height: 34, background: `color-mix(in srgb, ${riskColor(p.risque)} 14%, transparent)` }}>
               <Bug size={16} style={{ color: riskColor(p.risque) }} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium truncate" style={{ color: C.ink }}>{p.nom}</span>
-                <span className="text-xs font-semibold shrink-0 ml-2" style={{ color: riskColor(p.risque) }}>{riskLabel(p.risque)}</span>
+              <div className="flex items-start justify-between gap-2 text-sm">
+                <span className="font-medium leading-snug" style={{ color: C.ink }}>{p.nom}</span>
+                <span className="text-xs font-semibold shrink-0 ml-2 whitespace-nowrap" style={{ color: riskColor(p.risque) }}>{riskLabel(p.risque)}</span>
               </div>
               <p className="text-[11px] mb-1" style={{ color: C.sage }}>{p.culture}</p>
               <Bar1 pct={p.risque} color={riskColor(p.risque)} height={6} />
@@ -647,27 +657,27 @@ function LaborCard({ className }: any) {
 function SoilCard({ className }: any) {
   return (
     <SectionCard className={className} title="Analyse pédologique" subtitle="Dernier prélèvement en laboratoire">
-      <div className="overflow-x-auto -mx-1">
-        <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+      <div className="overflow-x-auto -mx-1 px-1">
+        <table className="w-full min-w-[380px] text-xs" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ color: C.sage }}>
-              <th className="text-left font-medium pb-2 px-1">Parcelle</th>
-              <th className="text-center font-medium pb-2 px-1">pH</th>
-              <th className="text-center font-medium pb-2 px-1">N</th>
-              <th className="text-center font-medium pb-2 px-1">P</th>
-              <th className="text-center font-medium pb-2 px-1">K</th>
-              <th className="text-center font-medium pb-2 px-1">M.O.</th>
+              <th className="text-left font-medium pb-2 px-2">Parcelle</th>
+              <th className="text-center font-medium pb-2 px-2">pH</th>
+              <th className="text-center font-medium pb-2 px-2">N</th>
+              <th className="text-center font-medium pb-2 px-2">P</th>
+              <th className="text-center font-medium pb-2 px-2">K</th>
+              <th className="text-center font-medium pb-2 px-2">M.O.</th>
             </tr>
           </thead>
           <tbody>
             {soils.map((s, i) => (
               <tr key={s.parcelle} style={{ borderTop: `1px solid ${C.line}` }}>
-                <td className="py-2 px-1 font-medium truncate" style={{ color: C.ink }}>{s.parcelle}</td>
-                <td className="text-center px-1" style={{ color: C.ink }}>{s.ph}</td>
-                <td className="text-center px-1"><span className="inline-flex items-center gap-1"><StatusDot statut={s.n} />{s.n}</span></td>
-                <td className="text-center px-1"><span className="inline-flex items-center gap-1"><StatusDot statut={s.p} />{s.p}</span></td>
-                <td className="text-center px-1"><span className="inline-flex items-center gap-1"><StatusDot statut={s.k} />{s.k}</span></td>
-                <td className="text-center px-1" style={{ color: C.ink }}>{s.mo}</td>
+                <td className="py-2 px-2 font-medium whitespace-nowrap" style={{ color: C.ink }}>{s.parcelle}</td>
+                <td className="text-center px-2 whitespace-nowrap" style={{ color: C.ink }}>{s.ph}</td>
+                <td className="text-center px-2 whitespace-nowrap"><span className="inline-flex items-center gap-1"><StatusDot statut={s.n} />{s.n}</span></td>
+                <td className="text-center px-2 whitespace-nowrap"><span className="inline-flex items-center gap-1"><StatusDot statut={s.p} />{s.p}</span></td>
+                <td className="text-center px-2 whitespace-nowrap"><span className="inline-flex items-center gap-1"><StatusDot statut={s.k} />{s.k}</span></td>
+                <td className="text-center px-2 whitespace-nowrap" style={{ color: C.ink }}>{s.mo}</td>
               </tr>
             ))}
           </tbody>
@@ -680,22 +690,18 @@ function SoilCard({ className }: any) {
 /* ------------------------------------------------------------------ */
 /*  ROOT                                                                */
 /* ------------------------------------------------------------------ */
-export default function CultimaDashboard() {
+export default function CultimaDashboard({ embedded = false, hideFooter = false }: { embedded?: boolean; hideFooter?: boolean }) {
   const [active, setActive] = useState("Tableau de bord");
 
   return (
-    <div style={{ fontFamily: sans, background: C.paper, color: C.ink }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Zilla+Slab:wght@500;600;700&display=swap');
-        * { box-sizing: border-box; }
-      `}</style>
+    <div style={{ fontFamily: sans, background: "var(--ork-use-surface-default)", color: C.ink }}>
 
-      <div className="flex min-h-screen">
-        <Sidebar active={active} setActive={setActive} />
+      <div className={embedded ? "flex flex-col" : "flex min-h-screen"}>
+        {!embedded && <Sidebar active={active} setActive={setActive} />}
         <div className="flex-1 min-w-0 flex flex-col">
-          <Topbar active={active} />
+          {!embedded && <Topbar active={active} />}
           <AlertBar />
-          <main className="flex-1 px-5 lg:px-8 py-6 space-y-6">
+          <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1360px] w-full mx-auto">
             <Hero />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -720,10 +726,12 @@ export default function CultimaDashboard() {
               <SoilCard className="lg:col-span-5" />
             </div>
 
-            <footer className="text-center text-xs pb-4" style={{ color: C.sage }}>
-              Cultima ERP · Production végétale — données de démonstration, campagne 2026
-            </footer>
-          </main>
+            {!hideFooter && (
+              <footer className="text-center text-xs pb-4" style={{ color: C.sage }}>
+                Cultima ERP · Production végétale — données de démonstration, campagne 2026
+              </footer>
+            )}
+          </div>
         </div>
       </div>
     </div>

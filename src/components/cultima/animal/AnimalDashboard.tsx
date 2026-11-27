@@ -34,8 +34,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-export default function AnimalDashboard() {
-  const [currentSite, setCurrentSite] = useState<string>('Domaine Agro-Pastoral de la Vallée');
+export default function AnimalDashboard({ embedded = false }: { embedded?: boolean }) {
+  const [currentSite, setCurrentSite] = useState<string>('Ferme Espoir · Kpalimé');
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesCategory>('all');
   const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
   const [silos, setSilos] = useState<SiloItem[]>(mockSilos);
@@ -110,17 +110,18 @@ export default function AnimalDashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-brand-green selection:text-white">
+    <div className={embedded ? "flex flex-col bg-background text-foreground selection:bg-brand selection:text-on-brand" : "min-h-screen flex flex-col bg-background text-foreground selection:bg-brand selection:text-on-brand"}>
       {/* Toast notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-2.5 animate-in slide-in-from-bottom-3 duration-200">
-          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 bg-[var(--ork-ref-primary-15)] text-white text-xs font-semibold px-4 py-3 rounded-[var(--ork-use-radius-card)] shadow-overlay border border-[var(--ork-use-border-brand)] flex items-center gap-2.5 animate-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle className="w-4 h-4 text-[var(--ork-use-icon-success)] shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Main Top Header */}
       <Header
+        compact={embedded}
         currentSite={currentSite}
         onSelectSite={(site) => {
           setCurrentSite(site);
@@ -140,7 +141,7 @@ export default function AnimalDashboard() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      <div className="flex-1 max-w-[1360px] w-full mx-auto p-4 sm:p-6 lg:px-8 space-y-6">
         {/* Core Zootechnical & Financial KPI Cards */}
         <section>
           <MetricCards kpis={currentKPIs} species={selectedSpecies} />
@@ -148,57 +149,57 @@ export default function AnimalDashboard() {
 
         {/* Aquaculture Dedicated Sensors (when Aquaculture or All is selected) */}
         {(selectedSpecies === 'aquaculture' || selectedSpecies === 'all') && (
-          <section className="bg-gradient-to-r from-teal-900 to-brand-green text-white rounded-xl p-4 sm:p-5 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-teal-800/80 pb-3">
+          <section className="bg-gradient-to-r from-[var(--ork-ref-primary-12)] to-[var(--ork-ref-primary-20)] border border-[var(--ork-ref-primary-30)] text-white rounded-xl p-4 sm:p-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--ork-ref-primary-30)] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-teal-800 flex items-center justify-center text-teal-200">
+                <div className="w-8 h-8 rounded-lg bg-[var(--ork-ref-primary-25)] border border-[var(--ork-ref-primary-35)] flex items-center justify-center text-[var(--ork-ref-primary-87)] shrink-0">
                   <Fish className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    Station Télémétrique Aquacole & Qualité de l'Eau
-                    <span className="text-[10px] bg-teal-700 text-teal-100 font-bold px-1.5 py-0.2 rounded font-mono">
+                  <h3 className="text-sm font-bold text-white flex flex-wrap items-center gap-2">
+                    Station Télémétrique Aquacole & Qualité de l&apos;Eau
+                    <span className="text-[10px] bg-[var(--ork-ref-primary-30)] text-[var(--ork-ref-primary-95)] font-bold px-1.5 py-0.5 rounded font-mono">
                       Capteurs Submersibles IoT
                     </span>
                   </h3>
-                  <p className="text-xs text-teal-200/80">
-                    Paramètres critiques de l'étang semi-intensif et des bassins bétonnés Tilapia / Silure
+                  <p className="text-xs text-[var(--ork-ref-primary-87)]">
+                    Paramètres critiques de l&apos;étang semi-intensif et des bassins bétonnés Tilapia / Silure
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-teal-200">
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <span className="text-[var(--ork-ref-primary-87)]">
                   Biomasse estimée : <strong className="text-white font-mono">14 250 kg</strong>
                 </span>
-                <span className="text-teal-400">•</span>
-                <span className="text-teal-200">
-                  IC Aquacole : <strong className="text-emerald-300 font-mono">1.22</strong>
+                <span className="text-[var(--ork-ref-primary-70)]">•</span>
+                <span className="text-[var(--ork-ref-primary-87)]">
+                  IC Aquacole : <strong className="text-[var(--ork-ref-success-80)] font-mono">1.22</strong>
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
               {mockWaterQuality.map((wq, idx) => (
                 <React.Fragment key={idx}>
-                  <div className="bg-teal-950/40 border border-teal-700/40 rounded-lg p-3">
-                    <div className="text-[11px] text-teal-300 font-semibold truncate">{wq.bassinId}</div>
+                  <div className="bg-[var(--ork-ref-primary-8)]/70 border border-[var(--ork-ref-primary-30)] rounded-lg p-3">
+                    <div className="text-[11px] text-[var(--ork-ref-primary-87)] font-semibold leading-snug">{wq.bassinId}</div>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className="text-lg font-black font-mono text-white">{wq.dissolvedOxygenMgL}</span>
-                      <span className="text-xs text-teal-300">mg/L O₂</span>
+                      <span className="text-xs text-[var(--ork-ref-primary-80)]">mg/L O₂</span>
                     </div>
-                    <div className="text-[10px] text-teal-400 mt-0.5">
+                    <div className="text-[10px] text-[var(--ork-ref-primary-80)] mt-0.5">
                       {wq.dissolvedOxygenMgL >= 5.0 ? 'Saturation optimale (>5mg/L)' : 'Aération d\'appoint requise'}
                     </div>
                   </div>
 
-                  <div className="bg-teal-950/40 border border-teal-700/40 rounded-lg p-3">
-                    <div className="text-[11px] text-teal-300 font-semibold">Température & pH</div>
+                  <div className="bg-[var(--ork-ref-primary-8)]/70 border border-[var(--ork-ref-primary-30)] rounded-lg p-3">
+                    <div className="text-[11px] text-[var(--ork-ref-primary-87)] font-semibold">Température & pH</div>
                     <div className="mt-1 flex items-baseline gap-1.5">
                       <span className="text-lg font-black font-mono text-white">{wq.temperatureC}°C</span>
-                      <span className="text-xs text-teal-300">• pH {wq.ph}</span>
+                      <span className="text-xs text-[var(--ork-ref-primary-80)]">• pH {wq.ph}</span>
                     </div>
-                    <div className="text-[10px] text-teal-400 mt-0.5">
+                    <div className="text-[10px] text-[var(--ork-ref-primary-80)] mt-0.5">
                       NH3 : {wq.ammoniaMgL} mg/L (Sécurisé)
                     </div>
                   </div>
@@ -245,7 +246,7 @@ export default function AnimalDashboard() {
             }}
           />
         </section>
-      </main>
+      </div>
 
       {/* Modals */}
       <ZootechSimulatorModal
@@ -266,16 +267,16 @@ export default function AnimalDashboard() {
       />
 
       {/* Corporate ERP Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-12 py-6 px-4 sm:px-6 text-xs text-slate-500">
+      <footer className="bg-surface border-t border-border mt-12 py-6 px-4 sm:px-6 text-xs text-muted">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-slate-900">Cultima ERP</span>
-            <span>— Plateforme Intégrée d'Ingénierie Zootechnique & Gestion d'Élevage</span>
+            <span className="font-title font-extrabold text-foreground">Cultima ERP</span>
+            <span>— Plateforme Intégrée d&apos;Ingénierie Zootechnique &amp; Gestion d&apos;Élevage</span>
           </div>
           <div className="flex items-center gap-4">
-            <span>Conforme Traçabilité Sanitaire Régionale & Normes ISO</span>
+            <span>Conforme Traçabilité Sanitaire Régionale &amp; Normes ISO</span>
             <span>•</span>
-            <span className="font-mono text-slate-700">Cultima v4.8 Enterprise</span>
+            <span className="font-mono text-foreground">Cultima v4.8 Enterprise</span>
           </div>
         </div>
       </footer>

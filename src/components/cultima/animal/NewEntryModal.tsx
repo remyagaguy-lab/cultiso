@@ -225,13 +225,13 @@ export const NewEntryModal: React.FC<NewEntryModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-3.5 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-semibold transition"
+                  className="px-3.5 py-2 border border-border text-foreground hover:bg-sunken rounded-[var(--ork-use-radius-button)] text-xs font-semibold transition"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-brand-green hover:bg-[#116a58] text-white rounded-lg text-xs font-bold shadow-xs transition"
+                  className="px-4 py-2 bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand rounded-[var(--ork-use-radius-button)] text-xs font-bold shadow-raised transition"
                 >
                   Valider et Enregistrer
                 </button>

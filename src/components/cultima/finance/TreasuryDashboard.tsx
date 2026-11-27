@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowUpOutlined, ArrowDownOutlined, DollarOutlined, PlusOutlined } from "@ant-design/icons";
+import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from "@ant-design/icons";
+import { Wallet } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -73,8 +74,9 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleAddTransaction = async (e: React.FormEvent) => {
@@ -108,15 +110,16 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
   const balance = totalIncome - totalExpense;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto font-manrope">
-      <div className="flex justify-between items-center mb-8">
+    <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-3xl font-unbounded font-bold text-[#17231F]">Trésorerie</h2>
-          <p className="text-[#6E8A75] mt-1">Gérez vos entrées et sorties d'argent.</p>
+          <h1 className="font-title text-xl sm:text-2xl font-bold text-foreground tracking-tight m-0">Trésorerie</h1>
+          <p className="text-sm text-muted mt-1 m-0">Gérez vos entrées et sorties d&apos;argent.</p>
         </div>
         <button 
+          type="button"
           onClick={() => setIsModalOpen(true)}
-          className="bg-brand-orange hover:bg-[#A04000] text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-sm"
+          className="bg-action hover:bg-[var(--ork-use-background-action-bold-hover)] text-on-action px-4 py-2 rounded-[var(--ork-use-radius-button)] text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition-colors shadow-xs w-fit whitespace-nowrap shrink-0"
         >
           <PlusOutlined />
           Nouvelle Transaction
@@ -124,108 +127,110 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-              <ArrowUpOutlined className="text-lg" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+        <div className="bg-surface p-5 rounded-[var(--ork-use-radius-card)] border border-border flex flex-col justify-between">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center shrink-0">
+              <ArrowUpOutlined className="text-base" />
             </div>
-            <h3 className="text-gray-500 font-medium">Entrées (Revenus)</h3>
+            <h2 className="text-sm text-muted font-semibold m-0">Entrées (Revenus)</h2>
           </div>
-          <p className="text-3xl font-bold text-[#17231F]">{totalIncome.toLocaleString('fr-FR')} <span className="text-lg text-gray-400 font-medium">FCFA</span></p>
+          <p className="text-2xl font-bold text-foreground font-mono-numbers m-0">{totalIncome.toLocaleString('fr-FR')} <span className="text-sm text-muted font-medium">FCFA</span></p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
-              <ArrowDownOutlined className="text-lg" />
+        <div className="bg-surface p-5 rounded-[var(--ork-use-radius-card)] border border-border flex flex-col justify-between">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-action-subtle)] text-t-action flex items-center justify-center shrink-0">
+              <ArrowDownOutlined className="text-base" />
             </div>
-            <h3 className="text-gray-500 font-medium">Sorties (Dépenses)</h3>
+            <h2 className="text-sm text-muted font-semibold m-0">Sorties (Dépenses)</h2>
           </div>
-          <p className="text-3xl font-bold text-[#17231F]">{totalExpense.toLocaleString('fr-FR')} <span className="text-lg text-gray-400 font-medium">FCFA</span></p>
+          <p className="text-2xl font-bold text-foreground font-mono-numbers m-0">{totalExpense.toLocaleString('fr-FR')} <span className="text-sm text-muted font-medium">FCFA</span></p>
         </div>
 
-        <div className="bg-brand-green p-6 rounded-2xl shadow-md flex flex-col justify-between text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <DollarOutlined className="text-lg" />
+        <div className="bg-brand p-5 rounded-[var(--ork-use-radius-card)] shadow-raised flex flex-col justify-between text-on-brand">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-[var(--ork-use-radius-control)] bg-white/15 flex items-center justify-center shrink-0">
+              <Wallet className="w-4 h-4" />
             </div>
-            <h3 className="text-white/80 font-medium">Solde Actuel</h3>
+            <h2 className="text-sm opacity-90 font-semibold m-0">Solde Actuel</h2>
           </div>
-          <p className="text-3xl font-bold">{balance.toLocaleString('fr-FR')} <span className="text-lg text-white/60 font-medium">FCFA</span></p>
+          <p className="text-2xl font-bold font-mono-numbers m-0">{balance.toLocaleString('fr-FR')} <span className="text-sm opacity-90 font-medium">FCFA</span></p>
         </div>
       </div>
 
       {/* Transactions List */}
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 className="font-bold text-[#17231F]">Historique des transactions</h3>
+      <div className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-border bg-sunken/70">
+          <h2 className="text-sm font-title font-bold text-foreground m-0">Historique des transactions</h2>
         </div>
         
         {loading ? (
-          <div className="p-8 text-center text-gray-400">Chargement...</div>
+          <div className="p-8 text-center text-sm text-muted">Chargement...</div>
         ) : transactions.length === 0 ? (
-          <div className="p-12 text-center flex flex-col items-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-              <DollarOutlined className="text-2xl text-gray-400" />
+          <div className="p-10 text-center flex flex-col items-center">
+            <div className="w-12 h-12 bg-[var(--ork-use-background-brand-subtle)] rounded-[var(--ork-use-radius-control)] flex items-center justify-center mb-3 text-t-brand">
+              <Wallet className="w-5 h-5" />
             </div>
-            <h4 className="text-lg font-bold text-gray-700 mb-2">Aucune transaction</h4>
-            <p className="text-gray-500 max-w-md">Commencez à gérer votre trésorerie en ajoutant vos premières dépenses (intrants, salaires) ou revenus (ventes).</p>
+            <h3 className="text-base font-title font-bold text-foreground mb-1.5 m-0">Aucune transaction</h3>
+            <p className="text-xs sm:text-sm text-muted max-w-md m-0">Commencez à gérer votre trésorerie en ajoutant vos premières dépenses (intrants, salaires) ou revenus (ventes).</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[540px] text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 text-sm text-gray-500">
-                <th className="px-6 py-4 font-medium">Date</th>
-                <th className="px-6 py-4 font-medium">Catégorie</th>
-                <th className="px-6 py-4 font-medium">Description</th>
-                <th className="px-6 py-4 font-medium text-right">Montant</th>
+              <tr className="border-b border-border text-xs text-muted uppercase tracking-wider">
+                <th className="px-5 py-3.5 font-semibold">Date</th>
+                <th className="px-5 py-3.5 font-semibold">Catégorie</th>
+                <th className="px-5 py-3.5 font-semibold">Description</th>
+                <th className="px-5 py-3.5 font-semibold text-right">Montant</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((tx) => (
-                <tr key={tx.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-600">{tx.date}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                <tr key={tx.id} className="border-b border-border hover:bg-sunken/60 transition-colors">
+                  <td className="px-5 py-3.5 text-xs font-mono-numbers text-muted whitespace-nowrap">{tx.date}</td>
+                  <td className="px-5 py-3.5 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-[var(--ork-use-radius-badge)] text-xs font-medium bg-sunken text-foreground">
                       {tx.category}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-800">{tx.description || '-'}</td>
-                  <td className={`px-6 py-4 text-sm font-bold text-right ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                  <td className="px-5 py-3.5 text-sm text-foreground">{tx.description || '-'}</td>
+                  <td className={`px-5 py-3.5 text-sm font-bold text-right font-mono-numbers whitespace-nowrap ${tx.type === 'income' ? 'text-t-brand' : 'text-t-action'}`}>
                     {tx.type === 'income' ? '+' : '-'}{Number(tx.amount).toLocaleString('fr-FR')} FCFA
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
       {/* Add Transaction Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-bold text-lg text-[#17231F]">Nouvelle Transaction</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+        <div className="fixed inset-0 bg-[color-mix(in_srgb,var(--ork-sys-scrim)_40%,transparent)] z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-surface text-foreground rounded-[var(--ork-use-radius-dialog)] w-full max-w-md shadow-overlay border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center">
+              <h3 className="font-title font-bold text-lg text-foreground">Nouvelle Transaction</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-muted hover:text-foreground">✕</button>
             </div>
             
             <form onSubmit={handleAddTransaction} className="p-6">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type d'opération</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Type d&apos;opération</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button 
                     type="button"
                     onClick={() => setType('income')}
-                    className={`p-2 text-sm font-medium rounded-lg border ${type === 'income' ? 'bg-green-50 border-green-200 text-green-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                    className={`p-2 text-sm font-medium rounded-[var(--ork-use-radius-button)] border ${type === 'income' ? 'bg-[var(--ork-use-background-success-subtle)] border-[var(--ork-use-border-success)] text-t-success' : 'border-border text-muted hover:bg-sunken'}`}
                   >
-                    Rentrée d'argent
+                    Rentrée d&apos;argent
                   </button>
                   <button 
                     type="button"
                     onClick={() => setType('expense')}
-                    className={`p-2 text-sm font-medium rounded-lg border ${type === 'expense' ? 'bg-red-50 border-red-200 text-red-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                    className={`p-2 text-sm font-medium rounded-[var(--ork-use-radius-button)] border ${type === 'expense' ? 'bg-[var(--ork-use-background-danger-subtle)] border-[var(--ork-use-border-danger)] text-t-danger' : 'border-border text-muted hover:bg-sunken'}`}
                   >
                     Dépense
                   </button>
@@ -233,43 +238,43 @@ export default function TreasuryDashboard({ draftTransaction }: TreasuryDashboar
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Montant (FCFA)</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Montant (FCFA)</label>
                 <input 
                   type="number" 
                   required
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent"
+                  className="w-full px-3 py-2 bg-surface text-foreground border border-border-strong rounded-[var(--ork-use-radius-control)] focus:outline-none focus:ring-2 focus:ring-[var(--ork-use-border-focused)] focus:border-transparent"
                   placeholder="Ex: 50000"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Catégorie</label>
                 <input 
                   type="text" 
                   required
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent"
+                  className="w-full px-3 py-2 bg-surface text-foreground border border-border-strong rounded-[var(--ork-use-radius-control)] focus:outline-none focus:ring-2 focus:ring-[var(--ork-use-border-focused)] focus:border-transparent"
                   placeholder="Ex: Semences, Vente maïs, Salaire..."
                 />
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description (Optionnel)</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Description (Optionnel)</label>
                 <input 
                   type="text" 
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent"
+                  className="w-full px-3 py-2 bg-surface text-foreground border border-border-strong rounded-[var(--ork-use-radius-control)] focus:outline-none focus:ring-2 focus:ring-[var(--ork-use-border-focused)] focus:border-transparent"
                   placeholder="Ex: Achat de 2 sacs de NPK"
                 />
               </div>
 
               <button 
                 type="submit" 
-                className="w-full bg-brand-green hover:bg-[#072F27] text-white py-3 rounded-xl font-bold transition-colors"
+                className="w-full bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand py-3 rounded-[var(--ork-use-radius-button)] font-bold transition-colors"
               >
                 Enregistrer
               </button>

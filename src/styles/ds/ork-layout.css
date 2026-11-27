@@ -1,0 +1,106 @@
+/* Orkedio Design System : primitives de mise en page (v2.5.0, bêta). Généré par build_tokens.py (layout.py) : ne pas modifier à la main.
+   Container, Box, Stack, Inline, Grid. Elles ne lisent que des jetons --ork-ref-* et --ork-use-* ; l'écart se règle avec .ork-gap-<pas>, le remplissage avec .ork-p-<pas>. */
+*, *::before, *::after { box-sizing: border-box; }
+/* Container : largeur maximale + marges de la classe d'écran. */
+.ork-container { width: 100%; margin-inline: auto; padding-inline: var(--ork-ref-grid-margin); max-width: calc(var(--ork-ref-grid-container-large) + 2 * var(--ork-ref-grid-margin)); }
+.ork-container--large { max-width: calc(var(--ork-ref-grid-container-large) + 2 * var(--ork-ref-grid-margin)); }
+.ork-container--narrow { max-width: calc(var(--ork-ref-grid-container-narrow) + 2 * var(--ork-ref-grid-margin)); }
+.ork-container--fluid { max-width: none; }
+/* Pas d'espacement : gap et remplissage, de 0 à 11 (jetons --ork-ref-space-*). */
+.ork-gap-0 { --ork-gap: var(--ork-ref-space-0); }
+.ork-gap-1 { --ork-gap: var(--ork-ref-space-1); }
+.ork-gap-2 { --ork-gap: var(--ork-ref-space-2); }
+.ork-gap-3 { --ork-gap: var(--ork-ref-space-3); }
+.ork-gap-4 { --ork-gap: var(--ork-ref-space-4); }
+.ork-gap-5 { --ork-gap: var(--ork-ref-space-5); }
+.ork-gap-6 { --ork-gap: var(--ork-ref-space-6); }
+.ork-gap-7 { --ork-gap: var(--ork-ref-space-7); }
+.ork-gap-8 { --ork-gap: var(--ork-ref-space-8); }
+.ork-gap-9 { --ork-gap: var(--ork-ref-space-9); }
+.ork-gap-10 { --ork-gap: var(--ork-ref-space-10); }
+.ork-gap-11 { --ork-gap: var(--ork-ref-space-11); }
+.ork-p-0 { padding: var(--ork-ref-space-0); }
+.ork-p-1 { padding: var(--ork-ref-space-1); }
+.ork-p-2 { padding: var(--ork-ref-space-2); }
+.ork-p-3 { padding: var(--ork-ref-space-3); }
+.ork-p-4 { padding: var(--ork-ref-space-4); }
+.ork-p-5 { padding: var(--ork-ref-space-5); }
+.ork-p-6 { padding: var(--ork-ref-space-6); }
+.ork-p-7 { padding: var(--ork-ref-space-7); }
+.ork-p-8 { padding: var(--ork-ref-space-8); }
+.ork-p-9 { padding: var(--ork-ref-space-9); }
+.ork-p-10 { padding: var(--ork-ref-space-10); }
+.ork-p-11 { padding: var(--ork-ref-space-11); }
+.ork-px-0 { padding-inline: var(--ork-ref-space-0); }
+.ork-px-1 { padding-inline: var(--ork-ref-space-1); }
+.ork-px-2 { padding-inline: var(--ork-ref-space-2); }
+.ork-px-3 { padding-inline: var(--ork-ref-space-3); }
+.ork-px-4 { padding-inline: var(--ork-ref-space-4); }
+.ork-px-5 { padding-inline: var(--ork-ref-space-5); }
+.ork-px-6 { padding-inline: var(--ork-ref-space-6); }
+.ork-px-7 { padding-inline: var(--ork-ref-space-7); }
+.ork-px-8 { padding-inline: var(--ork-ref-space-8); }
+.ork-px-9 { padding-inline: var(--ork-ref-space-9); }
+.ork-px-10 { padding-inline: var(--ork-ref-space-10); }
+.ork-px-11 { padding-inline: var(--ork-ref-space-11); }
+.ork-py-0 { padding-block: var(--ork-ref-space-0); }
+.ork-py-1 { padding-block: var(--ork-ref-space-1); }
+.ork-py-2 { padding-block: var(--ork-ref-space-2); }
+.ork-py-3 { padding-block: var(--ork-ref-space-3); }
+.ork-py-4 { padding-block: var(--ork-ref-space-4); }
+.ork-py-5 { padding-block: var(--ork-ref-space-5); }
+.ork-py-6 { padding-block: var(--ork-ref-space-6); }
+.ork-py-7 { padding-block: var(--ork-ref-space-7); }
+.ork-py-8 { padding-block: var(--ork-ref-space-8); }
+.ork-py-9 { padding-block: var(--ork-ref-space-9); }
+.ork-py-10 { padding-block: var(--ork-ref-space-10); }
+.ork-py-11 { padding-block: var(--ork-ref-space-11); }
+/* Box : un bloc avec remplissage, fond, bordure et rayon facultatifs. */
+.ork-box { display: block; min-width: 0; padding: var(--ork-ref-space-5); }
+.ork-box--default { background: var(--ork-use-surface-default); color: var(--ork-use-text-default); }
+.ork-box--raised { background: var(--ork-use-surface-raised); color: var(--ork-use-text-default); box-shadow: var(--ork-use-elevation-raised); }
+.ork-box--sunken { background: var(--ork-use-surface-sunken); color: var(--ork-use-text-default); }
+.ork-box--bordered { border: var(--ork-use-border-width-default) solid var(--ork-use-border-default); }
+.ork-r-none { border-radius: var(--ork-ref-radius-none); }
+.ork-r-xs { border-radius: var(--ork-ref-radius-xs); }
+.ork-r-sm { border-radius: var(--ork-ref-radius-sm); }
+.ork-r-md { border-radius: var(--ork-ref-radius-md); }
+.ork-r-lg { border-radius: var(--ork-ref-radius-lg); }
+.ork-r-xl { border-radius: var(--ork-ref-radius-xl); }
+.ork-r-full { border-radius: var(--ork-ref-radius-full); }
+/* Stack : enfants empilés, écart constant (défaut 16 px). */
+.ork-stack { display: flex; flex-direction: column; gap: var(--ork-gap, var(--ork-ref-space-5)); min-width: 0; }
+.ork-stack--center { align-items: center; } .ork-stack--start { align-items: flex-start; } .ork-stack--end { align-items: flex-end; }
+.ork-stack > .ork-push { margin-block-start: auto; }
+/* Inline : enfants côte à côte, qui passent à la ligne (jamais de défilement horizontal). */
+.ork-inline { display: flex; flex-flow: row wrap; align-items: center; gap: var(--ork-gap, var(--ork-ref-space-3)); min-width: 0; }
+.ork-inline--start { align-items: flex-start; } .ork-inline--end { align-items: flex-end; } .ork-inline--baseline { align-items: baseline; }
+.ork-inline--between { justify-content: space-between; } .ork-inline--center { justify-content: center; } .ork-inline--end-x { justify-content: flex-end; }
+.ork-inline--nowrap { flex-wrap: nowrap; } .ork-inline > .ork-push { margin-inline-start: auto; }
+/* Grid : grille de la classe d'écran (4, 8 ou 12 colonnes) ou grille automatique de cartes. */
+.ork-grid { display: grid; gap: var(--ork-gap, var(--ork-ref-grid-gutter)); min-width: 0; grid-template-columns: repeat(var(--ork-ref-grid-columns), minmax(0, 1fr)); }
+.ork-grid--auto { grid-template-columns: repeat(auto-fit, minmax(min(var(--ork-min, 16rem), 100%), 1fr)); }
+.ork-grid > * { min-width: 0; }
+.ork-grid--cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.ork-grid--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ork-grid--cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ork-grid--cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ork-grid--cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.ork-span-1 { grid-column: span 1 / span 1; }
+.ork-span-2 { grid-column: span 2 / span 2; }
+.ork-span-3 { grid-column: span 3 / span 3; }
+.ork-span-4 { grid-column: span 4 / span 4; }
+.ork-span-5 { grid-column: span 5 / span 5; }
+.ork-span-6 { grid-column: span 6 / span 6; }
+.ork-span-7 { grid-column: span 7 / span 7; }
+.ork-span-8 { grid-column: span 8 / span 8; }
+.ork-span-9 { grid-column: span 9 / span 9; }
+.ork-span-10 { grid-column: span 10 / span 10; }
+.ork-span-11 { grid-column: span 11 / span 11; }
+.ork-span-12 { grid-column: span 12 / span 12; }
+.ork-span-full { grid-column: 1 / -1; }
+/* Une portée plus large que la grille de l'écran est ramenée à la grille entière. */
+@media (max-width: 599px) { .ork-grid:not(.ork-grid--auto):not([class*="ork-grid--cols-"]) > [class*="ork-span-"] { grid-column: 1 / -1; } }
+/* Utilitaires de lecture : texte sans débordement, ligne de lecture confortable. */
+.ork-measure { max-inline-size: 65ch; }
+.ork-z-raised { position: relative; z-index: var(--ork-ref-z-raised); } .ork-z-sticky { position: sticky; z-index: var(--ork-ref-z-sticky); }

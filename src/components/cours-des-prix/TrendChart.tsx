@@ -11,17 +11,15 @@ import {
   Legend
 } from 'recharts';
 
+// Séries ordonnées selon l'étape 1c du design system Orkedio (contraste >= 3:1 en clair et en nuit)
 const COLORS = [
-  '#007468', // Vert principal
-  '#D0541F', // Orange latérite
-  '#2E86C1', // Bleu
-  '#8E44AD', // Violet
-  '#28B463', // Vert clair
-  '#F1C40F', // Jaune
-  '#E74C3C', // Rouge
-  '#16A085', // Turquoise
-  '#34495E', // Gris foncé
-  '#E67E22', // Orange clair
+  'var(--ork-use-data-1-mark)',
+  'var(--ork-use-data-2-mark)',
+  'var(--ork-use-data-3-mark)',
+  'var(--ork-use-data-4-mark)',
+  'var(--ork-use-data-5-mark)',
+  'var(--ork-use-data-6-mark)',
+  'var(--ork-use-data-other-mark)',
 ];
 
 export default function TrendChart({ data }: { data: PriceRecord[] }) {
@@ -83,16 +81,16 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-4 border border-[rgba(0,52,47,0.08)] rounded-[9px] shadow-lg min-w-[200px] z-50">
-          <p className="font-medium text-forest-ink mb-3 pb-2 border-b border-gray-100">{label}</p>
+        <div className="bg-surface p-4 border border-border rounded-[9px] shadow-lg min-w-[200px] z-50">
+          <p className="font-medium text-foreground mb-3 pb-2 border-b border-border">{label}</p>
           <div className="flex flex-col gap-2">
             {payload.map((entry: any, index: number) => (
               <div key={`item-${index}`} className="flex justify-between items-center text-[14px] font-mono-numbers gap-4">
                 <span className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></span>
-                  <span className="text-gray-600 font-sans">{entry.name}</span>
+                  <span className="text-muted font-sans">{entry.name}</span>
                 </span>
-                <span className="font-bold text-gray-900">
+                <span className="font-bold text-foreground">
                   {entry.value.toLocaleString('fr-FR')} F
                 </span>
               </div>
@@ -106,14 +104,15 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
 
   if (chartData.length === 0) {
     return (
-      <div className="w-full bg-white p-6 rounded-[9px] border border-gray-200 shadow-sm flex flex-col items-center justify-center" style={{ height: 400 }}>
-        <h3 className="font-unbounded font-medium text-lg text-gray-900 mb-2 opacity-70">Évolution des prix</h3>
-        <p className="text-gray-500 text-[15px]">Aucune donnée disponible pour la période sélectionnée.</p>
+      <div className="w-full bg-surface p-6 rounded-[9px] border border-border shadow-sm flex flex-col items-center justify-center" style={{ height: 400 }}>
+        <h3 className="font-title font-medium text-lg text-foreground mb-2 opacity-80">Évolution des prix</h3>
+        <p className="text-muted text-[15px]">Aucune donnée disponible pour la période sélectionnée.</p>
         <button 
+          type="button"
           onClick={() => setActiveTimeRange('ALL')} 
-          className="mt-4 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition"
+          className="mt-4 px-4 py-2 min-h-[44px] text-sm bg-sunken text-foreground rounded-lg border border-border hover:bg-selected transition"
         >
-          Voir tout l'historique
+          Voir tout l&apos;historique
         </button>
       </div>
     );
@@ -129,30 +128,31 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
   ];
 
   return (
-    <div className="w-full bg-white p-6 rounded-[9px] border border-gray-200 shadow-sm flex flex-col gap-6">
+    <div className="w-full bg-surface p-6 rounded-[9px] border border-border shadow-sm flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h3 className="text-gray-500 font-medium text-sm mb-1 uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-muted font-medium text-sm mb-1 uppercase tracking-wider flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-orange inline-block animate-pulse"></span>
             Évolution {productName}
           </h3>
           <div className="flex items-baseline gap-2">
-            <span className="font-unbounded font-bold text-3xl text-gray-900">
+            <span className="font-title font-bold text-3xl text-foreground font-mono-numbers">
               {currentPrice?.toLocaleString('fr-FR')} FCFA
             </span>
-            <span className="text-gray-500 text-sm">/ {currentUnit} (dernier relevé)</span>
+            <span className="text-muted text-sm">/ {currentUnit} (dernier relevé)</span>
           </div>
         </div>
         
-        <div className="flex gap-2 bg-gray-50 p-1 rounded-md border border-gray-200 self-start overflow-x-auto max-w-full">
+        <div className="flex gap-1.5 bg-sunken p-1 rounded-lg border border-border self-start overflow-x-auto max-w-full">
           {timeRanges.map(range => (
             <button
               key={range.value}
+              type="button"
               onClick={() => setActiveTimeRange(range.value)}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap ${
                 activeTimeRange === range.value 
-                  ? 'bg-white text-brand-green shadow-sm border border-gray-200' 
-                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-selected text-t-brand ring-1 ring-inset ring-[var(--ork-use-border-selected)]' 
+                  : 'text-muted hover:text-foreground hover:bg-surface'
               }`}
             >
               {range.label}
@@ -164,10 +164,10 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
       <div className="w-full font-mono-numbers relative" style={{ height: 400 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 10, right: 10, bottom: 5, left: -10 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--ork-use-border-default)" />
             <XAxis 
               dataKey="date" 
-              tick={{ fontSize: 11, fill: '#6b7280', fontFamily: 'var(--font-manrope)' }}
+              tick={{ fontSize: 11, fill: 'var(--ork-use-text-subtle)', fontFamily: 'var(--ork-use-font-text)' }}
               axisLine={false}
               tickLine={false}
               dy={15}
@@ -175,15 +175,15 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
             />
             <YAxis 
               tickFormatter={(val) => `${val}`}
-              tick={{ fontSize: 11, fill: '#6b7280', fontFamily: 'var(--font-manrope)' }}
+              tick={{ fontSize: 11, fill: 'var(--ork-use-text-subtle)', fontFamily: 'var(--ork-use-font-text)' }}
               axisLine={false}
               tickLine={false}
               dx={-5}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(11,83,69,0.1)', strokeWidth: 40 }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'color-mix(in srgb, var(--ork-use-text-brand) 12%, transparent)', strokeWidth: 40 }} />
             <Legend 
               iconType="circle" 
-              wrapperStyle={{ fontSize: '12px', fontFamily: 'var(--font-manrope)', paddingTop: '20px' }} 
+              wrapperStyle={{ fontSize: '12px', fontFamily: 'var(--ork-use-font-text)', paddingTop: '20px' }} 
             />
             
             {locations.map((loc, index) => (
@@ -194,7 +194,7 @@ export default function TrendChart({ data }: { data: PriceRecord[] }) {
                 name={loc}
                 stroke={COLORS[index % COLORS.length]}
                 strokeWidth={2.5}
-                dot={{ r: 3, strokeWidth: 1, fill: '#fff' }}
+                dot={{ r: 3, strokeWidth: 1, fill: 'var(--ork-use-surface-raised)' }}
                 activeDot={{ r: 6, strokeWidth: 2 }}
                 connectNulls={true}
               />

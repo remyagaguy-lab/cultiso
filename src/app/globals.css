@@ -1,41 +1,51 @@
 @import "tailwindcss";
 
+/* Design system Orkedio (marque Cultiso) : fichiers générés depuis la source, voir src/styles/ds/ */
+@import "../styles/ds/ork-tokens.css";
+@import "../styles/ds/ork-tailwind-v4.css";
+@import "../styles/ds/ork-components.css";
+@import "../styles/ds/ork-components-bc.css";
+@import "../styles/ds/ork-layout.css";
+@import "../styles/ds/cultiso-palette.css";
+
+/* La police officielle de Cultiso est Plus Jakarta Sans chargée via next/font */
+[data-brand="cultiso"] {
+  --ork-use-font-title: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --ork-use-font-text: var(--font-plus-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
 @theme inline {
   /* Fonts */
-  --font-sans: var(--font-plus-jakarta);
-  --font-unbounded: var(--font-plus-jakarta);
-  --font-manrope: var(--font-plus-jakarta);
-  
-  /* Cultiso Core Colors */
-  --color-brand-green: #007468; /* sarcelle vive (logo 2026-11-20) */
-  --color-brand-orange: #D0541F; /* terre cuite */
+  --font-sans: var(--ork-use-font-text);
+  --font-title: var(--ork-use-font-title);
+  --font-unbounded: var(--ork-use-font-title);
+  --font-manrope: var(--ork-use-font-text);
+  --font-plus-jakarta: var(--font-plus-jakarta);
 
-  /* Plain x Cultiso Semantic Colors */
-  --color-forest-ink: #00342F; /* encre : sarcelle foncée, jamais de noir */
-  --color-parchment-cream: #f3fbe9;
-  --color-card-linen: #f9f6f1;
-  --color-sage-charcoal: #063D36; /* surface sombre = Foncé de la marque */
-  --color-muted-moss: #607166;
-  --color-vivid-accent: #BA4409; /* action : terre cuite assombrie pour tenir 4,5:1 avec du texte blanc */
-  --color-deep-botanical: #007468; /* sarcelle pour les contours */
+  /* Aliases sémantiques Cultiso reliés aux jetons Orkedio */
+  --color-brand-green: var(--ork-use-text-brand);
+  --color-brand-orange: var(--ork-sys-brand-accent);
+  --color-forest-ink: var(--ork-use-text-default);
+  --color-parchment-cream: var(--ork-use-surface-sunken);
+  --color-card-linen: var(--ork-use-surface-sunken);
+  --color-sage-charcoal: var(--ork-ref-primary-17);
+  --color-muted-moss: var(--ork-use-text-subtle);
+  --color-vivid-accent: var(--ork-use-background-action-bold);
+  --color-deep-botanical: var(--ork-use-text-brand);
 
-  /* Spacing */
-  --spacing-4: 4px;
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-20: 20px;
-  --spacing-24: 24px;
-  --spacing-40: 40px;
-  --spacing-64: 64px;
-  --spacing-72: 72px;
-  --spacing-80: 80px;
-  --spacing-120: 120px;
-  --spacing-160: 160px;
-
-  /* Border Radius */
-  --radius-md: 6px;
-  --radius-lg: 9px;
+  /* Cultima Sub-dashboard Theme Aliases */
+  --color-cultima-green: var(--ork-use-text-brand);
+  --color-cultima-green-dark: var(--ork-ref-primary-17);
+  --color-cultima-green-light: var(--ork-ref-primary-50);
+  --color-cultima-orange: var(--ork-sys-brand-accent);
+  --color-cultima-orange-dark: var(--ork-use-background-action-bold);
+  --color-cultima-bg: var(--ork-use-surface-default);
+  --color-cultima-surface: var(--ork-use-surface-raised);
+  --color-cultima-border: var(--ork-use-border-default);
+  --color-cultima-text: var(--ork-use-text-default);
+  --color-cultima-text-light: var(--ork-use-text-subtle);
+  --color-surface-bg: var(--ork-use-surface-default);
+  --color-surface-card: var(--ork-use-surface-raised);
 
   /* Animations */
   --animate-marquee: marquee 35s linear infinite;
@@ -47,12 +57,12 @@
 }
 
 body {
-  background-color: #ffffff;
-  color: #00342F;
+  background-color: var(--ork-use-surface-default);
+  color: var(--ork-use-text-default);
   margin: 0;
   padding: 0;
-  font-family: var(--font-plus-jakarta), sans-serif;
-  letter-spacing: -0.01em; /* Plain body tracking */
+  font-family: var(--ork-use-font-text);
+  letter-spacing: -0.01em;
 }
 
 .font-mono-numbers {
@@ -61,10 +71,20 @@ body {
   letter-spacing: 0.015em;
 }
 
-/* Make interfaces feel better: Scale on press & Specific transitions */
-button, 
+/* Trait unifié Lucide selon les règles du design system Orkedio (1,75 sur grille 24) */
+svg.lucide {
+  stroke-width: 1.75;
+}
+
+/* Micro-interactions sur contrôles */
+button,
 .ant-btn {
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s !important;
+  transition:
+    transform var(--ork-use-motion-control-state-duration) var(--ork-use-motion-control-state-easing),
+    background-color var(--ork-use-motion-control-state-duration),
+    color var(--ork-use-motion-control-state-duration),
+    border-color var(--ork-use-motion-control-state-duration),
+    box-shadow var(--ork-use-motion-control-state-duration) !important;
 }
 
 button:active:not(:disabled),
@@ -72,7 +92,109 @@ button:active:not(:disabled),
   transform: scale(0.96) !important;
 }
 
-.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ork-use-text-default) 16%, transparent);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--ork-use-text-default) 32%, transparent);
+}
+
+/* Native <dialog> modal scroll containment & accessibility focus ring (modern-web-guidance) */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: color-mix(in srgb, var(--ork-sys-scrim) 42%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+:where(a:any-link, button, [tabindex="0"]):focus-visible {
+  outline: var(--ork-use-focus-ring-width) solid var(--ork-use-border-focused);
+  outline-offset: var(--ork-use-focus-ring-offset);
+}
+
+/* Horizontal tab strip without scrollbar clutter */
+.tabstrip-scroll {
+  scrollbar-width: none;
+}
+.tabstrip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Synchronisation Dark Mode Ant Design pré-hydratation et contraste des contrôles */
+[data-theme="dark"] .ant-card {
+  background-color: var(--ork-use-surface-raised);
+  border-color: var(--ork-use-border-default);
+  color: var(--ork-use-text-default);
+}
+[data-theme="dark"] .ant-table-wrapper .ant-table {
+  background-color: var(--ork-use-surface-raised);
+  color: var(--ork-use-text-default);
+}
+[data-theme="dark"] .ant-table-wrapper .ant-table-thead > tr > th,
+[data-theme="dark"] .ant-table-wrapper .ant-table-thead > tr > th.ant-table-cell {
+  background-color: var(--ork-use-surface-sunken);
+  color: var(--ork-use-text-subtle);
+  border-bottom-color: var(--ork-use-border-default);
+}
+[data-theme="dark"] .ant-table-wrapper .ant-table-tbody > tr > td,
+[data-theme="dark"] .ant-table-wrapper .ant-table-tbody > tr > td.ant-table-cell {
+  background-color: var(--ork-use-surface-raised);
+  border-bottom-color: var(--ork-use-border-default);
+}
+[data-theme="dark"] .ant-table-wrapper .ant-table-tbody > tr:hover > td,
+[data-theme="dark"] .ant-table-wrapper .ant-table-tbody > tr:hover > td.ant-table-cell {
+  background-color: var(--ork-use-background-neutral-subtle-hover);
+}
+[data-theme="dark"] .ant-select.ant-select-outlined:not(.ant-select-customize-input),
+[data-theme="dark"] .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+[data-theme="dark"] .ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+  background-color: var(--ork-use-surface-sunken);
+  border-color: var(--ork-use-border-input);
+  color: var(--ork-use-text-default);
+}
+[data-theme="dark"] .ant-select-selection-item,
+[data-theme="dark"] .ant-select-content-value {
+  color: var(--ork-use-text-default);
+}
+[data-theme="dark"] .ant-select-selection-placeholder,
+[data-theme="dark"] .ant-select-placeholder {
+  color: var(--ork-use-text-subtle);
+  opacity: 1;
+}
+[data-theme="dark"] .ant-select-arrow,
+[data-theme="dark"] .ant-select-clear {
+  color: var(--ork-use-text-subtle);
+}
+[data-theme="dark"] .ant-btn-default {
+  background-color: var(--ork-use-background-neutral-bold);
+  color: var(--ork-use-text-default);
+  border-color: var(--ork-use-border-input);
+}
+[data-theme="dark"] .ant-pagination .ant-pagination-item {
+  background-color: var(--ork-use-surface-sunken);
+  border-color: var(--ork-use-border-default);
+}
+[data-theme="dark"] .ant-pagination .ant-pagination-item a {
+  color: var(--ork-use-text-default);
+}
+[data-theme="dark"] .ant-drawer-content {
+  background-color: var(--ork-use-surface-raised);
+  color: var(--ork-use-text-default);
+}
+
+/* Contraste garanti pour toutes les infobulles Recharts (Clair et Nuit) */
+.recharts-default-tooltip,
+.recharts-tooltip-label,
+.recharts-tooltip-item,
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value,
+.recharts-tooltip-item-separator {
+  color: var(--ork-use-text-default) !important;
+}

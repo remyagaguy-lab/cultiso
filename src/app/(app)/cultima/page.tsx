@@ -1,134 +1,315 @@
 "use client";
 
-import Logo from "@/components/ui/Logo";
-import { useState } from "react";
-import Link from "next/link";
-import { AppstoreOutlined, DashboardOutlined } from "@ant-design/icons";
-import { SharedChat } from "@/components/cultisia/SharedChat";
+import React, { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Sprout,
+  Tractor,
+  Layers,
+  Factory,
+  Wrench,
+  Scale,
+  Wallet,
+  LayoutGrid,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 import VegetalDashboard from "@/components/cultima/vegetal/VegetalDashboard";
 import AnimalDashboard from "@/components/cultima/animal/AnimalDashboard";
 import TransformationDashboard from "@/components/cultima/transformation/TransformationDashboard";
 import ServiceDashboard from "@/components/cultima/service/ServiceDashboard";
 import NegoceDashboard from "@/components/cultima/negoce/NegoceDashboard";
 import TreasuryDashboard from "@/components/cultima/finance/TreasuryDashboard";
-import { BrainCircuit } from "lucide-react";
+import { useAppWorkspace } from "@/components/app/AppWorkspaceContext";
+
+type CultimaView =
+  | "overview"
+  | "vegetal"
+  | "animal"
+  | "mixte"
+  | "transformation"
+  | "service"
+  | "negoce"
+  | "finance";
+
+const VIEWS: {
+  id: CultimaView;
+  label: string;
+  desc: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  {
+    id: "overview",
+    label: "Vue globale",
+    desc: "Accès rapide à tous vos ateliers agricoles",
+    icon: LayoutGrid,
+  },
+  {
+    id: "vegetal",
+    label: "Végétal",
+    desc: "Parcelles, calendrier cultural, sols & rendements",
+    icon: Sprout,
+  },
+  {
+    id: "animal",
+    label: "Élevage",
+    desc: "Bandes, silos provende, suivi sanitaire & aquaculture",
+    icon: Tractor,
+  },
+  {
+    id: "mixte",
+    label: "Mixte",
+    desc: "Supervision combinée Végétal & Élevage",
+    icon: Layers,
+  },
+  {
+    id: "transformation",
+    label: "Transformation",
+    desc: "Lots de production, qualité & maintenance",
+    icon: Factory,
+  },
+  {
+    id: "service",
+    label: "Services",
+    desc: "Missions terrain, flotte & devis",
+    icon: Wrench,
+  },
+  {
+    id: "negoce",
+    label: "Négoce",
+    desc: "Entrepôts, flux logistiques & marges",
+    icon: Scale,
+  },
+  {
+    id: "finance",
+    label: "Trésorerie",
+    desc: "Entrées, sorties & solde en FCFA",
+    icon: Wallet,
+  },
+];
+
+function isValidView(value: string | null): value is CultimaView {
+  return VIEWS.some((v) => v.id === value);
+}
+
+function CultimaContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { activeWorkspace, openCultisia } = useAppWorkspace();
+
+  const paramView = searchParams.get("view");
+  const [pendingView, setPendingView] = useState<{
+    param: string | null;
+    view: CultimaView;
+  } | null>(null);
+  const activeView: CultimaView =
+    pendingView && pendingView.param === paramView
+      ? pendingView.view
+      : isValidView(paramView)
+        ? paramView
+        : "overview";
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    const idx = VIEWS.findIndex((v) => v.id === activeView);
+    if (idx >= 0) {
+      tabRefs.current[idx]?.scrollIntoView({
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [activeView]);
+
+  const selectView = (view: CultimaView) => {
+    setPendingView({ param: paramView, view });
+    const nextUrl = view === "overview" ? "/cultima" : `/cultima?view=${view}`;
+    router.replace(nextUrl, { scroll: false });
+  };
+
+  const handleTabKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    idx: number
+  ) => {
+    let nextIdx = idx;
+    if (e.key === "ArrowRight") nextIdx = (idx + 1) % VIEWS.length;
+    else if (e.key === "ArrowLeft")
+      nextIdx = (idx - 1 + VIEWS.length) % VIEWS.length;
+    else if (e.key === "Home") nextIdx = 0;
+    else if (e.key === "End") nextIdx = VIEWS.length - 1;
+    else return;
+
+    e.preventDefault();
+    const target = VIEWS[nextIdx];
+    selectView(target.id);
+    tabRefs.current[nextIdx]?.focus();
+  };
+
+  return (
+    <div className="flex flex-col min-h-full bg-background text-foreground">
+      {/* ClickUp-style Views Bar */}
+      <div className="sticky top-0 z-30 bg-surface border-b border-border px-4 sm:px-6 py-1.5 flex items-center justify-between gap-3">
+        <div
+          role="tablist"
+          aria-label="Vues Cultima ERP"
+          className="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto tabstrip-scroll"
+        >
+          {VIEWS.map((view, idx) => {
+            const Icon = view.icon;
+            const selected = activeView === view.id;
+            return (
+              <button
+                key={view.id}
+                ref={(el) => {
+                  tabRefs.current[idx] = el;
+                }}
+                role="tab"
+                type="button"
+                aria-selected={selected}
+                tabIndex={selected ? 0 : -1}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => selectView(view.id)}
+                onKeyDown={(e) => handleTabKeyDown(e, idx)}
+                className={`relative flex items-center gap-1.5 px-3 min-h-[36px] py-1.5 rounded-[var(--ork-use-radius-control)] text-xs font-semibold whitespace-nowrap shrink-0 transition-colors outline-none ${
+                  selected
+                    ? "bg-selected text-t-brand ring-1 ring-inset ring-[var(--ork-use-border-selected)]"
+                    : "text-muted hover:text-foreground hover:bg-sunken"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>{view.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => openCultisia("cultima")}
+          aria-label="Configurer Cultima avec Cultisia"
+          className="hidden md:inline-flex items-center gap-1.5 min-h-[36px] px-3 rounded-[var(--ork-use-radius-button)] bg-[var(--ork-use-background-brand-subtle)] hover:bg-selected border border-[var(--ork-use-border-selected)] text-t-brand text-xs font-semibold shrink-0 transition-colors"
+        >
+          <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          <span className="xl:hidden">Copilote ERP</span>
+          <span className="hidden xl:inline">Configurer avec Cultisia</span>
+        </button>
+      </div>
+
+      {/* Active View Body */}
+      <div className="flex-1">
+        {activeView === "overview" && (
+          <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface rounded-[var(--ork-use-radius-card)] border border-border p-5">
+              <div>
+                <h1 className="text-lg sm:text-xl font-title font-bold text-foreground tracking-[-0.02em] m-0">
+                  Cultima ERP · {activeWorkspace.name}
+                </h1>
+                <p className="text-xs sm:text-[13px] text-muted m-0 mt-1">
+                  Sélectionnez une vue ci-dessous pour piloter vos opérations, ou demandez à Cultisia d&apos;adapter la configuration à votre exploitation.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => openCultisia("cultima")}
+                className="inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-[var(--ork-use-radius-button)] bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand text-xs font-semibold shrink-0 transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                Assistant de configuration
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {VIEWS.filter((v) => v.id !== "overview").map((view) => {
+                const Icon = view.icon;
+                const isFinance = view.id === "finance";
+                return (
+                  <button
+                    key={view.id}
+                    type="button"
+                    onClick={() => selectView(view.id)}
+                    className={`group text-left bg-surface rounded-[var(--ork-use-radius-card)] border p-5 transition-colors flex flex-col justify-between gap-4 ${
+                      isFinance
+                        ? "border-[var(--ork-use-border-warning)] hover:border-[var(--ork-use-text-action)]"
+                        : "border-border hover:border-[var(--ork-use-border-selected)]"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span
+                        className={`w-10 h-10 rounded-[var(--ork-use-radius-control)] flex items-center justify-center shrink-0 transition-colors ${
+                          isFinance
+                            ? "bg-[var(--ork-use-background-action-subtle)] text-t-action group-hover:bg-action group-hover:text-on-action"
+                            : "bg-[var(--ork-use-background-brand-subtle)] text-t-brand group-hover:bg-brand group-hover:text-on-brand"
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" aria-hidden="true" />
+                      </span>
+                      <ArrowRight
+                        className="w-4 h-4 text-muted group-hover:text-foreground group-hover:translate-x-0.5 transition-all"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-[15px] font-title font-bold text-foreground m-0 mb-1">
+                        {view.label}
+                      </h2>
+                      <p className="text-xs text-muted m-0 leading-relaxed">
+                        {view.desc}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeView === "vegetal" && (
+          <>
+            <h1 className="sr-only">Cultima ERP — Production végétale</h1>
+            <VegetalDashboard embedded />
+          </>
+        )}
+        {activeView === "animal" && (
+          <>
+            <h1 className="sr-only">Cultima ERP — Élevage et zootechnie</h1>
+            <AnimalDashboard embedded />
+          </>
+        )}
+        {activeView === "mixte" && (
+          <div className="space-y-2">
+            <h1 className="sr-only">Cultima ERP — Exploitation mixte végétale et animale</h1>
+            <VegetalDashboard embedded hideFooter />
+            <div className="border-t border-border pt-6">
+              <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pb-2">
+                <h2 className="text-lg font-title font-bold text-foreground m-0">
+                  Supervision Zootechnique (Élevage)
+                </h2>
+                <p className="text-xs text-muted m-0 mt-0.5">
+                  Ateliers animaux consolidés sur la même exploitation
+                </p>
+              </div>
+              <AnimalDashboard embedded />
+            </div>
+          </div>
+        )}
+        {activeView === "transformation" && <TransformationDashboard embedded />}
+        {activeView === "service" && <ServiceDashboard embedded />}
+        {activeView === "negoce" && <NegoceDashboard embedded />}
+        {activeView === "finance" && <TreasuryDashboard />}
+      </div>
+    </div>
+  );
+}
 
 export default function CultimaPage() {
-  const [config, setConfig] = useState<"vegetal" | "animal" | "mixte" | "transformation" | "service" | "negoce" | "finance" | null>(null);
-  const [draftTransaction, setDraftTransaction] = useState<any>(null);
-
-  // Pour la démo, on simule l'activation d'un dashboard après que l'utilisateur ait cliqué sur un profil type
-  // Idéalement cela viendrait de `onConfigComplete` du composant SharedChat.
-  
   return (
-    <div className="flex-1 flex h-[calc(100vh-72px)] flex-col md:flex-row bg-white font-manrope">
-      {/* 1. LEFT SIDEBAR */}
-      <aside className="hidden">
-        <Link href="/" className="opacity-80 hover:opacity-100 transition-opacity">
-          <Logo variant="symbol" size="sm" className="w-[32px]" />
-        </Link>
-        <nav className="flex flex-col gap-4 w-full px-3">
-          <Link href="/cultisia" className="w-full aspect-square rounded-xl flex items-center justify-center text-gray-400 hover:text-brand-green hover:bg-gray-50 transition-colors">
-            <AppstoreOutlined style={{fontSize:"20px"}} />
-          </Link>
-          <div className="relative w-full aspect-square rounded-xl flex items-center justify-center bg-brand-green text-white shadow-sm cursor-default">
-            <DashboardOutlined style={{fontSize:"20px"}} />
-          </div>
-        </nav>
-      </aside>
-
-      {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 h-full overflow-y-auto bg-[#F3F5EF] relative z-10 flex flex-col">
-        <header className="h-[72px] shrink-0 bg-white border-b border-gray-200 flex items-center px-8 sticky top-0 z-10">
-          <div>
-            <h1 className="font-unbounded font-bold text-2xl text-[#17231F] tracking-tight">Cultima</h1>
-            <p className="text-[13px] text-[#6E8A75] font-medium">L'ERP Agricole Propulsé par Cultisia</p>
-          </div>
-        </header>
-        
-        <div className="flex-1 flex flex-col">
-          {!config ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-              <div className="w-20 h-20 bg-white border border-[#DFE4DA] rounded-3xl flex items-center justify-center mb-6 shadow-sm">
-                <BrainCircuit size={40} className="text-brand-green" />
-              </div>
-              <h2 className="font-unbounded text-3xl font-bold text-[#17231F] mb-4">
-                ERP non configuré
-              </h2>
-              <p className="text-[#6E8A75] text-[15px] max-w-lg mx-auto mb-10">
-                Discutez avec Cultisia dans le panneau latéral. Elle analysera votre profil et assemblera votre tableau de bord sur-mesure (Production Végétale, Animale ou Mixte).
-              </p>
-
-              {/* Temporary demo buttons to trigger dashboard states until backend integration */}
-              <div className="flex flex-col gap-3 max-w-sm w-full">
-                <p className="text-xs font-bold text-[#17231F] uppercase mb-2">Simulation de la configuration (Démo)</p>
-                <button onClick={() => setConfig("vegetal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-brand-green hover:shadow-sm transition-all text-sm font-medium">Charger le profil Végétal</button>
-                <button onClick={() => setConfig("animal")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-brand-green hover:shadow-sm transition-all text-sm font-medium">Charger le profil Animal</button>
-                <button onClick={() => setConfig("mixte")} className="p-3 bg-brand-green text-white border border-transparent rounded-xl hover:bg-[#072F27] transition-all text-sm font-medium shadow-md">Charger le profil Mixte (Recommandé)</button>
-                <div className="w-full h-[1px] bg-[#DFE4DA] my-2"></div>
-                <button onClick={() => setConfig("transformation")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-brand-green hover:shadow-sm transition-all text-sm font-medium">Transformation Agroalimentaire</button>
-                <button onClick={() => setConfig("service")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-brand-green hover:shadow-sm transition-all text-sm font-medium">Services Agricoles</button>
-                <button onClick={() => setConfig("negoce")} className="p-3 bg-white border border-[#DFE4DA] rounded-xl hover:border-brand-green hover:shadow-sm transition-all text-sm font-medium">Agro-Commerce & Négoce</button>
-                <div className="w-full h-[1px] bg-[#DFE4DA] my-2"></div>
-                <button onClick={() => setConfig("finance")} className="p-3 bg-white border-2 border-brand-orange text-brand-orange rounded-xl hover:bg-brand-orange hover:text-white transition-all text-sm font-bold shadow-sm">💰 Module Trésorerie (NOUVEAU)</button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 overflow-y-auto">
-              {config === "vegetal" && <VegetalDashboard />}
-              {config === "animal" && (
-                <div className="animal-wrapper">
-                  <AnimalDashboard />
-                </div>
-              )}
-              {config === "mixte" && (
-                <div className="mixte-wrapper flex flex-col">
-                  <div className="bg-[#072F27] text-white text-center py-8 px-4 shadow-inner">
-                    <h2 className="text-3xl font-serif font-bold text-[#F5D9C2] mb-2">Tableau de Bord Mixte</h2>
-                    <p className="opacity-80 max-w-2xl mx-auto">
-                      Cultisia a fusionné vos activités Végétales et Animales. Vos données financières et opérationnelles sont centralisées.
-                    </p>
-                  </div>
-                  <div className="border-b-[10px] border-brand-orange">
-                    <VegetalDashboard />
-                  </div>
-                  <div className="bg-slate-50 pt-10">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
-                      <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-full bg-brand-green text-white flex items-center justify-center text-sm">2</span>
-                        Supervision Zootechnique
-                      </h3>
-                    </div>
-                    <AnimalDashboard />
-                  </div>
-                </div>
-              )}
-              {config === "transformation" && <TransformationDashboard />}
-              {config === "service" && <ServiceDashboard />}
-              {config === "negoce" && <NegoceDashboard />}
-              {config === "finance" && <TreasuryDashboard draftTransaction={draftTransaction} />}
-            </div>
-          )}
+    <Suspense
+      fallback={
+        <div className="p-8 text-sm text-muted-moss">
+          Chargement de Cultima ERP...
         </div>
-      </main>
-
-      {/* 3. RIGHT PANEL (Chatbot) */}
-      <aside className="w-full md:w-[400px] h-full flex-none bg-white border-l border-gray-200 flex flex-col flex-shrink-0 z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.02)] relative">
-        <SharedChat 
-          toolContext="cultima" 
-          title="CULTISIA ERP" 
-          subtitle="Configuration Cultima" 
-          isEmbedded={true}
-          hideSidebar={true}
-          onTransactionDraft={setDraftTransaction}
-          onConfigComplete={(data) => {
-             // In a real scenario, Cultisia would emit { "type": "cultima_config", "config": "mixte" }
-             if (data && (data === "vegetal" || data === "animal" || data === "mixte" || data === "transformation" || data === "service" || data === "negoce")) {
-                setConfig(data);
-             }
-          }}
-        />
-      </aside>
-    </div>
+      }
+    >
+      <CultimaContent />
+    </Suspense>
   );
 }

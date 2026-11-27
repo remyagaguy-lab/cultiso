@@ -1,0 +1,147 @@
+/* Orkedio Design System : composants du lot A (v2.2) : bouton, bouton-icône, champ, case, radio, interrupteur, puce, étiquette, badge, tableau.
+   Ce fichier ne contient AUCUNE valeur de couleur, de taille ni de rayon : il lit les jetons --ork-comp-* (niveau 4) de tokens.css.
+   Marque, thème et densité se règlent par data-brand, data-theme, data-density sur <html> ou sur un conteneur.
+   Règles : sélection = fond teinté + contour de 2 px + signe (coche, point) ; un champ ne se pose que sur surface par défaut ou surélevée ;
+   un bouton d'envoi n'est jamais désactivé (utiliser aria-disabled et expliquer) ; focus = anneau de 2 px décalé de 2 px, distinct de la sélection. */
+
+.ork-btn, .ork-iconbtn, .ork-chip, .ork-field__input, .ork-check, .ork-switch { font-family: var(--ork-use-font-text); }
+.ork-btn:focus-visible, .ork-iconbtn:focus-visible, .ork-chip:focus-visible, .ork-check:focus-visible, .ork-switch:focus-visible, .ork-table-wrap:focus-visible {
+  outline: var(--ork-use-focus-ring-width) solid var(--ork-use-border-focused); outline-offset: var(--ork-use-focus-ring-offset); }
+[disabled], [aria-disabled="true"] { cursor: not-allowed; }
+
+/* ── Bouton ─────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.ork-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--ork-comp-button-base-container-gap); box-sizing: border-box;
+  min-height: var(--ork-comp-button-base-container-height); padding: 0 var(--ork-comp-button-base-container-padding-x); border-radius: var(--ork-comp-button-base-container-radius);
+  font-size: 14px; line-height: 20px; font-weight: var(--ork-use-font-weight-semibold); letter-spacing: .01em; cursor: pointer; text-decoration: none;
+  border: var(--_bw, 0) solid var(--_bc, transparent); background: var(--_bg); color: var(--_fg);
+  transition: background var(--ork-use-motion-control-state-duration) var(--ork-use-motion-control-state-easing); }
+.ork-btn:hover:not([disabled]):not([aria-disabled="true"]) { background: var(--_bg-h); }
+.ork-btn:active:not([disabled]):not([aria-disabled="true"]) { background: var(--_bg-p); }
+.ork-btn[disabled], .ork-btn[aria-disabled="true"] { background: var(--_bg-d); color: var(--_fg-d); border-color: var(--_bc-d, transparent); }
+.ork-btn--filled { --_bg: var(--ork-comp-button-filled-container-color); --_bg-h: var(--ork-comp-button-filled-container-color-hover); --_bg-p: var(--ork-comp-button-filled-container-color-pressed); --_bg-d: var(--ork-comp-button-filled-container-color-disabled); --_fg: var(--ork-comp-button-filled-label-color); --_fg-d: var(--ork-comp-button-filled-label-color-disabled); }
+.ork-btn--tonal { --_bg: var(--ork-comp-button-tonal-container-color); --_bg-h: var(--ork-comp-button-tonal-container-color-hover); --_bg-p: var(--ork-comp-button-tonal-container-color-pressed); --_bg-d: var(--ork-comp-button-tonal-container-color-disabled); --_fg: var(--ork-comp-button-tonal-label-color); --_fg-d: var(--ork-comp-button-tonal-label-color-disabled); }
+.ork-btn--danger { --_bg: var(--ork-comp-button-danger-container-color); --_bg-h: var(--ork-comp-button-danger-container-color-hover); --_bg-p: var(--ork-comp-button-danger-container-color-pressed); --_bg-d: var(--ork-comp-button-danger-container-color-disabled); --_fg: var(--ork-comp-button-danger-label-color); --_fg-d: var(--ork-comp-button-danger-label-color-disabled); }
+.ork-btn--outlined { --_bg: var(--ork-comp-button-outlined-container-color); --_bg-h: var(--ork-comp-button-outlined-container-color-hover); --_bg-p: var(--ork-comp-button-outlined-container-color-pressed); --_bg-d: var(--ork-comp-button-outlined-container-color-disabled); --_fg: var(--ork-comp-button-outlined-label-color); --_fg-d: var(--ork-comp-button-outlined-label-color-disabled);
+  --_bw: var(--ork-comp-button-outlined-border-width); --_bc: var(--ork-comp-button-outlined-border-color); --_bc-d: var(--ork-comp-button-outlined-border-color-disabled); }
+.ork-btn--text { --_bg: var(--ork-comp-button-text-container-color); --_bg-h: var(--ork-comp-button-text-container-color-hover); --_bg-p: var(--ork-comp-button-text-container-color-pressed); --_bg-d: var(--ork-comp-button-text-container-color-disabled); --_fg: var(--ork-comp-button-text-label-color); --_fg-d: var(--ork-comp-button-text-label-color-disabled); }
+/* Bascule (bouton à deux états) : sélection = fond teinté + contour 2 px + coche */
+.ork-btn[aria-pressed="true"] { background: var(--ork-use-background-selected); color: var(--ork-use-text-selected); border: var(--ork-use-border-width-selected) solid var(--ork-use-border-selected); }
+.ork-btn[aria-pressed="true"]::before { content: "✓"; }
+
+/* ── Bouton-icône ───────────────────────────────────────────────────────────────────────────────────────────────────── */
+.ork-iconbtn { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0; border: 0; cursor: pointer;
+  width: var(--ork-comp-icon-button-base-container-size); height: var(--ork-comp-icon-button-base-container-size); border-radius: var(--ork-comp-icon-button-base-container-radius);
+  background: var(--_bg); color: var(--_fg); transition: background var(--ork-use-motion-control-state-duration) var(--ork-use-motion-control-state-easing); }
+.ork-iconbtn svg { width: 24px; height: 24px; }
+.ork-iconbtn:hover:not([disabled]):not([aria-disabled="true"]) { background: var(--_bg-h); }
+.ork-iconbtn:active:not([disabled]):not([aria-disabled="true"]) { background: var(--_bg-p); }
+.ork-iconbtn[disabled], .ork-iconbtn[aria-disabled="true"] { background: var(--_bg-d); color: var(--_fg-d); }
+.ork-iconbtn--standard { --_bg: var(--ork-comp-icon-button-standard-container-color); --_bg-h: var(--ork-comp-icon-button-standard-container-color-hover); --_bg-p: var(--ork-comp-icon-button-standard-container-color-pressed); --_bg-d: var(--ork-comp-icon-button-standard-container-color-disabled); --_fg: var(--ork-comp-icon-button-standard-icon-color); --_fg-d: var(--ork-comp-icon-button-standard-icon-color-disabled); }
+.ork-iconbtn--filled { --_bg: var(--ork-comp-icon-button-filled-container-color); --_bg-h: var(--ork-comp-icon-button-filled-container-color-hover); --_bg-p: var(--ork-comp-icon-button-filled-container-color-pressed); --_bg-d: var(--ork-comp-icon-button-filled-container-color-disabled); --_fg: var(--ork-comp-icon-button-filled-icon-color); --_fg-d: var(--ork-comp-icon-button-filled-icon-color-disabled); }
+.ork-iconbtn--tonal { --_bg: var(--ork-comp-icon-button-tonal-container-color); --_bg-h: var(--ork-comp-icon-button-tonal-container-color-hover); --_bg-p: var(--ork-comp-icon-button-tonal-container-color-pressed); --_bg-d: var(--ork-comp-icon-button-tonal-container-color-disabled); --_fg: var(--ork-comp-icon-button-tonal-icon-color); --_fg-d: var(--ork-comp-icon-button-tonal-icon-color-disabled); }
+
+/* ── Champ de texte (libellé au-dessus, jamais le texte d'exemple comme libellé) ────────────────────────────────────── */
+.ork-field { display: flex; flex-direction: column; gap: var(--ork-comp-field-base-container-gap); font-family: var(--ork-use-font-text); }
+.ork-field__label { font-size: 13px; line-height: 18px; font-weight: var(--ork-use-font-weight-semibold); color: var(--ork-comp-field-base-label-color); }
+.ork-field__input { box-sizing: border-box; width: 100%; min-height: var(--ork-comp-field-base-container-height); padding: 0 var(--ork-comp-field-base-container-padding-x);
+  font-size: 16px; line-height: 24px; color: var(--ork-comp-field-base-value-color); background: var(--ork-comp-field-base-container-color); border-radius: var(--ork-comp-field-base-container-radius);
+  border: var(--ork-comp-field-base-border-width) solid var(--ork-comp-field-base-border-color); transition: border-color var(--ork-use-motion-control-state-duration) var(--ork-use-motion-control-state-easing); }
+textarea.ork-field__input { padding-block: 12px; min-height: calc(var(--ork-comp-field-base-container-height) * 2); resize: vertical; }
+.ork-field__input::placeholder { color: var(--ork-comp-field-base-placeholder-color); opacity: 1; }
+.ork-field__input:hover:not(:disabled) { background: var(--ork-comp-field-base-container-color-hover); border-color: var(--ork-comp-field-base-border-color-hover); }
+.ork-field__input:focus-visible { outline: 0; border-color: var(--ork-comp-field-base-border-color-focused); box-shadow: inset 0 0 0 1px var(--ork-comp-field-base-border-color-focused); }   /* 1 px + 1 px intérieur = 2 px, sans décalage de mise en page */
+.ork-field__input[aria-invalid="true"] { border-color: var(--ork-comp-field-base-border-color-error); box-shadow: inset 0 0 0 1px var(--ork-comp-field-base-border-color-error); }
+.ork-field__input:disabled { background: var(--ork-comp-field-base-container-color-disabled); border-color: var(--ork-comp-field-base-border-color-disabled); color: var(--ork-comp-field-base-value-color-disabled); }
+.ork-field__label--disabled { color: var(--ork-comp-field-base-label-color-disabled); }
+.ork-field__helper { font-size: 13px; line-height: 18px; color: var(--ork-comp-field-base-helper-color); }
+.ork-field--error .ork-field__label, .ork-field--error .ork-field__helper { color: var(--ork-comp-field-base-helper-color-error); }
+.ork-field--error .ork-field__helper::before { content: "⚠ "; }   /* l'erreur n'est jamais portée par la couleur seule */
+
+/* ── Case, radio : la sélection = fond teinté + contour 2 px + signe ─────────────────────────────────────────────────── */
+.ork-check { display: inline-flex; align-items: center; gap: var(--ork-use-space-inline-icon); min-height: var(--ork-use-density-control); cursor: pointer; font-size: 16px; line-height: 24px; color: var(--ork-use-text-default); }
+.ork-check input { appearance: none; -webkit-appearance: none; margin: 0; flex: none; box-sizing: border-box; position: relative; cursor: inherit;
+  width: var(--ork-comp-checkbox-base-container-size); height: var(--ork-comp-checkbox-base-container-size); border-radius: var(--ork-comp-checkbox-base-container-radius);
+  background: var(--ork-comp-checkbox-base-container-color); border: var(--ork-comp-checkbox-base-border-width) solid var(--ork-comp-checkbox-base-border-color); }
+.ork-check input[type="radio"] { border-radius: var(--ork-comp-radio-base-container-radius); }
+.ork-check input:hover:not(:disabled) { border-color: var(--ork-comp-checkbox-base-border-color-hover); }
+.ork-check input:checked { background: var(--ork-comp-checkbox-base-container-color-checked); border: var(--ork-comp-checkbox-base-border-width-checked) solid var(--ork-comp-checkbox-base-border-color-checked); }
+.ork-check input:checked::after { content: ""; position: absolute; box-sizing: border-box; }
+.ork-check input[type="checkbox"]:checked::after { left: 6px; top: 1px; width: 7px; height: 13px; border: solid var(--ork-comp-checkbox-base-mark-color); border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.ork-check input[type="radio"]:checked::after { inset: 4px; border-radius: 50%; background: var(--ork-comp-radio-base-mark-color); }
+.ork-check input:indeterminate::after { content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 3px; margin-top: -1.5px; background: var(--ork-comp-checkbox-base-mark-color); }
+.ork-check input:focus-visible { outline: var(--ork-use-focus-ring-width) solid var(--ork-use-border-focused); outline-offset: var(--ork-use-focus-ring-offset); }
+.ork-check input:disabled { background: var(--ork-comp-checkbox-base-container-color-disabled); border-color: var(--ork-comp-checkbox-base-border-color-disabled); }
+.ork-check input:disabled::after { border-color: var(--ork-comp-checkbox-base-mark-color-disabled); }
+.ork-check input[type="radio"]:disabled::after { background: var(--ork-comp-radio-base-mark-color-disabled); }
+
+/* ── Interrupteur (role="switch") ───────────────────────────────────────────────────────────────────────────────────── */
+.ork-switch { display: inline-flex; align-items: center; gap: var(--ork-use-space-inline-icon); min-height: var(--ork-use-density-control); cursor: pointer; font-size: 16px; line-height: 24px; color: var(--ork-use-text-default); }
+.ork-switch input { appearance: none; -webkit-appearance: none; margin: 0; flex: none; position: relative; box-sizing: border-box; cursor: inherit;
+  width: var(--ork-comp-switch-base-track-width); height: var(--ork-comp-switch-base-track-height); border-radius: var(--ork-comp-switch-base-track-radius);
+  background: var(--ork-comp-switch-base-track-color); border: 2px solid var(--ork-comp-switch-base-track-border-color); transition: background var(--ork-use-motion-switch-duration) var(--ork-use-motion-switch-easing); }
+.ork-switch input::before { content: ""; position: absolute; top: 50%; left: 4px; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: var(--ork-comp-switch-base-thumb-color);
+  transition: transform var(--ork-use-motion-switch-duration) var(--ork-use-motion-switch-easing), width var(--ork-use-motion-switch-duration) var(--ork-use-motion-switch-easing), height var(--ork-use-motion-switch-duration) var(--ork-use-motion-switch-easing), margin var(--ork-use-motion-switch-duration) var(--ork-use-motion-switch-easing); }
+.ork-switch input:checked { background: var(--ork-comp-switch-base-track-color-checked); border-color: var(--ork-comp-switch-base-track-border-color-checked); }
+.ork-switch input:checked::before { background: var(--ork-comp-switch-base-thumb-color-checked); width: 22px; height: 22px; margin-top: -11px; transform: translateX(calc(var(--ork-comp-switch-base-track-width) - 4px - 22px - 4px - 2px)); }
+.ork-switch input:checked::after { content: "✓"; position: absolute; top: 50%; right: 8px; margin-top: -9px; font: 700 13px/18px var(--ork-use-font-text); color: var(--ork-comp-switch-base-thumb-color-checked); }   /* le signe non coloré de l'état activé */
+.ork-switch input:disabled { background: var(--ork-comp-switch-base-track-color-disabled); border-color: var(--ork-comp-switch-base-track-border-color-disabled); }
+.ork-switch input:disabled::before { background: var(--ork-comp-switch-base-thumb-color-disabled); }
+.ork-switch input:focus-visible { outline: var(--ork-use-focus-ring-width) solid var(--ork-use-border-focused); outline-offset: var(--ork-use-focus-ring-offset); }
+
+/* ── Puce (filtre, choix) : bouton à bascule ─────────────────────────────────────────────────────────────────────────── */
+.ork-chip { display: inline-flex; align-items: center; gap: var(--ork-comp-chip-base-container-gap); box-sizing: border-box; min-height: var(--ork-comp-chip-base-container-height);
+  padding: 0 var(--ork-comp-chip-base-container-padding-x); border-radius: var(--ork-comp-chip-base-container-radius); cursor: pointer; font-size: 14px; line-height: 20px; font-weight: var(--ork-use-font-weight-semibold);
+  background: var(--ork-comp-chip-base-container-color); color: var(--ork-comp-chip-base-label-color); border: var(--ork-comp-chip-base-border-width) solid var(--ork-comp-chip-base-border-color);
+  transition: background var(--ork-use-motion-control-state-duration) var(--ork-use-motion-control-state-easing); }
+.ork-chip:hover:not([disabled]):not([aria-pressed="true"]) { background: var(--ork-comp-chip-base-container-color-hover); }
+.ork-chip:active:not([disabled]):not([aria-pressed="true"]) { background: var(--ork-comp-chip-base-container-color-pressed); }
+.ork-chip[aria-pressed="true"] { background: var(--ork-comp-chip-base-container-color-selected); color: var(--ork-comp-chip-base-label-color-selected); border: var(--ork-comp-chip-base-border-width-selected) solid var(--ork-comp-chip-base-border-color-selected); }
+.ork-chip[aria-pressed="true"]::before { content: "✓"; color: var(--ork-comp-chip-base-mark-color); }
+.ork-chip[disabled] { background: var(--ork-comp-chip-base-container-color-disabled); color: var(--ork-comp-chip-base-label-color-disabled); border-color: var(--ork-comp-chip-base-border-color-disabled); }
+
+/* ── Étiquette et badge (texte toujours présent : la couleur ne porte jamais seule le sens) ──────────────────────────── */
+.ork-tag, .ork-badge { display: inline-flex; align-items: center; box-sizing: border-box; font-family: var(--ork-use-font-text); white-space: nowrap; }
+.ork-tag { min-height: var(--ork-comp-tag-base-container-height); padding: 0 var(--ork-comp-tag-base-container-padding-x); border-radius: var(--ork-comp-tag-base-container-radius); font-size: 13px; line-height: 18px; font-weight: var(--ork-use-font-weight-semibold); }
+.ork-badge { min-height: var(--ork-comp-badge-base-container-height); min-width: var(--ork-comp-badge-base-container-height); justify-content: center; padding: 0 var(--ork-comp-badge-base-container-padding-x); border-radius: var(--ork-comp-badge-base-container-radius); font-size: 12px; line-height: 16px; font-weight: var(--ork-use-font-weight-semibold); font-variant-numeric: var(--ork-use-font-numeric-tabular); }
+.ork-tag--brand { background: var(--ork-comp-tag-brand-container-color); color: var(--ork-comp-tag-brand-label-color); } .ork-badge--brand { background: var(--ork-comp-badge-brand-container-color); color: var(--ork-comp-badge-brand-label-color); }
+.ork-tag--accent { background: var(--ork-comp-tag-accent-container-color); color: var(--ork-comp-tag-accent-label-color); } .ork-badge--accent { background: var(--ork-comp-badge-accent-container-color); color: var(--ork-comp-badge-accent-label-color); }
+.ork-tag--danger { background: var(--ork-comp-tag-danger-container-color); color: var(--ork-comp-tag-danger-label-color); } .ork-badge--danger { background: var(--ork-comp-badge-danger-container-color); color: var(--ork-comp-badge-danger-label-color); }
+.ork-tag--success { background: var(--ork-comp-tag-success-container-color); color: var(--ork-comp-tag-success-label-color); } .ork-badge--success { background: var(--ork-comp-badge-success-container-color); color: var(--ork-comp-badge-success-label-color); }
+.ork-tag--warning { background: var(--ork-comp-tag-warning-container-color); color: var(--ork-comp-tag-warning-label-color); } .ork-badge--warning { background: var(--ork-comp-badge-warning-container-color); color: var(--ork-comp-badge-warning-label-color); }
+.ork-tag--info { background: var(--ork-comp-tag-info-container-color); color: var(--ork-comp-tag-info-label-color); } .ork-badge--info { background: var(--ork-comp-badge-info-container-color); color: var(--ork-comp-badge-info-label-color); }
+.ork-tag--neutral { background: var(--ork-comp-tag-neutral-container-color); color: var(--ork-comp-tag-neutral-label-color); } .ork-badge--neutral { background: var(--ork-comp-badge-neutral-container-color); color: var(--ork-comp-badge-neutral-label-color); }
+
+/* ── Tableau, avec motif mobile en cartes ────────────────────────────────────────────────────────────────────────────── */
+.ork-table-wrap { container-type: inline-size; border: var(--ork-use-border-width-default) solid var(--ork-comp-table-row-border-color); border-radius: var(--ork-comp-table-base-container-radius); overflow: auto; background: var(--ork-comp-table-row-container-color); }
+.ork-table { width: 100%; border-collapse: collapse; font-family: var(--ork-use-font-text); font-size: 15px; line-height: 24px; color: var(--ork-comp-table-row-label-color); }
+.ork-table th { text-align: left; font-size: 12px; line-height: 16px; letter-spacing: .04em; font-weight: var(--ork-use-font-weight-semibold); color: var(--ork-comp-table-header-label-color); background: var(--ork-comp-table-header-container-color); height: var(--ork-comp-table-base-row-height); padding: 0 var(--ork-comp-table-base-cell-padding-x); }
+.ork-table td { height: var(--ork-comp-table-base-row-height); box-sizing: border-box; padding: 0 var(--ork-comp-table-base-cell-padding-x); border-top: var(--ork-use-border-width-default) solid var(--ork-comp-table-row-border-color); }   /* la hauteur se règle par la hauteur de cellule, jamais par le remplissage vertical */
+.ork-table .ork-num { text-align: right; font-variant-numeric: var(--ork-use-font-numeric-tabular); }
+.ork-table tbody tr { background: var(--ork-comp-table-row-container-color); }
+.ork-table tbody tr:hover { background: var(--ork-comp-table-row-container-color-hover); }
+.ork-table tbody tr[aria-selected="true"] { background: var(--ork-comp-table-row-container-color-selected); }
+   /* repère en plus de la teinte ; la case cochée de la ligne est le signe */
+@container (max-width: 560px) {   /* motif mobile : chaque ligne devient une carte, chaque cellule affiche son en-tête (data-label) */
+  .ork-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .ork-table, .ork-table tbody { display: block; }
+  .ork-table tbody tr { display: block; margin: var(--ork-use-space-stack-tight); border: var(--ork-use-border-width-default) solid var(--ork-comp-table-row-border-color); border-radius: var(--ork-use-radius-card); overflow: hidden; }
+  .ork-table td { display: flex; justify-content: space-between; align-items: center; gap: var(--ork-use-space-stack-default); height: auto; min-height: var(--ork-comp-table-base-row-height); border-top: 0; }
+  .ork-table td + td { border-top: var(--ork-use-border-width-default) solid var(--ork-comp-table-row-border-color); }
+  .ork-table td::before { content: attr(data-label); font-size: 12px; font-weight: var(--ork-use-font-weight-semibold); color: var(--ork-comp-table-header-label-color); text-align: left; }
+  .ork-table td[data-label=""]::before { content: none; }
+}
+
+/* Texte réservé aux lecteurs d'écran (légende de tableau, libellé de colonne de cases) */
+.ork-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* ── Cibles tactiles : 44 px au moins sur écran tactile ou étroit, quelle que soit la densité (essais de formats, 2026-11-20) ───────────────── */
+@media (pointer: coarse), (max-width: 560px) {
+  .ork-btn, .ork-field__input, .ork-chip, .ork-tab, .ork-menu__item, .ork-pg__item, .ork-nav__item, .ork-day { min-height: 44px; }
+  .ork-iconbtn, .ork-pg__item { min-width: 44px; min-height: 44px; }
+  .ork-link { display: inline-block; padding-block: 10px; }
+  .ork-table td:has(> input[type="checkbox"]), .ork-table th:has(> input[type="checkbox"]) { min-width: 44px; text-align: center; }
+  .ork-table input[type="checkbox"] { width: 24px; height: 24px; margin: 10px; }
+}
+
+/* Cases et radios : jamais la couleur noire par défaut du navigateur */
+.ork-check input, .ork-switch input, input[type="checkbox"], input[type="radio"] { color: var(--ork-use-text-default); }

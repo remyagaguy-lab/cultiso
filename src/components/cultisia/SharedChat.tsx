@@ -59,41 +59,46 @@ interface QuestionnaireData {
   questions: { question: string; options: string[]; allow_multiple?: boolean }[];
 }
 
-/* â”€â”€â”€ SVG Icons â”€â”€â”€ */
+/* ─── SVG Icons ─── */
 const SuggestLeaf = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-brand-green"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-t-brand"><path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
 );
 const SuggestSearch = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-brand-green"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-t-brand"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 );
 const SuggestChart = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-brand-green"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-t-brand"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 );
 const SuggestDroplet = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-brand-green"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-t-brand"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
 );
 
-/* â”€â”€â”€ Thinking Animation â”€â”€â”€ */
+/* ─── Thinking Animation ─── */
 const ThinkingIndicator = () => (
   <div className="flex items-center gap-3 py-4">
-    <div className="w-9 h-9 rounded-full bg-[#f3fbe9] flex items-center justify-center flex-shrink-0 border border-[#22c55e]/20 relative shadow-sm">
-      <Logo variant="symbol" size="sm" decorative className="w-5" />
-      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-[1.5px] border-white rounded-full"></span>
+    <div className="ork-avatar ork-avatar--ai w-9 h-9 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+      <span className="inline-flex [[data-theme=dark]_&]:hidden">
+        <Logo variant="symbol" size="xs" tone="on-light" decorative className="w-5" />
+      </span>
+      <span className="hidden [[data-theme=dark]_&]:inline-flex">
+        <Logo variant="symbol" size="xs" tone="on-dark" decorative className="w-5" />
+      </span>
     </div>
     <div className="flex items-center gap-2.5">
       <div className="flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 bg-brand-orange rounded-full animate-bounce opacity-80" />
-        <span className="w-1.5 h-1.5 bg-brand-orange rounded-full animate-bounce opacity-80" style={{ animationDelay: "150ms" }} />
-        <span className="w-1.5 h-1.5 bg-brand-orange rounded-full animate-bounce opacity-80" style={{ animationDelay: "300ms" }} />
+        <span className="w-1.5 h-1.5 bg-action rounded-full animate-bounce opacity-80" />
+        <span className="w-1.5 h-1.5 bg-action rounded-full animate-bounce opacity-80" style={{ animationDelay: "150ms" }} />
+        <span className="w-1.5 h-1.5 bg-action rounded-full animate-bounce opacity-80" style={{ animationDelay: "300ms" }} />
       </div>
-      <span className="text-[13.5px] text-gray-500 font-medium italic">Cultisia réfléchit...</span>
+      <span className="ork-avatar-ai-label">IA</span>
+      <span className="text-[13.5px] text-muted font-medium italic">Cultisia réfléchit...</span>
     </div>
   </div>
 );
 
-/* â”€â”€â”€ Markdown Renderer â”€â”€â”€ */
+/* ─── Markdown Renderer ─── */
 const MarkdownContent = ({ content }: { content: string }) => (
-  <div className="prose prose-sm max-w-none text-gray-800 prose-headings:text-brand-green prose-headings:font-unbounded prose-h2:text-[18px] prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-[16px] prose-h3:mt-5 prose-h3:mb-2 prose-p:text-[15.5px] prose-p:leading-[1.75] prose-p:mb-4 prose-li:text-[15px] prose-li:leading-[1.7] prose-strong:text-forest-ink prose-strong:font-bold prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-a:text-brand-orange hover:prose-a:text-[#a04000] prose-a:no-underline">
+  <div className="prose prose-sm max-w-none text-foreground prose-headings:text-t-brand prose-headings:font-title prose-h2:text-[18px] prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-[16px] prose-h3:mt-5 prose-h3:mb-2 prose-p:text-foreground prose-p:text-[15.5px] prose-p:leading-[1.75] prose-p:mb-4 prose-li:text-foreground prose-li:text-[15px] prose-li:leading-[1.7] prose-strong:text-foreground prose-strong:font-bold prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-a:text-t-action hover:prose-a:underline prose-a:no-underline">
     <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
   </div>
 );
@@ -172,13 +177,13 @@ const QuestionnaireWidget = ({
   const isMulti = !!q.allow_multiple;
 
   return (
-    <div className="mt-4 border border-gray-200 rounded-3xl bg-white shadow-sm overflow-hidden w-full max-w-3xl transition-all duration-500 ease-out animate-in slide-in-from-bottom-2 fade-in">
-      <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100 bg-gray-50/50">
+    <div className="mt-4 border border-border rounded-[var(--ork-use-radius-card)] bg-surface shadow-raised overflow-hidden w-full max-w-3xl transition-all duration-500 ease-out animate-in slide-in-from-bottom-2 fade-in">
+      <div className="flex items-start justify-between px-6 py-5 border-b border-border bg-sunken/70">
         <div>
-          <h4 className="font-unbounded font-semibold text-brand-green text-[15px] leading-snug pr-4">{q.question}</h4>
-          {isMulti && <p className="text-[12px] text-gray-500 font-medium mt-1">Plusieurs choix possibles</p>}
+          <h4 className="font-title font-semibold text-t-brand text-[15px] leading-snug pr-4">{q.question}</h4>
+          {isMulti && <p className="text-[12px] text-muted font-medium mt-1">Plusieurs choix possibles</p>}
         </div>
-        <div className="flex items-center text-[11px] text-gray-400 font-medium gap-1 shrink-0 px-2 mt-0.5">
+        <div className="flex items-center text-[11px] text-muted font-medium gap-1 shrink-0 px-2 mt-0.5">
           <span>{step + 1} sur {data.questions.length}</span>
         </div>
       </div>
@@ -190,19 +195,19 @@ const QuestionnaireWidget = ({
               placeholder="Précisez votre réponse..."
               value={freeTextValue}
               onChange={(e) => setFreeTextValue(e.target.value)}
-              className="w-full p-4 rounded-xl border border-gray-200 bg-[#f9f8f6] focus:bg-white focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition-all resize-none text-[14px] text-gray-700 min-h-[100px]"
+              className="w-full p-4 rounded-[var(--ork-use-radius-control)] border border-border bg-sunken focus:bg-surface focus:border-[var(--ork-use-border-brand)] focus:ring-1 focus:ring-[var(--ork-use-border-brand)] outline-none transition-all resize-none text-[14px] text-foreground placeholder:text-muted min-h-[100px]"
             />
             <div className="flex justify-between items-center mt-1">
               <button
                 onClick={() => setFreeTextMode(false)}
-                className="text-[13px] font-medium text-gray-500 hover:text-gray-800 transition-colors py-1"
+                className="text-[13px] font-medium text-muted hover:text-foreground transition-colors py-1"
               >
                 ← Retour
               </button>
               <button
                 onClick={() => handleSelectSingle(freeTextValue)}
                 disabled={!freeTextValue.trim()}
-                className="px-5 py-2.5 rounded-xl bg-brand-green text-white text-[13px] font-semibold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 rounded-[var(--ork-use-radius-button)] bg-brand text-on-brand text-[13px] font-semibold hover:bg-[var(--ork-use-background-brand-bold-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Valider
               </button>
@@ -216,37 +221,37 @@ const QuestionnaireWidget = ({
                 <button
                   key={i}
                   onClick={() => isMulti ? handleToggleMulti(opt) : handleSelectSingle(opt)}
-                  className={`group w-full text-left px-6 py-4 border-b border-gray-100 last:border-0 transition-all duration-150 text-[14.5px] flex items-center gap-4 active:bg-gray-50 ${
+                  className={`group w-full text-left px-6 py-4 border-b border-border last:border-0 transition-all duration-150 text-[14.5px] flex items-center gap-4 ${
                     isSelected 
-                      ? "bg-green-50/50 text-green-900" 
-                      : "bg-white hover:bg-gray-50/80 text-gray-700"
+                      ? "bg-selected text-t-brand" 
+                      : "bg-surface hover:bg-sunken text-foreground"
                   }`}
                 >
-                  <span className={`flex items-center justify-center w-6 h-6 rounded-md text-[11.5px] font-semibold shrink-0 transition-colors ${
+                  <span className={`flex items-center justify-center w-6 h-6 rounded-[var(--ork-use-radius-badge)] text-[11.5px] font-semibold shrink-0 transition-colors ${
                     isSelected
-                      ? "bg-green-500 text-white"
-                      : "bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-700"
+                      ? "bg-brand text-on-brand"
+                      : "bg-sunken text-muted group-hover:text-foreground"
                   }`}>
                     {isSelected ? "✓" : (i + 1)}
                   </span>
-                  <span className={`font-medium transition-colors leading-relaxed ${isSelected ? "text-green-900" : "group-hover:text-gray-900"}`}>{opt}</span>
+                  <span className={`font-medium transition-colors leading-relaxed ${isSelected ? "text-t-brand font-semibold" : ""}`}>{opt}</span>
                 </button>
               );
             })}
             
             {isMulti && (
-              <div className="p-4 border-t border-gray-100 bg-gray-50/50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="p-4 border-t border-border bg-sunken/70 animate-in fade-in slide-in-from-bottom-2 duration-200">
                 <input
                   type="text"
                   placeholder="Autre (préciser)..."
                   value={freeTextValue}
                   onChange={(e) => setFreeTextValue(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:border-brand-orange outline-none transition-all text-[14px] text-gray-700 mb-3"
+                  className="w-full p-3 rounded-[var(--ork-use-radius-control)] border border-border bg-surface focus:border-[var(--ork-use-border-brand)] outline-none transition-all text-[14px] text-foreground placeholder:text-muted mb-3"
                 />
                 <button
                   onClick={handleValidateMulti}
                   disabled={multiSelections.length === 0 && !freeTextValue.trim()}
-                  className="w-full py-3 rounded-xl bg-brand-green text-white text-[14px] font-bold hover:bg-[#084236] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 rounded-[var(--ork-use-radius-button)] bg-brand text-on-brand text-[14px] font-bold hover:bg-[var(--ork-use-background-brand-bold-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Valider ces choix
                 </button>
@@ -254,19 +259,19 @@ const QuestionnaireWidget = ({
             )}
 
             {!isMulti && (
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-white hover:bg-gray-50/80 transition-colors">
+              <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-surface hover:bg-sunken transition-colors">
                 <button
                   onClick={() => setFreeTextMode(true)}
-                  className="flex items-center gap-3 text-[14px] text-gray-500 hover:text-gray-800 transition-colors flex-1 text-left font-medium"
+                  className="flex items-center gap-3 text-[14px] text-muted hover:text-foreground transition-colors flex-1 text-left font-medium"
                 >
-                  <span className="flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 text-[12px]">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-[var(--ork-use-radius-badge)] bg-sunken text-muted text-[12px]">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   </span>
                   Autre chose...
                 </button>
                 <button
                   onClick={handleSkip}
-                  className="text-[13px] font-medium text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 bg-white hover:bg-gray-50 transition-colors"
+                  className="text-[13px] font-medium text-muted hover:text-foreground border border-border rounded-[var(--ork-use-radius-button)] px-3 py-1.5 bg-surface hover:bg-sunken transition-colors"
                 >
                   Passer
                 </button>
@@ -287,6 +292,7 @@ interface SharedChatProps {
   icon?: React.ReactNode;
   isEmbedded?: boolean;
   hideSidebar?: boolean;
+  headingLevel?: "h1" | "h2";
   onSimulationComplete?: (data: any) => void;
   onConfigComplete?: (data: any) => void;
   onTransactionDraft?: (data: any) => void;
@@ -295,7 +301,7 @@ interface SharedChatProps {
 }
 
 export function SharedChat({ toolContext, title = "Cultisia", subtitle = "Votre agronome virtuel, propulsé par l'IA", icon,  isEmbedded = false,
-  hideSidebar = false, onSimulationComplete, onConfigComplete, onTransactionDraft, onNewDiscussion, triggerNewSession
+  hideSidebar = false, headingLevel = "h1", onSimulationComplete, onConfigComplete, onTransactionDraft, onNewDiscussion, triggerNewSession
 }: SharedChatProps) {
   const [activeMode, setActiveMode] = useState<"cultisia" | "cultiplan" | "cultiseil" | "cultima">(toolContext);
   
@@ -811,8 +817,8 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
 
   /* ─── Input Bar ─── */
   const renderInputBar = (placeholder: string, large?: boolean) => (
-    <div className={`w-full bg-white border border-gray-200/80 rounded-[32px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:shadow-[0_4px_20px_rgba(0,0,0,0.06)] focus-within:border-brand-green/20 transition-all duration-300 overflow-hidden flex items-center`}>
-      <div className={`flex-1 flex items-center ${large ? "px-6 py-4" : "px-4 py-3"}`}>
+    <div className="w-full bg-surface border border-border-strong rounded-[24px] shadow-raised focus-within:border-[var(--ork-use-border-brand)] transition-all duration-200 overflow-hidden flex items-center">
+      <div className={`flex-1 min-w-0 flex items-center ${large ? "px-5 py-3.5" : "px-4 py-2.5"}`}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -820,36 +826,38 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
           onKeyDown={handleKey}
           placeholder={placeholder}
           rows={1}
-          className={`flex-1 resize-none bg-transparent ${large ? "text-[16px]" : "text-[15px]"} text-gray-800 placeholder:text-gray-400 focus:outline-none leading-relaxed max-h-[200px] self-center`}
+          className={`w-full flex-1 resize-none overflow-y-hidden bg-transparent ${large ? "text-[15.5px]" : "text-[14.5px]"} text-foreground placeholder:text-muted focus:outline-none leading-normal max-h-[180px] self-center`}
           style={{ paddingTop: '2px', paddingBottom: '2px' }}
         />
       </div>
-      <div className={`flex items-center gap-1.5 ${large ? "pr-4" : "pr-3"}`}>
+      <div className={`flex items-center gap-1.5 shrink-0 ${large ? "pr-3.5" : "pr-2.5"}`}>
           <button
+            type="button"
             onClick={toggleRecording}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-[0.92] ${
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 active:scale-[0.92] ${
               isRecording 
-                ? "bg-red-50 text-red-500 animate-pulse" 
-                : "bg-transparent hover:bg-gray-50 text-gray-600"
+                ? "bg-[var(--ork-use-background-danger-subtle)] text-t-danger animate-pulse" 
+                : "bg-transparent hover:bg-sunken text-muted hover:text-foreground"
             }`}
             aria-label="Saisie vocale"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
           </button>
           <button
+            type="button"
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-[0.92] ${
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 active:scale-[0.92] ${
               input.trim() 
-                ? "bg-gray-900 hover:bg-black text-white shadow-sm" 
-                : "bg-transparent text-gray-300 cursor-not-allowed"
+                ? "bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand shadow-raised" 
+                : "bg-sunken text-muted opacity-50 cursor-not-allowed"
             }`}
             aria-label="Envoyer"
           >
             {isLoading ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="animate-spin" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             )}
           </button>
         </div>
@@ -864,10 +872,10 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
   const renderSessionItem = (s: ChatSession) => (
     <div 
       key={s.id} 
-      className={`group flex items-center justify-between w-full px-3 py-3 rounded-xl text-[14px] font-medium transition-all duration-200 cursor-pointer 
+      className={`group flex items-center justify-between w-full px-3 py-3 rounded-[var(--ork-use-radius-control)] text-[14px] font-medium transition-all duration-200 cursor-pointer 
       ${s.id === sessionId 
-        ? "bg-[#f3fbe9] text-brand-green border border-[#22c55e]/20" 
-        : "bg-transparent text-gray-600 hover:bg-gray-50 border border-transparent"
+        ? "bg-selected text-t-brand ring-1 ring-inset ring-[var(--ork-use-border-selected)]" 
+        : "bg-transparent text-muted hover:bg-sunken hover:text-foreground border border-transparent"
       }`}
     >
       <button
@@ -888,7 +896,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
         }}
         className="flex-1 flex items-center gap-3 text-left truncate focus:outline-none"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={s.id === sessionId ? "text-[#22c55e]" : "text-gray-400"}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={s.id === sessionId ? "text-t-brand" : "text-muted"}>
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
         <span className="truncate w-full block pt-0.5">{s.title}</span>
@@ -914,7 +922,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
         trigger={['click']}
         placement="bottomRight"
       >
-        <button className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all focus:outline-none focus:opacity-100 ${s.id === sessionId ? 'text-white/80 hover:bg-white/20' : 'text-gray-400 hover:bg-black/5'}`} onClick={e => e.stopPropagation()}>
+        <button className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all focus:outline-none focus:opacity-100 ${s.id === sessionId ? 'text-t-brand hover:bg-surface' : 'text-muted hover:bg-[var(--ork-use-background-neutral-subtle-hover)]'}`} onClick={e => e.stopPropagation()}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
         </button>
       </Dropdown>
@@ -922,29 +930,29 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
   );
 
   return (
-    <div className={isEmbedded ? "w-full h-full flex bg-white font-manrope relative" : "w-full h-full flex bg-white font-manrope relative"} style={{}}>
+    <div className="w-full h-full flex bg-surface text-foreground relative">
       {/* â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â• */}
       {!hideSidebar && (
         <Drawer
-          title={<span className="font-unbounded font-bold text-brand-green text-lg tracking-tight">Historique</span>}
+          title={<span className="font-title font-bold text-foreground text-base tracking-tight">Historique</span>}
           placement="right"
           closable={true}
           onClose={() => setSidebarOpen(false)}
           open={sidebarOpen}
-          width={340}
+          size={340}
           getContainer={false}
-          style={{ position: 'absolute' }}
+          rootStyle={{ position: 'absolute' }}
           styles={{
-            body: { padding: '0', display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff' },
-            header: { backgroundColor: '#ffffff', borderBottom: '1px solid #f0f0f0', padding: '20px 24px' }
+            body: { padding: '0', display: 'flex', flexDirection: 'column' },
+            header: { padding: '16px 20px' }
           }}
         >
-          <div className="px-6 py-6 border-b border-gray-50">
+          <div className="px-6 py-6 border-b border-border">
             <button 
               onClick={startNewDiscussion} 
-              className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand-green hover:bg-[#073c32] rounded-xl font-bold text-white transition-all shadow-[0_4px_12px_rgba(11,83,69,0.15)] hover:shadow-[0_6px_16px_rgba(11,83,69,0.2)] active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] rounded-[var(--ork-use-radius-button)] font-bold text-on-brand transition-all shadow-raised active:scale-[0.98]"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Nouvelle discussion
             </button>
           </div>
@@ -952,8 +960,8 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 custom-scrollbar">
             {pinnedSessions.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-2 flex items-center gap-1.5">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                <h3 className="text-[11px] font-bold text-muted uppercase tracking-widest mb-2 px-2 flex items-center gap-1.5">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                   Épinglées
                 </h3>
                 {pinnedSessions.map(s => renderSessionItem(s))}
@@ -961,15 +969,15 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
             )}
             
             <div className="space-y-1">
-              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-2 mt-4">Récentes</h3>
-              {recentSessions.length === 0 && <p className="text-[13px] text-gray-400 px-2 font-medium">Aucune discussion récente.</p>}
+              <h3 className="text-[11px] font-bold text-muted uppercase tracking-widest mb-2 px-2 mt-4">Récentes</h3>
+              {recentSessions.length === 0 && <p className="text-[13px] text-muted px-2 font-medium">Aucune discussion récente.</p>}
               {recentSessions.map(s => renderSessionItem(s))}
             </div>
           </div>
           
-          <div className="p-4 border-t border-gray-50">
-             <button onClick={() => setIsArchiveModalOpen(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl text-[13px] font-bold text-gray-600 transition-colors border border-gray-100">
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+          <div className="p-4 border-t border-border">
+             <button onClick={() => setIsArchiveModalOpen(true)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-sunken hover:bg-selected/50 rounded-[var(--ork-use-radius-button)] text-[13px] font-bold text-foreground transition-colors border border-border">
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
                Voir les archives ({archivedSessions.length})
              </button>
           </div>
@@ -977,54 +985,67 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
       )}
 
       {/* ═══ MAIN CHAT AREA ═══ */}
-      <main className="flex-1 flex flex-col h-full min-w-0 bg-gradient-to-b from-[#f3fbe9]/60 via-white to-white overflow-hidden relative">
+      <section aria-label="Zone de discussion Cultisia" className="flex-1 flex flex-col h-full min-w-0 bg-surface overflow-hidden relative">
 
         {!hideSidebar && (
-          <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-white/80 backdrop-blur-md z-10 shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="font-medium text-gray-800 text-[14px]">
+          <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-2.5 border-b border-border bg-surface/95 backdrop-blur-md z-10 shrink-0">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="font-semibold text-foreground text-[13.5px] shrink-0">
                 {activeMode.charAt(0).toUpperCase() + activeMode.slice(1)}
               </span>
-              <span className="text-gray-300">/</span>
-              <span className="text-[13px] text-gray-500 truncate max-w-[200px]">
+              <span className="text-muted shrink-0">/</span>
+              <span className="text-[13px] text-muted truncate">
                 {sessions.find(s => s.id === sessionId)?.title || "Nouvelle discussion"}
               </span>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button 
+                type="button"
                 onClick={() => setSidebarOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 bg-white hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-foreground bg-sunken hover:bg-selected/60 rounded-[var(--ork-use-radius-button)] transition-colors border border-border"
                 title="Historique"
+                aria-label="Ouvrir l'historique des discussions"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span className="hidden sm:inline text-[13px] font-medium">Historique</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span className="text-[12.5px] font-semibold">Historique</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* Mobile menu toggle (visible only when sidebar is closed on small screens) */}
-        {!sidebarOpen && (
-          <button 
-            onClick={() => setSidebarOpen(true)}
-            className="md:hidden absolute top-4 left-4 z-50 w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-800"
-            aria-label="Ouvrir le menu"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
-        )}
-        
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center px-6 pb-[15vh]">
-            <h1 className="font-manrope text-[28px] sm:text-[36px] text-gray-800 mb-8 text-center font-medium tracking-tight leading-snug">
-              {activeMode === "cultiplan" ? (
-                <>Prêt à bâtir votre business plan agricole ?</>
-              ) : (
-                <>Bonjour, comment puis-je vous aider ?</>
-              )}
-            </h1>
-            <div className="w-full max-w-[860px]">{renderInputBar(`Posez votre question à ${title}...`, true)}</div>
+          <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pb-[10vh]">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="ork-avatar ork-avatar--ai w-9 h-9 flex items-center justify-center" aria-hidden="true">
+                <span className="inline-flex [[data-theme=dark]_&]:hidden">
+                  <Logo variant="symbol" size="xs" tone="on-light" decorative className="w-5" />
+                </span>
+                <span className="hidden [[data-theme=dark]_&]:inline-flex">
+                  <Logo variant="symbol" size="xs" tone="on-dark" decorative className="w-5" />
+                </span>
+              </div>
+              <span className="text-sm font-title font-bold text-foreground">Cultisia</span>
+              <span className="ork-avatar-ai-label">IA</span>
+            </div>
+            {headingLevel === "h2" ? (
+              <h2 className="text-xl sm:text-2xl font-title text-foreground mb-6 text-center font-bold tracking-tight leading-snug max-w-xl">
+                {activeMode === "cultiplan" ? (
+                  <>Prêt à bâtir votre business plan agricole ?</>
+                ) : (
+                  <>Bonjour, comment puis-je vous aider ?</>
+                )}
+              </h2>
+            ) : (
+              <h1 className="text-2xl sm:text-[32px] font-title text-foreground mb-6 text-center font-bold tracking-tight leading-snug max-w-xl">
+                {activeMode === "cultiplan" ? (
+                  <>Prêt à bâtir votre business plan agricole ?</>
+                ) : (
+                  <>Bonjour, comment puis-je vous aider ?</>
+                )}
+              </h1>
+            )}
+            <div className="w-full max-w-[780px]">{renderInputBar(`Posez votre question à ${title}...`, true)}</div>
           </div>
         ) : (
             <>
@@ -1104,14 +1125,24 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                   return (
                     <div key={idx} className={`flex gap-4 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                       {msg.role === "assistant" && (
-                        <div className="w-9 h-9 rounded-full bg-[#f3fbe9] flex items-center justify-center flex-shrink-0 mt-1 border border-[#22c55e]/20 relative shadow-sm">
-                          <Logo variant="symbol" size="sm" decorative className="w-5" />
-                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-[1.5px] border-white rounded-full"></span>
+                        <div className="ork-avatar ork-avatar--ai w-9 h-9 flex items-center justify-center flex-shrink-0 mt-1" aria-hidden="true">
+                          <span className="inline-flex [[data-theme=dark]_&]:hidden">
+                            <Logo variant="symbol" size="xs" tone="on-light" decorative className="w-5" />
+                          </span>
+                          <span className="hidden [[data-theme=dark]_&]:inline-flex">
+                            <Logo variant="symbol" size="xs" tone="on-dark" decorative className="w-5" />
+                          </span>
                         </div>
                       )}
                       <div className={`flex flex-col gap-1.5 ${msg.role === "user" ? "items-end max-w-[75%]" : "items-start w-full"}`}>
+                        {msg.role === "assistant" && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-title font-bold text-foreground">Cultisia</span>
+                            <span className="ork-avatar-ai-label">IA</span>
+                          </div>
+                        )}
                         {msg.role === "user" ? (
-                          <div className="px-5 py-3.5 rounded-3xl bg-[#f9f8f6] border border-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.02)] text-gray-800 text-[15px] font-medium leading-[1.65] whitespace-pre-wrap">
+                          <div className="px-5 py-3.5 rounded-[var(--ork-use-radius-card)] bg-sunken border border-border shadow-raised text-foreground text-[15px] font-medium leading-[1.65] whitespace-pre-wrap">
                             {displayContent}
                           </div>
                         ) : (
@@ -1120,7 +1151,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                               <MarkdownContent content={displayContent} />
                             )}
                             {msg.isStreaming && (
-                              <span className="inline-block w-1 h-5 bg-brand-orange animate-pulse ml-1 align-text-bottom rounded-sm" />
+                              <span className="inline-block w-1 h-5 bg-action animate-pulse ml-1 align-text-bottom rounded-sm" />
                             )}
                             {questionnaireData && !msg.isStreaming && idx === messages.length - 1 && (
                               <QuestionnaireWidget
@@ -1132,13 +1163,13 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                               />
                             )}
                             {simulationData && !msg.isStreaming && (
-                              <div className="mt-4 p-4 bg-[#f3fbe9] rounded-2xl border border-[#22c55e]/30 flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-sm">
-                                <p className="text-[14.5px] text-brand-green font-semibold mb-4 text-center">🎉 La collecte d'informations est terminée.</p>
+                              <div className="mt-4 p-4 bg-selected rounded-[var(--ork-use-radius-card)] border border-[var(--ork-use-border-selected)] flex flex-col items-center animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-raised">
+                                <p className="text-[14.5px] text-t-brand font-semibold mb-4 text-center">La collecte d&apos;informations est terminée.</p>
                                 <button
                                   onClick={() => onSimulationComplete?.(simulationData)}
-                                  className="bg-[#22c55e] text-white px-6 py-3 rounded-xl text-[14.5px] font-bold hover:bg-[#16a34a] hover:shadow-md transition-all duration-200 active:scale-[0.98] w-full sm:w-auto"
+                                  className="bg-brand text-on-brand px-6 py-3 rounded-[var(--ork-use-radius-button)] text-[14.5px] font-bold hover:bg-[var(--ork-use-background-brand-bold-hover)] transition-all duration-200 active:scale-[0.98] w-full sm:w-auto"
                                 >
-                                  Générer mon plan d'affaires
+                                  Générer mon plan d&apos;affaires
                                 </button>
                               </div>
                             )}
@@ -1147,7 +1178,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                         {msg.role === "assistant" && !msg.isStreaming && msg.sources && msg.sources.length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-3">
                             {msg.sources.map((s, i) => (
-                              <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-brand-green/20 rounded-lg text-[11px] text-brand-green font-semibold shadow-[0_1px_2px_rgba(11,83,69,0.05)] cursor-default">
+                              <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface border border-border rounded-[var(--ork-use-radius-badge)] text-[11px] text-t-brand font-semibold cursor-default">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 {s.file_name}
                               </span>
@@ -1162,51 +1193,50 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                 <div ref={messagesEndRef} />
               </div>
             </div>
-            <div className="flex-shrink-0 px-6 pb-6 pt-2 bg-gradient-to-t from-white via-white to-white/0">
+            <div className="flex-shrink-0 px-6 pb-6 pt-2 bg-surface border-t border-border/60">
               <div className="max-w-[860px] mx-auto">
                 {renderInputBar("Répondre à Cultisia...")}
-                <p className="text-center mt-3.5 text-[11.5px] font-medium text-gray-400">Cultisia peut faire des erreurs. Vérifiez les informations agronomiques avant toute action.</p>
+                <p className="text-center mt-3 text-[11.5px] font-medium text-muted">Cultisia peut faire des erreurs. Vérifiez les informations agronomiques avant toute action.</p>
               </div>
             </div>
           </>
         )}
-      </main>
+      </section>
 
       {/* ═══ MODALS ═══ */}
       <Modal
-        title={<span className="font-unbounded font-bold text-gray-800 tracking-tight flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg> Archives</span>}
+        title={<span className="font-title font-bold text-foreground tracking-tight flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg> Archives</span>}
         open={isArchiveModalOpen}
         onCancel={() => setIsArchiveModalOpen(false)}
         footer={null}
         width={500}
         centered
-        className="font-manrope"
       >
         <div className="py-4 space-y-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
           {archivedSessions.length === 0 ? (
-            <p className="text-gray-500 text-center py-6 font-medium text-[14px]">Vos archives sont vides.</p>
+            <p className="text-muted text-center py-6 font-medium text-[14px]">Vos archives sont vides.</p>
           ) : (
             archivedSessions.map(s => (
-              <div key={s.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-xl bg-gray-50 hover:bg-white hover:border-gray-200 transition-all">
+              <div key={s.id} className="flex items-center justify-between p-3 border border-border rounded-[var(--ork-use-radius-control)] bg-sunken hover:bg-surface transition-all">
                 <div className="flex items-center gap-3 truncate">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-400 shrink-0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                  <span className="font-medium text-gray-700 text-[14px] truncate">{s.title}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted shrink-0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <span className="font-medium text-foreground text-[14px] truncate">{s.title}</span>
                 </div>
                 <div className="flex gap-1.5 shrink-0 ml-2">
                   <Tooltip title="Désarchiver">
                     <button 
                       onClick={() => handleUnarchiveSession(s.id)}
-                      className="p-1.5 text-gray-500 hover:text-brand-green hover:bg-brand-green/10 rounded-lg transition-colors"
+                      className="p-1.5 text-muted hover:text-t-brand hover:bg-selected rounded-[var(--ork-use-radius-control)] transition-colors"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     </button>
                   </Tooltip>
                   <Tooltip title="Supprimer définitivement">
                     <button 
                       onClick={(e) => handleDeleteSession(s.id, e)}
-                      className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-1.5 text-muted hover:text-t-danger hover:bg-[var(--ork-use-background-danger-subtle)] rounded-[var(--ork-use-radius-control)] transition-colors"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     </button>
                   </Tooltip>
                 </div>
@@ -1217,18 +1247,17 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
       </Modal>
 
       <Modal
-        title={<span className="font-unbounded font-bold text-gray-800 tracking-tight flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> Partager la discussion</span>}
+        title={<span className="font-title font-bold text-foreground tracking-tight flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> Partager la discussion</span>}
         open={isShareModalOpen}
         onCancel={() => setIsShareModalOpen(false)}
         footer={null}
         width={480}
         centered
-        className="font-manrope"
       >
         <div className="py-6 space-y-6">
-          <div className="p-4 bg-[#f3fbe9]/50 border border-brand-green/10 rounded-xl">
-            <h4 className="font-bold text-brand-green mb-1">Copie Locale</h4>
-            <p className="text-[13px] text-gray-600 mb-3 leading-relaxed">Téléchargez la conversation actuelle sous forme de fichier texte enrichi (.txt) sur votre appareil.</p>
+          <div className="p-4 bg-selected/60 border border-[var(--ork-use-border-selected)] rounded-[var(--ork-use-radius-card)]">
+            <h4 className="font-bold text-t-brand mb-1">Copie Locale</h4>
+            <p className="text-[13px] text-muted mb-3 leading-relaxed">Téléchargez la conversation actuelle sous forme de fichier texte enrichi (.txt) sur votre appareil.</p>
             <button 
               onClick={async () => {
                 if (!selectedSessionToShare) return;
@@ -1247,15 +1276,15 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                   antMessage.success("Copie locale téléchargée !");
                 }
               }}
-              className="px-4 py-2 bg-white border border-gray-200 text-gray-700 font-semibold rounded-lg text-[13px] hover:bg-gray-50 transition-colors shadow-sm"
+              className="px-4 py-2 bg-surface border border-border text-foreground font-semibold rounded-[var(--ork-use-radius-button)] text-[13px] hover:bg-sunken transition-colors"
             >
               Télécharger .txt
             </button>
           </div>
 
-          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl">
-            <h4 className="font-bold text-gray-800 mb-1">Lien Public</h4>
-            <p className="text-[13px] text-gray-600 mb-3 leading-relaxed">Générez un lien unique accessible par tous pour lire cette conversation.</p>
+          <div className="p-4 bg-sunken border border-border rounded-[var(--ork-use-radius-card)]">
+            <h4 className="font-bold text-foreground mb-1">Lien Public</h4>
+            <p className="text-[13px] text-muted mb-3 leading-relaxed">Générez un lien unique accessible par tous pour lire cette conversation.</p>
             <button 
               onClick={async () => {
                 if (!selectedSessionToShare) return;
@@ -1275,7 +1304,7 @@ const extractSimulationData = (msgs: ChatMessage[]) => {
                   console.error(err);
                 }
               }}
-              className="px-4 py-2 bg-brand-green text-white font-bold rounded-lg text-[13px] hover:bg-[#073c32] transition-all shadow-[0_2px_8px_rgba(11,83,69,0.2)] active:scale-[0.98]"
+              className="px-4 py-2 bg-brand text-on-brand font-bold rounded-[var(--ork-use-radius-button)] text-[13px] hover:bg-[var(--ork-use-background-brand-bold-hover)] transition-all active:scale-[0.98]"
             >
               Créer et copier le lien
             </button>

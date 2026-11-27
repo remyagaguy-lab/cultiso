@@ -44,7 +44,7 @@ export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
           percent
         };
       })
-      .slice(0, 6); // Prendre les 6 premiers "phares"
+      .slice(0, 4); // 4 produits phares affichés sans coupure ni barre de défilement
 
     return pulses;
   }, [data]);
@@ -52,22 +52,26 @@ export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
   if (!pulseData.length) return null;
 
   return (
-    <div className="w-full overflow-x-auto flex gap-4 pb-4 scrollbar-hide">
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
       {pulseData.map(pulse => {
         const isUp = pulse.diff > 0;
         const isDown = pulse.diff < 0;
-        const color = isUp ? '#22c55e' : isDown ? '#D0541F' : '#607166';
+        const color = isUp
+          ? 'var(--ork-use-text-brand)'
+          : isDown
+            ? 'var(--ork-use-text-action)'
+            : 'var(--ork-use-text-subtle)';
         
         return (
-          <Card key={pulse.id} size="small" className="min-w-[220px] flex-shrink-0 shadow-sm border border-gray-200 bg-white rounded-[9px]" styles={{ body: { padding: '12px' }}}>
-            <div className="text-xs text-gray-500 mb-1 truncate font-medium">{pulse.productName} • {pulse.location || 'Global'}</div>
+          <Card key={pulse.id} size="small" className="min-w-0 shadow-raised border border-border bg-surface rounded-[var(--ork-use-radius-card)]" styles={{ body: { padding: '12px' }}}>
+            <div className="text-xs text-muted mb-1 truncate font-medium">{pulse.productName} • {pulse.location || 'Global'}</div>
             <div className="font-mono-numbers">
               <Statistic
                 value={pulse.price}
                 precision={0}
-                valueStyle={{ color: color, fontSize: '1.25rem', fontWeight: 600 }}
+                styles={{ content: { color: color, fontSize: '1.25rem', fontWeight: 600 } }}
               prefix={isUp ? <ArrowUpOutlined className="relative -top-[1px]" /> : isDown ? <ArrowDownOutlined className="relative -top-[1px]" /> : <MinusOutlined className="relative -top-[1px]" />}
-              suffix={<span className="text-[11px] text-gray-400 font-normal ml-1">F/{pulse.unit}</span>}
+              suffix={<span className="text-[11px] text-muted font-normal ml-1">F/{pulse.unit}</span>}
               />
             </div>
             {pulse.diff !== 0 && (
@@ -76,7 +80,7 @@ export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
               </div>
             )}
             {pulse.diff === 0 && (
-              <div className="text-[11px] mt-1 text-gray-400 font-mono-numbers">
+              <div className="text-[11px] mt-1 text-muted font-mono-numbers">
                 Prix stable
               </div>
             )}

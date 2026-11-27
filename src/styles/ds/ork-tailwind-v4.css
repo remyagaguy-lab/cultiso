@@ -1,0 +1,36 @@
+/* Généré par outillage/build_adaptateurs.py : ne pas modifier à la main. Tailwind v4 : importer tokens.css avant ce fichier.
+   Classes obtenues : bg-background, text-foreground, bg-action, text-on-action, border-border, rounded-button, shadow-raised, font-title… */
+@theme inline {
+  --color-background: var(--ork-use-surface-default);
+  --color-surface: var(--ork-use-surface-raised);
+  --color-sunken: var(--ork-use-surface-sunken);
+  --color-foreground: var(--ork-use-text-default);
+  --color-muted: var(--ork-use-text-subtle);
+  --color-brand: var(--ork-use-background-brand-bold);
+  --color-on-brand: var(--ork-use-text-on-brand-bold);
+  --color-action: var(--ork-use-background-action-bold);
+  --color-on-action: var(--ork-use-text-on-action-bold);
+  --color-danger: var(--ork-use-background-danger-bold);
+  --color-success: var(--ork-use-background-success-bold);
+  --color-warning: var(--ork-use-background-warning-bold);
+  --color-info: var(--ork-use-background-info-bold);
+  --color-border: var(--ork-use-border-default);
+  --color-border-strong: var(--ork-use-border-input);
+  --color-ring: var(--ork-use-border-focused);
+  --color-selected: var(--ork-use-background-selected);
+  --color-data-1: var(--ork-use-data-1-mark);
+  --color-data-2: var(--ork-use-data-2-mark);
+  --color-data-3: var(--ork-use-data-3-mark);
+  --color-data-4: var(--ork-use-data-4-mark);
+  --color-data-5: var(--ork-use-data-5-mark);
+  --color-data-6: var(--ork-use-data-6-mark);
+  --radius-button: var(--ork-use-radius-button);
+  --radius-control: var(--ork-use-radius-control);
+  --radius-card: var(--ork-use-radius-card);
+  --radius-dialog: var(--ork-use-radius-dialog);
+  --font-sans: var(--ork-use-font-text);
+  --font-title: var(--ork-use-font-title);
+  --spacing-card: var(--ork-use-space-card-padding);
+  --shadow-raised: var(--ork-use-elevation-raised);
+  --shadow-overlay: var(--ork-use-elevation-overlay);
+}

@@ -56,7 +56,7 @@ export default function MarketFilters({
   const filterContent = (
     <div className="flex flex-col gap-5 w-full">
       <div>
-        <label className="block text-[13px] font-medium text-gray-700 mb-1.5">Catégorie</label>
+        <label className="block text-[13px] font-medium text-foreground mb-1.5">Catégorie</label>
         <Select
           allowClear
           className="w-full"
@@ -67,7 +67,7 @@ export default function MarketFilters({
         />
       </div>
       <div>
-        <label className="block text-[13px] font-medium text-gray-700 mb-1.5">Produit</label>
+        <label className="block text-[13px] font-medium text-foreground mb-1.5">Produit</label>
         <Select
           allowClear
           showSearch
@@ -82,7 +82,7 @@ export default function MarketFilters({
         />
       </div>
       <div>
-        <label className="block text-[13px] font-medium text-gray-700 mb-1.5">Lieu / Marché</label>
+        <label className="block text-[13px] font-medium text-foreground mb-1.5">Lieu / Marché</label>
         <Select
           allowClear
           showSearch
@@ -97,7 +97,7 @@ export default function MarketFilters({
         <Button 
           icon={<ReloadOutlined />} 
           onClick={onReset}
-          className="w-full rounded-md"
+          className="w-full !bg-sunken hover:!bg-[var(--ork-use-background-neutral-default-hover)] !text-foreground !border-border-strong rounded-[var(--ork-use-radius-button)]"
         >
           Réinitialiser
         </Button>
@@ -108,18 +108,18 @@ export default function MarketFilters({
   return (
     <>
       {/* Version Desktop (Sidebar) */}
-      <div className="hidden lg:block bg-white p-6 rounded-[9px] shadow-sm border border-gray-200">
-        <h3 className="font-unbounded font-medium text-lg text-gray-900 mb-5">Filtres</h3>
+      <div className="hidden lg:block bg-surface p-6 rounded-[var(--ork-use-radius-card)] shadow-raised border border-border">
+        <h3 className="font-title font-medium text-lg text-foreground mb-5">Filtres</h3>
         {filterContent}
       </div>
 
-      {/* Version Mobile (Bouton + Drawer) */}
-      <div className="md:hidden mb-4">
+      {/* Version Mobile & Tablette (Bouton + Drawer) */}
+      <div className="lg:hidden mb-4">
         <Button 
           type="primary" 
           icon={<FilterOutlined />} 
           onClick={() => setMobileDrawerOpen(true)}
-          className="w-full bg-brand-orange hover:bg-[#E67E22] border-none rounded-md shadow-none"
+          className="w-full bg-action hover:bg-[var(--ork-use-background-action-bold-hover)] text-on-action border-none rounded-[var(--ork-use-radius-button)] shadow-none"
         >
           Filtrer les prix
         </Button>
@@ -128,10 +128,10 @@ export default function MarketFilters({
       <Drawer
         title="Filtres"
         placement="bottom"
-        height="auto"
+        size="default"
         onClose={() => setMobileDrawerOpen(false)}
         open={mobileDrawerOpen}
-        className="md:hidden"
+        className="lg:hidden"
       >
         {filterContent}
       </Drawer>
