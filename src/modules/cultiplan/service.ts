@@ -230,6 +230,25 @@ export async function listerPlans(client: ClientBase, exploitationId: string): P
   return data.map(versResume);
 }
 
+export interface PlanDeLaListe extends ResumePlan {
+  /** Nom de l'exploitation (projet) du plan. */
+  exploitationNom: string | null;
+}
+
+/** Tous les plans que l'utilisateur peut voir (les siens et ceux d'une exploitation partagée), du plus récent au plus ancien. */
+export async function listerMesPlans(client: ClientBase): Promise<PlanDeLaListe[]> {
+  const { data, error } = await client.from("plans").select(COLONNES_RESUME).order("updated_at", { ascending: false });
+  if (error) throw erreurBase(error);
+  const ids = [...new Set(data.map((p) => p.cultiso_id))];
+  const noms = new Map<string, string>();
+  if (ids.length > 0) {
+    const lecture = await client.from("cultisos").select("id, name").in("id", ids);
+    if (lecture.error) throw erreurBase(lecture.error);
+    for (const c of lecture.data) noms.set(c.id, c.name);
+  }
+  return data.map((p) => ({ ...versResume(p), exploitationNom: noms.get(p.cultiso_id) ?? null }));
+}
+
 export async function lirePlan(client: ClientBase, planId: string): Promise<Plan> {
   const [plan, lignes] = await Promise.all([
     client.from("plans").select("*").eq("id", planId).maybeSingle(),

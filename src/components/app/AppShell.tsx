@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   LineChart,
+  ListChecks,
   Zap,
   Bot,
   TrendingUp,
@@ -58,6 +59,7 @@ const PILOTAGE_ITEMS: NavItem[] = [
 
 const SUITE_ITEMS: NavItem[] = [
   { name: "Cultiplan", href: "/cultiplan", icon: LineChart },
+  { name: "Mes plans", href: "/cultiplan/mes-plans", icon: ListChecks },
   { name: "Cultima ERP", href: "/cultima", icon: Zap },
   { name: "Cultisia IA", href: "/cultisia", icon: Bot },
 ];
@@ -71,6 +73,7 @@ const ROUTE_TITLES: Record<string, string> = {
   "/dashboard": "Tableau de bord",
   "/marches": "Cours des prix",
   "/cultiplan": "Cultiplan",
+  "/cultiplan/mes-plans": "Mes plans",
   "/cultima": "Cultima ERP",
   "/cultisia": "Cultisia IA",
   "/cultiseil": "Cultiseil",

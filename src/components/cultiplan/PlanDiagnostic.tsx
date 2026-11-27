@@ -2,29 +2,13 @@
 
 import { Alert, Skeleton } from "antd";
 import { useCallback, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { enFcfa, type RegleFinanceur } from "@/moteurs/controles";
 import { versRegleMoteur, type RegleFinanceurRef } from "@/referentiel";
 import type { Plan } from "@/modules/cultiplan";
+import { appeler } from "./appeler";
 import { ChoixFinanceur } from "./ChoixFinanceur";
 import { ControlesExpliques } from "./ControlesExpliques";
 import { IndicateurExplique } from "./IndicateurExplique";
-
-class ErreurApi extends Error {}
-
-/** Appel d'une route /api/cultiplan avec le jeton de l'utilisateur connecté. */
-async function appeler<T>(chemin: string, init?: RequestInit): Promise<T> {
-  const { data } = await createClient().auth.getSession();
-  const jeton = data.session?.access_token;
-  if (!jeton) throw new ErreurApi("Connecte-toi pour voir ton plan.");
-  const reponse = await fetch(chemin, {
-    ...init,
-    headers: { ...init?.headers, Authorization: `Bearer ${jeton}`, ...(init?.body ? { "Content-Type": "application/json" } : {}) },
-  });
-  const corps = (await reponse.json().catch(() => ({}))) as { error?: string };
-  if (!reponse.ok) throw new ErreurApi(corps.error ?? "Une erreur est survenue. Réessaie dans un instant.");
-  return corps as T;
-}
 
 const memeRegle = (a: RegleFinanceur | null | undefined, b: RegleFinanceur): boolean => JSON.stringify(a ?? null) === JSON.stringify(b);
 
