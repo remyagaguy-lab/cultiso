@@ -294,6 +294,116 @@ isOneToOne: false
           CompositeTypes: {
             [_ in never]: never
           }
+        },"ref": {
+          Tables: {
+            "modeles_charges": {
+                  Row: {
+                    "base": string,"classe": string,"created_at": string,"duree_vie_ans": number | null,"frequence": number,"id": string,"libelle": string,"mois_decaissement": (number)[] | null,"nature": string,"ordre": number,"prix_reference": number,"produit_prix": string | null,"quantite": number,"source": string | null,"speculation_code": string,"statut": string,"type_charge": string,"unite": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "base"?: string,"classe": string,"created_at"?: string,"duree_vie_ans"?: number | null,"frequence"?: number,"id"?: string,"libelle": string,"mois_decaissement"?: (number)[] | null,"nature": string,"ordre"?: number,"prix_reference": number,"produit_prix"?: string | null,"quantite": number,"source"?: string | null,"speculation_code": string,"statut"?: string,"type_charge": string,"unite": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "base"?: string,"classe"?: string,"created_at"?: string,"duree_vie_ans"?: number | null,"frequence"?: number,"id"?: string,"libelle"?: string,"mois_decaissement"?: (number)[] | null,"nature"?: string,"ordre"?: number,"prix_reference"?: number,"produit_prix"?: string | null,"quantite"?: number,"source"?: string | null,"speculation_code"?: string,"statut"?: string,"type_charge"?: string,"unite"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "modeles_charges_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
+                },"modeles_revenus": {
+                  Row: {
+                    "base": string,"created_at": string,"id": string,"libelle": string,"mois_vente": (number)[] | null,"ordre": number,"pertes": number,"prix_reference": number,"produit_prix": string | null,"quantite_optimiste": number,"quantite_pessimiste": number,"quantite_realiste": number,"source": string | null,"speculation_code": string,"statut": string,"type_revenu": string,"unite": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "base"?: string,"created_at"?: string,"id"?: string,"libelle": string,"mois_vente"?: (number)[] | null,"ordre"?: number,"pertes"?: number,"prix_reference": number,"produit_prix"?: string | null,"quantite_optimiste": number,"quantite_pessimiste": number,"quantite_realiste": number,"source"?: string | null,"speculation_code": string,"statut"?: string,"type_revenu": string,"unite": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "base"?: string,"created_at"?: string,"id"?: string,"libelle"?: string,"mois_vente"?: (number)[] | null,"ordre"?: number,"pertes"?: number,"prix_reference"?: number,"produit_prix"?: string | null,"quantite_optimiste"?: number,"quantite_pessimiste"?: number,"quantite_realiste"?: number,"source"?: string | null,"speculation_code"?: string,"statut"?: string,"type_revenu"?: string,"unite"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "modeles_revenus_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
+                },"questions_terrain": {
+                  Row: {
+                    "cle": string,"created_at": string,"libelle": string,"ordre": number,"reponses": NonNullable<Json>,"secteurs": (string)[],"source": string | null,"sous_titre": string | null,"statut": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cle": string,"created_at"?: string,"libelle": string,"ordre"?: number,"reponses"?: NonNullable<Json>,"secteurs"?: (string)[],"source"?: string | null,"sous_titre"?: string | null,"statut"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cle"?: string,"created_at"?: string,"libelle"?: string,"ordre"?: number,"reponses"?: NonNullable<Json>,"secteurs"?: (string)[],"source"?: string | null,"sous_titre"?: string | null,"statut"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"regles_ajustement": {
+                  Row: {
+                    "cible_modele_id": string | null,"cible_sens": string | null,"cible_type": string | null,"cle_question": string,"coefficient": number | null,"created_at": string,"description": string | null,"effet": string,"id": string,"ligne": Json | null,"source": string | null,"speculation_code": string | null,"statut": string,"updated_at": string,"valeur": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cible_modele_id"?: string | null,"cible_sens"?: string | null,"cible_type"?: string | null,"cle_question": string,"coefficient"?: number | null,"created_at"?: string,"description"?: string | null,"effet": string,"id"?: string,"ligne"?: Json | null,"source"?: string | null,"speculation_code"?: string | null,"statut"?: string,"updated_at"?: string,"valeur": string
+                  }
+                  Update: {
+                    "cible_modele_id"?: string | null,"cible_sens"?: string | null,"cible_type"?: string | null,"cle_question"?: string,"coefficient"?: number | null,"created_at"?: string,"description"?: string | null,"effet"?: string,"id"?: string,"ligne"?: Json | null,"source"?: string | null,"speculation_code"?: string | null,"statut"?: string,"updated_at"?: string,"valeur"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "regles_ajustement_cle_question_fkey"
+      columns: ["cle_question"]
+isOneToOne: false
+      referencedRelation: "questions_terrain"
+      referencedColumns: ["cle"]
+    },{
+      foreignKeyName: "regles_ajustement_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
+                },"speculations": {
+                  Row: {
+                    "code": string,"created_at": string,"cycles_par_an": number,"duree_cycle_jours": number | null,"nom": string,"secteur": string,"source": string | null,"sous_secteur": string | null,"statut": string,"unite_echelle": string,"updated_at": string,"valide_le": string | null,"valide_par": string | null,"zones": (string)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "code": string,"created_at"?: string,"cycles_par_an"?: number,"duree_cycle_jours"?: number | null,"nom": string,"secteur": string,"source"?: string | null,"sous_secteur"?: string | null,"statut"?: string,"unite_echelle": string,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null,"zones"?: (string)[]
+                  }
+                  Update: {
+                    "code"?: string,"created_at"?: string,"cycles_par_an"?: number,"duree_cycle_jours"?: number | null,"nom"?: string,"secteur"?: string,"source"?: string | null,"sous_secteur"?: string | null,"statut"?: string,"unite_echelle"?: string,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null,"zones"?: (string)[]
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+          }
+          Views: {
+            [_ in never]: never
+          }
+          Functions: {
+            [_ in never]: never
+          }
+          Enums: {
+            [_ in never]: never
+          }
+          CompositeTypes: {
+            [_ in never]: never
+          }
         }
 }
 
@@ -404,6 +514,10 @@ export type CompositeTypes<
 
 export const Constants = {
   "public": {
+          Enums: {
+            
+          }
+        },"ref": {
           Enums: {
             
           }
