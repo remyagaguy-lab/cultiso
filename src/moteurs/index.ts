@@ -27,7 +27,7 @@ export {
   type EntreeLexique,
   type Explication,
 } from "./explications";
-export { analyserSensibilite, HYPOTHESES_CLES, type HypotheseCle, type Sensibilite } from "./sensibilite";
+export { analyserSensibilite, HYPOTHESES_CLES, type HypotheseCle, type Intensite, type SeuilIntensification, type Sensibilite } from "./sensibilite";
 export {
   genererBudget,
   type EntreeBudget,

@@ -126,6 +126,10 @@ describe("S5 : alertes de prudence", () => {
     const a = un(s.controles, "ALERTE_EXPOSITION_PRIX");
     expect(a.valeurs).toMatchObject({ baisse: -0.3, statutAuPrixBas: "deficitaire", origineBaisse: "parametre" });
     expect(a.valeurs.resultatCumuleAuPrixBas).toBe(r.sensibilite.testPrixBas.resultatCumule);
+    // S5 : l'alerte donne la part des intrants et de la main d'oeuvre et le rendement requis, tirés de l'intensité mesurée.
+    const i = r.sensibilite.intensite;
+    expect(a.valeurs).toMatchObject({ partIntrantsMainOeuvre: i.partIntrantsMainOeuvre, hausseIntensification: i.seuils[0].hausse, rendementRequisIntensification: i.seuils[0].rendementRequis });
+    expect(a.message).toMatch(/Les intrants et la main d'oeuvre pèsent déjà \d+(,\d)? % de tes dépenses/);
     // L'alerte ne se lit que sur le scénario réaliste.
     expect(codes(r.scenarios.pessimiste.controles)).not.toContain("ALERTE_EXPOSITION_PRIX");
   });

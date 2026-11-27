@@ -78,6 +78,35 @@ export interface TableauSeuil {
   lignePrincipale: { ligneId: string; libelle: string; prixActuel: number; prixSeuil: (number | null)[][] } | null;
 }
 
+/** Une hausse de l'intensité (intrants et main d'oeuvre) et le gain de rendement qu'il faut pour qu'elle ne fasse pas perdre d'argent. */
+export interface SeuilIntensification {
+  /** Hausse du coût des intrants et de la main d'oeuvre (0,1 = +10 %, prise dans la grille `variations`). */
+  hausse: number;
+  /** Dépense supplémentaire par an (an 1). */
+  surcout: number;
+  /** Hausse de production (rendement) qui rembourse exactement ce surcoût : surcoût / chiffre d'affaires de l'an 1. null sans vente. */
+  rendementRequis: number | null;
+}
+
+/**
+ * Intensité du projet (S5) : ce que pèsent les intrants et la main d'oeuvre dans les dépenses, et ce qu'il faudrait gagner en rendement
+ * pour qu'intensifier se paie. Mesure descriptive de l'an 1, scénario réaliste. Elle ne PRÉDIT PAS l'effet d'un intrant sur le rendement
+ * (cette réponse vient de l'itinéraire technique, M2 et R1, pas encore modélisés) : elle donne le gain qu'il faudrait obtenir.
+ */
+export interface Intensite {
+  intrants: number;
+  /** Lignes d'exploitation de type main d'oeuvre, plus les salaires des employés. */
+  mainOeuvre: number;
+  /** Charges d'exploitation de l'an 1 (variables + fixes, salaires compris). */
+  chargesExploitation: number;
+  /** (intrants + main d'oeuvre) / charges d'exploitation ; null sans charges. */
+  partIntrantsMainOeuvre: number | null;
+  /** Coût et prix par unité vendue, seulement s'il n'y a qu'une ligne de revenu (sinon les unités se mélangent). Dans l'unité de la ligne. */
+  parUniteVendue: { ligneId: string; libelle: string; quantiteVendue: number; coutParUnite: number; prixParUnite: number } | null;
+  /** Un seuil par hausse positive de la grille. */
+  seuils: SeuilIntensification[];
+}
+
 export interface Sensibilite {
   base: { resultatCumule: number; pointBasTresorerie: number; van: number };
   variations: VariationMesuree[];
@@ -86,6 +115,7 @@ export interface Sensibilite {
   equilibre: Equilibre;
   testPrixBas: TestPrixBas;
   tableauSeuil: TableauSeuil;
+  intensite: Intensite;
 }
 
 /** Entrée modifiée : une hypothèse clé multipliée par (1 + variation). */
@@ -124,6 +154,44 @@ const prixArrondi = (p: number) => Math.round(p * 100) / 100;
 /** CA réaliste de l'an 1 d'une ligne (pour trouver la ligne principale). */
 const caLigne = (r: Entree["revenus"][number]) =>
   r.quantite.realiste * r.prixUnitaire * (1 - r.pertes) * (r.base === "an" ? 1 : r.cyclesParAn);
+
+/** Intensité de l'an 1 (voir `Intensite`), calculée directement sur les lignes : aucune valeur de référence. */
+function mesurerIntensite(e: Entree, base: Mesure): Intensite {
+  const montantAn = (c: Entree["charges"][number]) => c.quantite * c.prixUnitaire * c.frequence * (c.base === "an" ? 1 : c.cyclesParAn);
+  const exploitation = e.charges.filter((c) => c.classe === "exploitation");
+  const total = (type: string) => somme(exploitation.filter((c) => c.typeCharge === type).map(montantAn));
+  const intrants = total(TYPES_CHARGE_SENSIBILITE.intrants);
+  const mainOeuvre = total(TYPES_CHARGE_SENSIBILITE.mainOeuvre) + e.salairesAnnuels;
+  const an1 = base.annees[0];
+  const chargesExploitation = an1.chargesVariables + an1.chargesFixes;
+  const vendues = e.revenus.filter((r) => caLigne(r) > 0);
+  const unique = vendues.length === 1 ? vendues[0] : null;
+  const quantiteVendue = unique ? unique.quantite.realiste * (1 - unique.pertes) * (unique.base === "an" ? 1 : unique.cyclesParAn) : 0;
+  return {
+    intrants: fcfa(intrants),
+    mainOeuvre: fcfa(mainOeuvre),
+    chargesExploitation: fcfa(chargesExploitation),
+    partIntrantsMainOeuvre: chargesExploitation > 0 ? taux((intrants + mainOeuvre) / chargesExploitation) : null,
+    parUniteVendue:
+      unique && quantiteVendue > 0
+        ? {
+            ligneId: unique.id,
+            libelle: unique.libelle,
+            quantiteVendue: prixArrondi(quantiteVendue),
+            coutParUnite: prixArrondi(chargesExploitation / quantiteVendue),
+            prixParUnite: prixArrondi(unique.prixUnitaire),
+          }
+        : null,
+    seuils: e.sensibilite.variations
+      .filter((v) => v > 0)
+      .sort((a, b) => a - b)
+      .map((hausse) => ({
+        hausse,
+        surcout: fcfa((intrants + mainOeuvre) * hausse),
+        rendementRequis: an1.chiffreAffaires > 0 ? taux(((intrants + mainOeuvre) * hausse) / an1.chiffreAffaires) : null,
+      })),
+  };
+}
 
 export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
   const p = e.sensibilite;
@@ -235,5 +303,6 @@ export function analyserSensibilite(e: Entree, mesurer: Mesurer): Sensibilite {
     equilibre,
     testPrixBas,
     tableauSeuil,
+    intensite: mesurerIntensite(e, base),
   };
 }

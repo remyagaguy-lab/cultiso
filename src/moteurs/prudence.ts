@@ -83,6 +83,8 @@ export function alertesPrudence(s: ResultatScenario, sensibilite?: Sensibilite):
     const pire = ORDRE_STATUT[bas.statut] > ORDRE_STATUT[s.statut];
     const menagePerdu = s.verdict.menageCouvert === true && bas.soldeResiduelMin !== null && bas.soldeResiduelMin < 0;
     if (pire || menagePerdu) {
+      const i = sensibilite.intensite;
+      const part = i.partIntrantsMainOeuvre === null ? "" : `Les intrants et la main d'oeuvre pèsent déjà ${pourcent(i.partIntrantsMainOeuvre)} de tes dépenses. `;
       alertes.push({
         code: "ALERTE_EXPOSITION_PRIX",
         niveau: "alerte",
@@ -94,11 +96,16 @@ export function alertesPrudence(s: ResultatScenario, sensibilite?: Sensibilite):
           resultatCumuleAuPrixBas: bas.resultatCumule,
           soldeResiduelMinAuPrixBas: bas.soldeResiduelMin,
           coefficientPrixEquilibre: sensibilite.equilibre.coefficient,
+          partIntrantsMainOeuvre: sensibilite.intensite.partIntrantsMainOeuvre,
+          hausseIntensification: sensibilite.intensite.seuils[0]?.hausse ?? null,
+          rendementRequisIntensification: sensibilite.intensite.seuils[0]?.rendementRequis ?? null,
         },
         message:
           `Prudence : si le prix de vente baisse de ${pourcent(bas.baisse)}, le projet passe de « ${s.statut} » à « ${bas.statut} »` +
           (menagePerdu ? " et ne couvre plus les besoins de ta famille" : "") +
-          `. Plus tu dépenses en intrants et en main d'oeuvre pour produire davantage, plus un prix bas te coûte cher : assure-toi d'un acheteur ou d'un prix minimum avant d'intensifier.`,
+          `. ` +
+          part +
+          `Plus tu dépenses en intrants et en main d'oeuvre pour produire davantage, plus un prix bas te coûte cher : assure-toi d'un acheteur ou d'un prix minimum avant d'intensifier.`,
       });
     }
   }
