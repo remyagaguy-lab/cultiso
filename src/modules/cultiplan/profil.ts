@@ -33,6 +33,7 @@ const DEFINITIONS = [
   // Eau
   ["eauSource", "eau_source", z.enum(["aucune", "pluie", "puits", "forage", "cours_eau", "retenue", "reseau"])],
   ["eauSaison", "eau_saison", z.enum(["toute_annee", "saison_pluies", "irreguliere"])],
+  ["eauDebitM3Jour", "eau_debit_m3_jour", z.number().min(0)],
   // Argent
   ["epargneFcfa", "epargne_fcfa", montant],
   ["apportEspecesFcfa", "apport_especes_fcfa", montant],

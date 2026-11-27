@@ -276,3 +276,21 @@ describe("réponses", () => {
     expect((await lireProfil(client, "exp-1")).existe).toBe(false);
   });
 });
+
+describe("débit de l'eau", () => {
+  it("n'est demandé que s'il y a une source d'eau autre que la pluie, et accepte « je ne sais pas »", () => {
+    expect(etatQuestion(q("eau_debit"), etat({ eauSource: "pluie" }))).toBe("masquee");
+    expect(etatQuestion(q("eau_debit"), etat({ eauSource: "aucune" }))).toBe("masquee");
+    expect(etatQuestion(q("eau_debit"), etat({ eauSource: "forage" }))).toBe("a_poser");
+    expect(etatQuestion(q("eau_debit"), etat({ eauSource: "forage", eauDebitM3Jour: 12 }))).toBe("repondue");
+    expect(etatQuestion(q("eau_debit"), etat({ eauSource: "forage" }, { profil: { inconnus: ["eauDebitM3Jour"] } }))).toBe("inconnue");
+    expect(traduireReponse(q("eau_debit"), { question: "eau_debit", valeur: 12.5 })).toEqual({ profil: { eauDebitM3Jour: 12.5 } });
+    expect(traduireReponse(q("eau_debit"), { question: "eau_debit", neSaitPas: true })).toEqual({ profil: { eauDebitM3Jour: null } });
+    expect(() => traduireReponse(q("eau_debit"), { question: "eau_debit", valeur: -1 })).toThrow(ErreurPlan);
+  });
+
+  it("n'est pas essentiel : un débit inconnu ne rend pas l'eau orange", () => {
+    const d = pointDeFaisabilite(entretien, etat({ eauSource: "forage", eauSaison: "toute_annee" }, { profil: { inconnus: ["eauDebitM3Jour"] } })).dimensions.find((x) => x.dimension === "eau")!;
+    expect(d.feu).toBe("vert");
+  });
+});
