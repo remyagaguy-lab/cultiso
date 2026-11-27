@@ -4,12 +4,13 @@
 // Rien n'est enregistré : le financement détaillé se calcule à la demande (voir src/moteurs/CONTRAT-FINANCEMENT.md).
 import { z } from "zod";
 import type { ClientBase } from "@/core/exploitation";
-import { calculerFinancement, plafondCampagne, schemaFinancementComplet, type EntreeFinancement, type ResultatFinancement } from "@/moteurs";
+import { calculerFinances, calculerFinancement, plafondCampagne, schemaFinancementComplet, type EntreeFinancement, type ResultatFinancement } from "@/moteurs";
+import type { MoisFinancement } from "@/moteurs/financement";
 import { schemaCreditCampagne } from "@/moteurs/financement";
 import { choisirBareme, lireBaremesCampagne } from "@/referentiel/financement";
 import { ErreurPlan } from "./erreurs";
 import { verifier } from "./lignes";
-import { lirePlan, type Plan } from "./service";
+import { entreeFinance, lirePlan, type Plan } from "./service";
 
 /** Crédit de campagne tel que demandé : soit un plafond donné, soit une spéculation et une taille pour lire le barème de `ref`. */
 const schemaCampagneDemandee = schemaCreditCampagne.extend({
@@ -29,9 +30,31 @@ export interface BaremeLu {
   organisme?: string | null;
 }
 
+/** Un mois de la trésorerie du plan avec le financement détaillé (M6) à la place du financement simple du plan. */
+export interface MoisTresorerieFinancee {
+  mois: number;
+  /** Solde d'exploitation du mois : investissements, charges, ventes, impôts, ménage, SANS apport ni crédit du plan. */
+  exploitation: number;
+  /** Flux du financement détaillé (apports, prêts, subventions, campagne, chaîne, moins capital, intérêts et taxe). */
+  financement: number;
+  /** Retenue de l'acheteur sur la récolte (crédit de chaîne) : argent non encaissé par l'exploitation. */
+  retenuesAcheteur: number;
+  solde: number;
+  cumul: number;
+}
+export interface TresorerieFinancee {
+  mois: MoisTresorerieFinancee[];
+  pointBas: { montant: number; mois: number };
+  moisTresorerieNegative: number[];
+  /** Ce qui rend la lecture partielle (horizons différents, etc.). */
+  notes: string[];
+}
+
 export interface ResultatFinancementPlan {
   planId: string;
   financement: ResultatFinancement;
+  /** Trésorerie du plan (scénario réaliste) additionnée aux flux du financement détaillé ; le financement simple du plan (apport, crédit) en est retiré. */
+  tresorerie: TresorerieFinancee;
   /** D'où viennent les chiffres du moteur : plan (emplois, CAF) et référentiel (barèmes). */
   origines: string[];
   /** Ce qui n'a pas pu être évalué (barème introuvable, plan sans résultat...). */
@@ -51,7 +74,7 @@ export function assemblerFinancement(
   const bfr = reel.besoinFondsRoulement;
   const investissement = Math.max(reel.ratios.coutProjet - bfr, 0);
   origines.push("Investissement, besoin en fonds de roulement et CAF : moteur financier, scénario réaliste du plan.");
-  const horizonMois = demande.horizonMois ?? plan.hypotheses.horizonAnnees * 12;
+  const horizonMois = demande.horizonMois ?? reel.horizon?.mois ?? plan.hypotheses.horizonAnnees * 12;
   const nAns = Math.ceil(horizonMois / 12);
 
   const creditsCampagne = demande.creditsCampagne.map(({ baremeDe, ...c }) => {
@@ -99,5 +122,36 @@ export async function financerPlan(client: ClientBase, planId: string, corps: un
     baremes.set(c.id, bareme ? { plafondParUnite: bareme.plafondParUnite, source: bareme.source, statut: bareme.statut, organisme: bareme.organisme } : null);
   }
   const { entree, origines, manques } = assemblerFinancement(plan, demande, baremes);
-  return { planId, financement: calculerFinancement(entree), origines, manques: [...manquesLecture, ...manques] };
+  const financement = calculerFinancement(entree);
+  // Exploitation seule : le plan est recalculé SANS son financement simple, que le financement détaillé remplace (sinon l'apport serait compté deux fois).
+  const sansFinancement = calculerFinances({ ...entreeFinance(plan), apport: 0, credit: undefined }).scenarios.realiste;
+  const tresorerie = additionnerFinancement(sansFinancement.tresorerieMensuelle, financement.mois);
+  origines.push("Trésorerie : exploitation du plan recalculée sans apport ni crédit, plus les flux du financement détaillé, moins les retenues de l'acheteur.");
+  return { planId, financement, tresorerie, origines, manques: [...manquesLecture, ...manques] };
+}
+
+/**
+ * Pur : trésorerie d'exploitation du plan (sans financement) + flux du financement détaillé (M6) − retenues de l'acheteur, mois par mois.
+ * Les deux grilles suivent les mêmes conventions (mois 0 = démarrage). Sur la partie commune seulement : un écart d'horizon est signalé, jamais comblé.
+ */
+export function additionnerFinancement(exploitation: { mois: number; solde: number }[], financement: Pick<MoisFinancement, "mois" | "flux" | "retenuesAcheteur">[]): TresorerieFinancee {
+  const notes: string[] = [];
+  const n = Math.min(exploitation.length, financement.length);
+  if (exploitation.length !== financement.length) {
+    notes.push(`Le plan couvre ${exploitation.length - 1} mois et le financement ${financement.length - 1} : seuls les ${n - 1} premiers mois sont additionnés.`);
+  }
+  let cumul = 0;
+  const mois: MoisTresorerieFinancee[] = [];
+  for (let m = 0; m < n; m++) {
+    const solde = exploitation[m].solde + financement[m].flux - financement[m].retenuesAcheteur;
+    cumul += solde;
+    mois.push({ mois: m, exploitation: exploitation[m].solde, financement: financement[m].flux, retenuesAcheteur: financement[m].retenuesAcheteur, solde, cumul });
+  }
+  const bas = mois.reduce((b, x) => (x.cumul < b.cumul ? x : b), mois[0]);
+  return {
+    mois,
+    pointBas: { montant: bas.cumul, mois: bas.mois },
+    moisTresorerieNegative: mois.filter((x) => x.cumul < 0).map((x) => x.mois),
+    notes,
+  };
 }
