@@ -9,6 +9,36 @@ import type { Database, Json } from "@/types/supabase";
 export const versJson = (valeur: unknown): NonNullable<Json> => valeur as NonNullable<Json>;
 import { ErreurPlan } from "./erreurs";
 
+/**
+ * Champs optionnels que lisent les contrôles du §3.6 du moteur, rangés dans une seule colonne jsonb (`champs_controle`).
+ * Les schémas reprennent ceux du moteur : un champ accepté ici l'est aussi par `calculerFinances`.
+ */
+const champsCharge = schemaLigneCharge.shape;
+const champsRevenu = schemaLigneRevenu.shape;
+export const schemaControlesCharge = z
+  .object({
+    fournisseur: champsCharge.fournisseur,
+    referenceItineraire: champsCharge.referenceItineraire,
+    couverture: champsCharge.couverture,
+    emploi: champsCharge.emploi,
+  })
+  .strict();
+export const schemaControlesRevenu = z
+  .object({
+    bornesQuantite: champsRevenu.bornesQuantite,
+    client: champsRevenu.client,
+    perenne: champsRevenu.perenne,
+    debouche: champsRevenu.debouche,
+  })
+  .strict();
+export type ControlesCharge = z.output<typeof schemaControlesCharge>;
+export type ControlesRevenu = z.output<typeof schemaControlesRevenu>;
+
+/** Retire les clés non définies : le jsonb ne garde que ce qui est renseigné. */
+function sansIndefini<T extends object>(o: T): T {
+  return Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as T;
+}
+
 export const TYPES_CHARGE = ["intrants", "main_oeuvre", "energie", "infrastructures", "sanitaire", "logistique", "frais_financiers"] as const;
 export const TYPES_REVENU = ["principal", "coproduit", "sous_produit", "service"] as const;
 
@@ -44,12 +74,16 @@ export interface LigneChargePlan extends LigneCommune {
   nature: "fixe" | "variable";
   classe: "investissement" | "exploitation";
   dureeVieAns: number | null;
+  /** Champs lus par les contrôles du moteur (fournisseur, itinéraire de référence, bande, emploi). */
+  controles: ControlesCharge;
 }
 export interface LigneRevenuPlan extends LigneCommune {
   sens: "revenu";
   type: (typeof TYPES_REVENU)[number];
   quantites: { pessimiste: number; realiste: number; optimiste: number };
   pertes: number;
+  /** Champs lus par les contrôles du moteur (bornes de production, client, pérenne, débouché). */
+  controles: ControlesRevenu;
 }
 export type LignePlan = LigneChargePlan | LigneRevenuPlan;
 
@@ -74,6 +108,7 @@ export const schemaNouvelleCharge = z
     nature: z.enum(["fixe", "variable"]),
     classe: z.enum(["investissement", "exploitation"]),
     dureeVieAns: z.number().positive().nullable().optional(),
+    controles: schemaControlesCharge.optional(),
     ...commun,
   })
   .refine((l) => l.classe !== "investissement" || (l.dureeVieAns ?? null) !== null, {
@@ -85,6 +120,7 @@ export const schemaNouveauRevenu = z.object({
   type: z.enum(TYPES_REVENU),
   quantites,
   pertes: z.number().min(0).max(1).default(0),
+  controles: schemaControlesRevenu.optional(),
   ...commun,
 });
 export const schemaNouvelleLigne = z.union([schemaNouvelleCharge, schemaNouveauRevenu]);
@@ -106,6 +142,8 @@ export const schemaCorrectionLigne = z
     dureeVieAns: z.number().positive().nullable(),
     quantites,
     pertes: z.number().min(0).max(1),
+    /** Remplace tout le groupe de champs de contrôle de la ligne. */
+    controles: z.union([schemaControlesCharge, schemaControlesRevenu]),
   })
   .partial()
   .strict()
@@ -156,6 +194,9 @@ export function depuisBudget(
       classe: ligne.classe,
       duree_vie_ans: ligne.dureeVieAns ?? null,
       mois: ligne.moisDecaissement ?? null,
+      champs_controle: versJson(
+        sansIndefini({ fournisseur: ligne.fournisseur, referenceItineraire: ligne.referenceItineraire, couverture: ligne.couverture, emploi: ligne.emploi }),
+      ),
       quantite_pessimiste: null,
       quantite_realiste: null,
       quantite_optimiste: null,
@@ -172,11 +213,23 @@ export function depuisBudget(
     classe: null,
     duree_vie_ans: null,
     mois: ligne.moisVente ?? null,
+    champs_controle: versJson(
+      sansIndefini({ bornesQuantite: ligne.bornesQuantite, client: ligne.client, perenne: ligne.perenne, debouche: ligne.debouche }),
+    ),
     quantite_pessimiste: ligne.quantite.pessimiste,
     quantite_realiste: ligne.quantite.realiste,
     quantite_optimiste: ligne.quantite.optimiste,
     pertes: ligne.pertes ?? 0,
   };
+}
+
+/** Relit le groupe jsonb d'une rangée ; une valeur hors schéma est signalée plutôt que passée sous silence. */
+function lireControles<S extends z.ZodType>(schema: S, r: RangeeLigne): z.output<S> {
+  const p = schema.safeParse(r.champs_controle ?? {});
+  if (!p.success) {
+    throw new ErreurPlan(`Champs de contrôle illisibles sur la ligne « ${r.libelle} » : ${p.error.issues.map((i) => i.path.join(".") + " " + i.message).join(" ; ")}`, "base");
+  }
+  return p.data;
 }
 
 /** Rangée de la base → ligne du plan. */
@@ -199,6 +252,7 @@ export function versLigne(r: RangeeLigne): LignePlan {
   if (r.sens === "charge") {
     return {
       ...commune,
+      controles: lireControles(schemaControlesCharge, r),
       sens: "charge",
       type: r.type as LigneChargePlan["type"],
       quantite: Number(r.quantite),
@@ -210,6 +264,7 @@ export function versLigne(r: RangeeLigne): LignePlan {
   }
   return {
     ...commune,
+    controles: lireControles(schemaControlesRevenu, r),
     sens: "revenu",
     type: r.type as LigneRevenuPlan["type"],
     quantites: {
@@ -238,6 +293,7 @@ export function versMoteur(l: LignePlan): { charge: LigneCharge } | { revenu: Li
         classe: l.classe,
         dureeVieAns: l.dureeVieAns ?? undefined,
         moisDecaissement: l.mois ?? undefined,
+        ...l.controles,
       },
     };
   }
@@ -252,6 +308,7 @@ export function versMoteur(l: LignePlan): { charge: LigneCharge } | { revenu: Li
       base: l.base,
       cyclesParAn: l.cyclesParAn,
       moisVente: l.mois ?? undefined,
+      ...l.controles,
     },
   };
 }
@@ -284,6 +341,7 @@ export function depuisSaisie(planId: string, entree: NouvelleLigne, origine: Aut
       nature: l.nature,
       classe: l.classe,
       duree_vie_ans: l.dureeVieAns ?? null,
+      champs_controle: versJson(sansIndefini(l.controles ?? {})),
       pertes: 0,
     };
   }
@@ -294,6 +352,7 @@ export function depuisSaisie(planId: string, entree: NouvelleLigne, origine: Aut
     quantite_pessimiste: l.quantites.pessimiste,
     quantite_realiste: l.quantites.realiste,
     quantite_optimiste: l.quantites.optimiste,
+    champs_controle: versJson(sansIndefini(l.controles ?? {})),
     pertes: l.pertes,
   };
 }
@@ -304,12 +363,19 @@ export function depuisSaisie(planId: string, entree: NouvelleLigne, origine: Aut
  */
 export function appliquerCorrection(ligne: LignePlan, correction: CorrectionLigne, origine: Auteur): Database["public"]["Tables"]["plan_lignes"]["Update"] {
   const c = verifier(schemaCorrectionLigne, correction);
-  const champsCharge = ["quantite", "frequence", "nature", "classe", "dureeVieAns"] as const;
-  const champsRevenu = ["quantites", "pertes"] as const;
-  const interdits = ligne.sens === "charge" ? champsRevenu : champsCharge;
+  const propresCharge = ["quantite", "frequence", "nature", "classe", "dureeVieAns"] as const;
+  const propresRevenu = ["quantites", "pertes"] as const;
+  const interdits = ligne.sens === "charge" ? propresRevenu : propresCharge;
   const fautifs = interdits.filter((k) => k in c);
   if (fautifs.length > 0) {
     throw new ErreurPlan(`Champs sans objet pour une ligne de ${ligne.sens} : ${fautifs.join(", ")}.`, "invalide");
+  }
+  if (c.controles !== undefined) {
+    const p = (ligne.sens === "charge" ? schemaControlesCharge : schemaControlesRevenu).safeParse(c.controles);
+    if (!p.success) {
+      const details = p.error.issues.map((i) => `controles.${i.path.join(".")} : ${i.message}`);
+      throw new ErreurPlan(`Champs de contrôle sans objet pour une ligne de ${ligne.sens} : ${details.join(" ; ")}`, "invalide", details);
+    }
   }
   const corrigee = { ...ligne, ...c } as LignePlan;
   const moteur = versMoteur(corrigee);
@@ -339,5 +405,6 @@ export function appliquerCorrection(ligne: LignePlan, correction: CorrectionLign
     maj.quantite_optimiste = c.quantites.optimiste;
   }
   if (c.pertes !== undefined) maj.pertes = c.pertes;
+  if (c.controles !== undefined) maj.champs_controle = versJson(sansIndefini(c.controles));
   return maj;
 }
