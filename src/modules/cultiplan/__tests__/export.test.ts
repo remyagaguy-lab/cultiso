@@ -17,7 +17,7 @@ const lignes: LignePlan[] = [
   { ...commun, id: "r1", sens: "revenu", libelle: "Tomate", type: "principal", quantites: { pessimiste: 8000, realiste: 10000, optimiste: 12000 }, prixUnitaire: 150, pertes: 0.1, mois: [7, 8, 9], controles: {}, unite: "kg", sourcePrix: { source: "relevé d'essai", date: "2026-11-01" } },
 ];
 const credit = { montant: 400_000, tauxAnnuel: 0.12, dureeMois: 24, differeMois: 3 };
-const hypotheses = { horizonAnnees: 3, tauxActualisation: 0.12, hausseCharges: 0, haussePrix: 0, prelevementsAnnuels: 300_000, revenusExterieursAnnuels: 0, salairesAnnuels: 0, impotsAnnuels: 0, ecartsScenarios: { pessimiste: { prix: -0.1, charges: 0.05 }, optimiste: { prix: 0.1, charges: -0.05 } }, baissePrixBas: null };
+const hypotheses = { horizonAnnees: 3, horizonMois: null, horizonCycles: null, montee: [], tauxActualisation: 0.12, hausseCharges: 0, haussePrix: 0, prelevementsAnnuels: 300_000, revenusExterieursAnnuels: 0, salairesAnnuels: 0, impotsAnnuels: 0, ecartsScenarios: { pessimiste: { prix: -0.1, charges: 0.05 }, optimiste: { prix: 0.1, charges: -0.05 } }, baissePrixBas: null };
 
 const moteur = lignes.map(versMoteur);
 const resultats = calculerFinances({

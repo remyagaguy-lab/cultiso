@@ -21,6 +21,13 @@ export const schemaControlesCharge = z
     referenceItineraire: champsCharge.referenceItineraire,
     couverture: champsCharge.couverture,
     emploi: champsCharge.emploi,
+    // Moteur calendaire (M1, M2, R1) : profil de cycle du référentiel, hausses propres à la ligne, achat daté, série d'un moteur autonome.
+    calendrier: champsCharge.calendrier,
+    serieMensuelle: champsCharge.serieMensuelle,
+    hausseAnnuelle: champsCharge.hausseAnnuelle,
+    hausseParAn: champsCharge.hausseParAn,
+    moisAcquisition: champsCharge.moisAcquisition,
+    renouvellement: z.boolean().optional(),
   })
   .strict();
 export const schemaControlesRevenu = z
@@ -29,6 +36,10 @@ export const schemaControlesRevenu = z
     client: champsRevenu.client,
     perenne: champsRevenu.perenne,
     debouche: champsRevenu.debouche,
+    calendrier: champsRevenu.calendrier,
+    serieMensuelle: champsRevenu.serieMensuelle,
+    hausseAnnuelle: champsRevenu.hausseAnnuelle,
+    hausseParAn: champsRevenu.hausseParAn,
   })
   .strict();
 export type ControlesCharge = z.output<typeof schemaControlesCharge>;
@@ -195,7 +206,18 @@ export function depuisBudget(
       duree_vie_ans: ligne.dureeVieAns ?? null,
       mois: ligne.moisDecaissement ?? null,
       champs_controle: versJson(
-        sansIndefini({ fournisseur: ligne.fournisseur, referenceItineraire: ligne.referenceItineraire, couverture: ligne.couverture, emploi: ligne.emploi }),
+        sansIndefini({
+          fournisseur: ligne.fournisseur,
+          referenceItineraire: ligne.referenceItineraire,
+          couverture: ligne.couverture,
+          emploi: ligne.emploi,
+          calendrier: ligne.calendrier,
+          serieMensuelle: ligne.serieMensuelle,
+          hausseAnnuelle: ligne.hausseAnnuelle,
+          hausseParAn: ligne.hausseParAn,
+          moisAcquisition: ligne.moisAcquisition,
+          renouvellement: ligne.renouvellement,
+        }),
       ),
       quantite_pessimiste: null,
       quantite_realiste: null,
@@ -214,7 +236,16 @@ export function depuisBudget(
     duree_vie_ans: null,
     mois: ligne.moisVente ?? null,
     champs_controle: versJson(
-      sansIndefini({ bornesQuantite: ligne.bornesQuantite, client: ligne.client, perenne: ligne.perenne, debouche: ligne.debouche }),
+      sansIndefini({
+        bornesQuantite: ligne.bornesQuantite,
+        client: ligne.client,
+        perenne: ligne.perenne,
+        debouche: ligne.debouche,
+        calendrier: ligne.calendrier,
+        serieMensuelle: ligne.serieMensuelle,
+        hausseAnnuelle: ligne.hausseAnnuelle,
+        hausseParAn: ligne.hausseParAn,
+      }),
     ),
     quantite_pessimiste: ligne.quantite.pessimiste,
     quantite_realiste: ligne.quantite.realiste,
@@ -293,6 +324,7 @@ export function versMoteur(l: LignePlan): { charge: LigneCharge } | { revenu: Li
         classe: l.classe,
         dureeVieAns: l.dureeVieAns ?? undefined,
         moisDecaissement: l.mois ?? undefined,
+        atelierId: l.atelierId ?? undefined,
         ...l.controles,
       },
     };
@@ -308,6 +340,7 @@ export function versMoteur(l: LignePlan): { charge: LigneCharge } | { revenu: Li
       base: l.base,
       cyclesParAn: l.cyclesParAn,
       moisVente: l.mois ?? undefined,
+      atelierId: l.atelierId ?? undefined,
       ...l.controles,
     },
   };

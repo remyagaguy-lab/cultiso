@@ -137,7 +137,11 @@ decrire("base locale : plan persistant Cultiplan", () => {
   it("génère le plan depuis l'exploitation : lignes avec origine, prix du marché, règles du terrain, résultats du moteur", async () => {
     plan = await genererPlan(clients.proprietaire, exploitationId, { titre: "Tomate 2 ha", financement: { apport: 200000 } }, { aujourdhui: AUJOURDHUI });
     expect(plan).toMatchObject({ titre: "Tomate 2 ha", version: 1, statut: "brouillon", varianteDe: null, versionMoteur: VERSION_MOTEURS });
-    expect(plan.financement).toEqual({ apport: 200000, credit: null, regleFinanceur: null });
+    expect(plan.financement).toEqual({ apport: 200000, credit: null, moisTirageCredit: 0, regleFinanceur: null });
+    // R1, R4 : la spéculation d'essai n'a ni itinéraire ni profil dans le référentiel : le plan le dit et garde l'ancien calendrier.
+    expect(plan.generation.calendrier?.notes.join(' ')).toContain('dès la première année');
+    expect(plan.hypotheses.montee).toEqual([]);
+    expect(plan.moteurObsolete).toBe(false);
     expect(plan.hypotheses.horizonAnnees).toBe(3);
     expect(plan.lignes).toHaveLength(4);
 
@@ -192,7 +196,7 @@ decrire("base locale : plan persistant Cultiplan", () => {
     expect(finance.resultats!.scenarios.realiste.annees[0].interets).toBeGreaterThan(0);
     expect(finance.version).toBe(5);
 
-    await expect(modifierPlan(clients.proprietaire, plan.id, { hypotheses: { horizonAnnees: 9 } })).rejects.toMatchObject({ code: "invalide" });
+    await expect(modifierPlan(clients.proprietaire, plan.id, { hypotheses: { horizonAnnees: 11 } })).rejects.toMatchObject({ code: "invalide" });
     plan = finance;
   });
 
@@ -210,8 +214,8 @@ decrire("base locale : plan persistant Cultiplan", () => {
     const variante = await dupliquerPlan(clients.collaborateur, plan.id, "Et si le prix baisse ?");
     expect(variante).toMatchObject({ varianteDe: plan.id, version: 1, statut: "brouillon", titre: "Et si le prix baisse ?" });
     expect(variante.lignes.map((l) => [l.libelle, l.origine])).toEqual(plan.lignes.map((l) => [l.libelle, l.origine]));
-    // Les lignes copiées ont de nouveaux identifiants : on compare les résultats sans eux.
-    const sansIds = (r: unknown) => JSON.parse(JSON.stringify(r).replace(/"ligneId":"[^"]*"/g, '"ligneId":""'));
+    // Les lignes copiées ont de nouveaux identifiants (ligneId, et id dans la grille mensuelle) : on compare les résultats sans eux.
+    const sansIds = (r: unknown) => JSON.parse(JSON.stringify(r).replace(/"(ligneId|id)":"[^"]*"/g, '"$1":""'));
     expect(sansIds(variante.resultats)).toEqual(sansIds(plan.resultats));
 
     const vente = variante.lignes.find((l) => l.sens === "revenu")!;

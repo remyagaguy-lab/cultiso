@@ -5,6 +5,7 @@
 import { z } from "zod";
 import { lireExploitation, type ClientBase } from "@/core/exploitation";
 import { calculerFinances, ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
+import { schemaMontee, type Montee } from "@/moteurs/calendrier";
 import { schemaCredit } from "@/moteurs/credit";
 import { HORIZON_PAR_DEFAUT, schemaEcartsScenarios, schemaFinance, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
 import { preparerBudget } from "@/referentiel";
@@ -23,6 +24,7 @@ import {
   type LignePlan,
   type NouvelleLigne,
 } from "./lignes";
+import { appliquerCalendrier, lireCalendrierReferentiel } from "./calendrier";
 import { deduireDuProfil, lireProfil } from "./profil";
 import { injecterPrix, lireRelevesRecents, produitsDesignes } from "./prix";
 
@@ -30,7 +32,12 @@ export const STATUTS_PLAN = ["brouillon", "lance", "archive"] as const;
 export type StatutPlan = (typeof STATUTS_PLAN)[number];
 
 const champsHypotheses = {
-  horizonAnnees: z.number().int().min(1, "au moins 1 an").max(5, "au plus 5 ans"),
+  horizonAnnees: z.number().int().min(1, "au moins 1 an").max(10, "au plus 10 ans"),
+  // Horizon libre (M17) : si l'un est renseigné, il l'emporte sur `horizonAnnees` (les mois d'abord, puis les cycles). null = non utilisé.
+  horizonMois: z.number().int().min(1, "au moins 1 mois").max(120, "au plus 120 mois").nullable(),
+  horizonCycles: z.number().positive().max(120).nullable(),
+  // Montée en production par atelier (M2, R4) : lue du référentiel à la génération, corrigeable ensuite.
+  montee: z.array(schemaMontee),
   tauxActualisation: z.number().min(0).max(1),
   hausseCharges: z.number().min(-0.5).max(1),
   haussePrix: z.number().min(-0.5).max(1),
@@ -45,6 +52,9 @@ const champsHypotheses = {
 };
 export const schemaHypotheses = z.object({
   horizonAnnees: champsHypotheses.horizonAnnees.default(HORIZON_PAR_DEFAUT),
+  horizonMois: champsHypotheses.horizonMois.default(null),
+  horizonCycles: champsHypotheses.horizonCycles.default(null),
+  montee: champsHypotheses.montee.default([]),
   tauxActualisation: champsHypotheses.tauxActualisation.default(TAUX_ACTUALISATION_PAR_DEFAUT),
   hausseCharges: champsHypotheses.hausseCharges.default(0),
   haussePrix: champsHypotheses.haussePrix.default(0),
@@ -61,12 +71,15 @@ const champsFinancement = {
   apport: z.number().min(0, "l'apport ne peut pas être négatif"),
   /** Entrée du moteur de crédit ; null = pas de crédit. */
   credit: schemaCredit.nullable(),
+  /** Mois où le crédit est tiré (0 = démarrage ; M1). */
+  moisTirageCredit: z.number().int().min(0).max(120),
   /** Règle du financeur visé (R11) pour les contrôles M4, par exemple { nom: "ANPGF", apportMinimum: 0.2 } ; null = aucune. */
   regleFinanceur: schemaFinance.shape.regleFinanceur.unwrap().nullable(),
 };
 export const schemaFinancement = z.object({
   apport: champsFinancement.apport.default(0),
   credit: champsFinancement.credit.default(null),
+  moisTirageCredit: champsFinancement.moisTirageCredit.default(0),
   regleFinanceur: champsFinancement.regleFinanceur.default(null),
 });
 export type Financement = z.output<typeof schemaFinancement>;
@@ -99,6 +112,8 @@ export interface InfosGeneration {
   prixMarche: { produit: string; prix: number; source: string; date: string }[];
   /** Origine des valeurs reprises du profil du porteur (coût de vie, revenus extérieurs, apport). */
   origineProfil?: string[];
+  /** Calendrier et profil pluriannuel du référentiel (R1, R4) : ce qui a été appliqué, ce qui manque, les variantes à choisir. */
+  calendrier?: { notes: string[]; aChoisir: { speculationCode: string; type: "itineraire" | "profil"; variantes: string[] }[] };
 }
 
 export interface ResumePlan {
@@ -109,6 +124,8 @@ export interface ResumePlan {
   varianteDe: string | null;
   statut: StatutPlan;
   versionMoteur: string | null;
+  /** Vrai si le plan a été calculé par une version majeure des moteurs plus ancienne que l'actuelle (ou jamais calculé) : ses chiffres sont à recalculer (brouillon) ou à lire avec prudence (figé). */
+  moteurObsolete: boolean;
   calculeLe: string | null;
   majLe: string;
 }
@@ -128,6 +145,10 @@ export interface OptionsService {
 
 type RangeePlan = Database["public"]["Tables"]["plans"]["Row"];
 
+const majeure = (version: string) => Number.parseInt(version.split(".")[0], 10);
+/** Un plan est obsolète si sa version majeure des moteurs est plus ancienne que l'actuelle ; sans version enregistrée, il n'a jamais été calculé. */
+export const moteurObsolete = (version: string | null): boolean => version !== null && majeure(version) < majeure(VERSION_MOTEURS);
+
 const COLONNES_RESUME = "id, cultiso_id, titre, version, variante_de, statut, version_moteur, calcule_le, updated_at";
 
 const versResume = (p: Pick<RangeePlan, "id" | "cultiso_id" | "titre" | "version" | "variante_de" | "statut" | "version_moteur" | "calcule_le" | "updated_at">): ResumePlan => ({
@@ -138,6 +159,7 @@ const versResume = (p: Pick<RangeePlan, "id" | "cultiso_id" | "titre" | "version
   varianteDe: p.variante_de,
   statut: p.statut as StatutPlan,
   versionMoteur: p.version_moteur,
+  moteurObsolete: moteurObsolete(p.version_moteur),
   calculeLe: p.calcule_le,
   majLe: p.updated_at,
 });
@@ -149,7 +171,7 @@ function versPlan(p: RangeePlan, lignes: LignePlan[]): Plan {
     hypotheses: schemaHypotheses.parse(p.hypotheses ?? {}),
     financement: schemaFinancement.parse(p.financement ?? {}),
     resultats: (p.resultats ?? null) as unknown as ResultatFinance | null,
-    generation: { ateliersSansModele: generation.ateliersSansModele ?? [], prixMarche: generation.prixMarche ?? [], origineProfil: generation.origineProfil ?? [] },
+    generation: { ateliersSansModele: generation.ateliersSansModele ?? [], prixMarche: generation.prixMarche ?? [], origineProfil: generation.origineProfil ?? [], calendrier: generation.calendrier ?? { notes: [], aChoisir: [] } },
     lignes,
   };
 }
@@ -188,6 +210,14 @@ export async function genererPlan(
   }
   const entreeBudget = await preparerEntreeBudget(client, exploitation, options);
   const budget = genererBudget(entreeBudget);
+  // R1, R4, M2 : profil mensuel du cycle, déclaration de la période improductive et montée en production du référentiel (variantes absentes : rien d'appliqué).
+  const refCalendaire = await lireCalendrierReferentiel(client, exploitation.ateliers.map((a) => a.speculationCode));
+  const calendrier = appliquerCalendrier(
+    budget.charges,
+    budget.revenus,
+    exploitation.ateliers.map((a) => ({ atelierId: a.id, speculationCode: a.speculationCode })),
+    refCalendaire,
+  );
   // Profil du porteur (R9) : coût de vie, revenus extérieurs et apport déclarés alimentent M3, M4 et R11.
   // Ce que la demande précise elle-même l'emporte sur le profil.
   const deduit = deduireDuProfil(await lireProfil(client, exploitationId, { tolerant: true }));
@@ -197,11 +227,12 @@ export async function genererPlan(
     .insert({
       cultiso_id: exploitationId,
       titre: g.titre ?? `Plan de ${exploitation.nom}`,
-      hypotheses: versJson(schemaHypotheses.parse({ ...deduit.hypotheses, ...g.hypotheses })),
+      hypotheses: versJson(schemaHypotheses.parse({ ...deduit.hypotheses, montee: calendrier.montee, ...g.hypotheses })),
       financement: versJson(schemaFinancement.parse({ ...deduit.financement, ...g.financement })),
       generation: versJson({
         ateliersSansModele: budget.ateliersSansModele,
         origineProfil: deduit.origines,
+        calendrier: { notes: calendrier.notes, aChoisir: calendrier.aChoisir },
         prixMarche: (entreeBudget.prix ?? []).map((p) => ({ produit: p.produitId.split("|")[0], prix: p.prix, source: p.source, date: p.date })),
       } satisfies InfosGeneration),
     })
@@ -269,11 +300,14 @@ export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financ
     if ("charge" in m) charges.push(m.charge);
     else revenus.push(m.revenu);
   }
-  const { prelevementsAnnuels, revenusExterieursAnnuels, baissePrixBas, ...hypotheses } = plan.hypotheses;
+  const { prelevementsAnnuels, revenusExterieursAnnuels, baissePrixBas, horizonMois, horizonCycles, ...hypotheses } = plan.hypotheses;
   return {
     charges,
     revenus,
     ...hypotheses,
+    horizonMois: horizonMois ?? undefined,
+    horizonCycles: horizonCycles ?? undefined,
+    moisTirageCredit: plan.financement.moisTirageCredit,
     menage: prelevementsAnnuels === null ? undefined : { prelevementsAnnuels, revenusExterieursAnnuels },
     sensibilite: baissePrixBas === null ? undefined : { baissePrixBas },
     apport: plan.financement.apport,
@@ -415,3 +449,32 @@ export async function supprimerPlan(client: ClientBase, planId: string): Promise
   if (error) throw erreurBase(error);
   if (data.length === 0) throw new ErreurPlan("Plan introuvable, ou seul le propriétaire peut le supprimer.", "introuvable");
 }
+
+export interface BilanPlansObsoletes {
+  /** Brouillons recalculés avec le moteur actuel. */
+  recalcules: string[];
+  /** Plans lancés ou archivés (figés) calculés par une version plus ancienne : marqués `moteurObsolete`, non recalculés ; dupliquer pour obtenir une variante recalculée. */
+  marques: string[];
+  /** Brouillons dont le recalcul a échoué, avec la raison. */
+  echecs: { planId: string; raison: string }[];
+}
+
+/** Recalcule les brouillons calculés par une version majeure plus ancienne des moteurs et signale les plans figés dans ce cas (M1, moteur 2.0.0). */
+export async function recalculerPlansObsoletes(client: ClientBase): Promise<BilanPlansObsoletes> {
+  const bilan: BilanPlansObsoletes = { recalcules: [], marques: [], echecs: [] };
+  for (const p of (await listerMesPlans(client)).filter((x) => x.moteurObsolete)) {
+    if (p.statut !== "brouillon") {
+      bilan.marques.push(p.id);
+      continue;
+    }
+    try {
+      await recalculer(client, p.id);
+      bilan.recalcules.push(p.id);
+    } catch (erreur) {
+      bilan.echecs.push({ planId: p.id, raison: erreur instanceof Error ? erreur.message : String(erreur) });
+    }
+  }
+  return bilan;
+}
+
+export type { Montee };

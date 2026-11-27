@@ -126,6 +126,9 @@ describe("conversions des lignes", () => {
   it("hypothèses et financement prennent les valeurs validées par défaut", () => {
     expect(schemaHypotheses.parse({})).toEqual({
       horizonAnnees: 3,
+      horizonMois: null,
+      horizonCycles: null,
+      montee: [],
       tauxActualisation: 0.12,
       hausseCharges: 0,
       haussePrix: 0,
@@ -136,8 +139,8 @@ describe("conversions des lignes", () => {
       ecartsScenarios: { pessimiste: { prix: 0, charges: 0 }, optimiste: { prix: 0, charges: 0 } },
       baissePrixBas: null,
     });
-    expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null, regleFinanceur: null });
-    expect(() => schemaHypotheses.parse({ horizonAnnees: 6 })).toThrow();
+    expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null, moisTirageCredit: 0, regleFinanceur: null });
+    expect(() => schemaHypotheses.parse({ horizonAnnees: 11 })).toThrow();
   });
 
   it("ménage (M3) : transmis au moteur seulement si le coût de vie est renseigné", () => {
