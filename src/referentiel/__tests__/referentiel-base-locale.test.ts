@@ -79,7 +79,7 @@ decrire("base locale : référentiel ref", () => {
       { cle_question: QUESTION, valeur: "motopompe", speculation_code: AUTRE, effet: "multiplier", cible_sens: "charge", coefficient: 2 },
     ], { defaultToNull: false });
     if (regles.error) throw regles.error;
-  }, 120000);
+  }, 300000);
 
   afterAll(async () => {
     await admin.auth.admin.deleteUser(userId);

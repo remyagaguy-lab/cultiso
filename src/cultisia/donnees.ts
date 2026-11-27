@@ -1,3 +1,5 @@
+import type { EntreeBudget } from "@/moteurs";
+
 /**
  * Accès aux données lues par les outils de Cultisia.
  * L'interface est injectée : Supabase en production (`donnees-supabase.ts`), une fausse base dans les tests.
@@ -55,7 +57,30 @@ export interface ExtraitSavoir {
   similarite: number;
 }
 
+/** Spéculation du référentiel, telle que les outils de calcul la présentent. */
+export interface SpeculationRef {
+  code: string;
+  nom: string;
+  secteur: string;
+  uniteEchelle: string;
+  statut: "brouillon_ia" | "a_valider" | "validee";
+}
+
+/** Atelier à simuler : une spéculation du référentiel et une taille dans son unité d'échelle. */
+export interface AtelierSimule {
+  id: string;
+  speculationCode: string;
+  taille: number;
+}
+
 export interface AccesDonnees {
+  /** Spéculations du référentiel (catalogue court). */
+  listerSpeculations(): Promise<SpeculationRef[]>;
+  /** Entrée du générateur de budget (référentiel + prix du marché récents) pour des ateliers et un contexte terrain. */
+  preparerBudget(entree: { ateliers: AtelierSimule[]; contexte: Record<string, string> }): Promise<EntreeBudget>;
+  /** Ateliers et contexte terrain d'une exploitation, lus avec les droits de l'utilisateur ; null si inaccessible. */
+  lireAteliersEtContexte(exploitationId: string): Promise<{ ateliers: AtelierSimule[]; contexte: Record<string, string> } | null>;
+
   chercherPrix(terme: string): Promise<LignePrix[]>;
   /** Lu avec les droits de l'utilisateur : renvoie null si l'exploitation n'existe pas ou ne lui appartient pas. */
   lireExploitation(id: string): Promise<ResumeExploitation | null>;

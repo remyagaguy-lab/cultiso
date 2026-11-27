@@ -2,7 +2,11 @@
  * Accès aux données de Cultisia via Supabase, avec le jeton de l'utilisateur : les droits (RLS) de la base s'appliquent.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { AccesDonnees, Culture, ExtraitSavoir, LignePrix, ResumeExploitation, Sol, Zone } from "../donnees";
+import { ErreurExploitation, lireExploitation, type ClientBase } from "@/core/exploitation";
+import type { EntreeBudget } from "@/moteurs";
+import { preparerEntreeBudget } from "@/modules/cultiplan/service";
+import { lireSpeculations } from "@/referentiel";
+import type { AccesDonnees, AtelierSimule, Culture, ExtraitSavoir, LignePrix, ResumeExploitation, Sol, SpeculationRef, Zone } from "../donnees";
 import type { Embeddeur } from "./embeddings";
 
 const SEUIL_SIMILARITE = 0.75;
@@ -33,6 +37,34 @@ export class DonneesSupabase implements AccesDonnees {
     private readonly client: SupabaseClient,
     private readonly embeddeur: Embeddeur,
   ) {}
+
+  private get clientType(): ClientBase {
+    return this.client as unknown as ClientBase;
+  }
+
+  async listerSpeculations(): Promise<SpeculationRef[]> {
+    return (await lireSpeculations(this.clientType)).map((s) => ({
+      code: s.code,
+      nom: s.nom,
+      secteur: s.secteur,
+      uniteEchelle: s.uniteEchelle,
+      statut: s.statut,
+    }));
+  }
+
+  async preparerBudget(entree: { ateliers: AtelierSimule[]; contexte: Record<string, string> }): Promise<EntreeBudget> {
+    return preparerEntreeBudget(this.clientType, entree);
+  }
+
+  async lireAteliersEtContexte(exploitationId: string): Promise<{ ateliers: AtelierSimule[]; contexte: Record<string, string> } | null> {
+    try {
+      const e = await lireExploitation(this.clientType, exploitationId);
+      return { ateliers: e.ateliers.map((a) => ({ id: a.id, speculationCode: a.speculationCode, taille: a.taille })), contexte: e.contexte };
+    } catch (erreur) {
+      if (erreur instanceof ErreurExploitation && erreur.code === "introuvable") return null;
+      throw erreur;
+    }
+  }
 
   async chercherPrix(terme: string): Promise<LignePrix[]> {
     const { data, error } = await this.client.rpc("lire_prix_marche", { p_terme: terme });

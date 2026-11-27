@@ -46,4 +46,25 @@ decrire("essai avec le vrai modèle", () => {
     console.log("Action :", JSON.stringify(action));
     expect(action).toMatchObject({ outil: "saisir_operation", arguments: { amount: 72000, type: "expense" } });
   });
+
+  it("calcule un crédit avec l'outil calculer_credit et restitue la mensualité du moteur", async () => {
+    const evenements = await collecter(
+      await lancerCultisia(
+        {
+          module: "cultiplan",
+          utilisateurId: "essai",
+          messages: [{ role: "user", content: "Je veux emprunter 1 000 000 FCFA à 24 % par an sur 12 mois. Quelle sera ma mensualité ?" }],
+        },
+        dependances(),
+      ),
+    );
+    const texte = texteDe(evenements);
+    console.log("Réponse :", texte);
+    // L'outil serveur a tourné : sa source (le moteur de crédit) est diffusée.
+    expect(evenements).toEqual(
+      expect.arrayContaining([{ type: "sources", sources: [{ file_name: "Moteur de crédit Cultiso (version 1.0.0)", origine: "moteur" }] }]),
+    );
+    // Mensualité du moteur : 94 560 FCFA (séparateur de milliers libre).
+    expect(texte.replace(/[\s .  ]/g, "")).toContain("94560");
+  });
 });

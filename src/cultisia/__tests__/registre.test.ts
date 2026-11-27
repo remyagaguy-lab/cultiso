@@ -13,7 +13,7 @@ describe("registre d'outils", () => {
     expect(noms("cultima")).not.toContain("ouvrir_module");
     expect(noms("cultisia")).toContain("ouvrir_module");
     expect(noms("cultisia")).not.toContain("saisir_operation");
-    expect(noms("cultiplan")).toEqual(["chercher_savoir", "lire_exploitation", "lire_prix", "lire_referentiel"]);
+    expect(noms("cultiplan")).toEqual(["calculer_credit", "calculer_plan", "chercher_savoir", "comparer_filieres", "lire_exploitation", "lire_prix", "lire_referentiel"]);
   });
 
   it("convertit les schémas zod au format du modèle", () => {

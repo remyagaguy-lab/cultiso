@@ -12,8 +12,8 @@ import type { Module } from "./modules";
 export interface Source {
   /** Libellé affiché (nom compris par l'interface actuelle). */
   file_name: string;
-  /** Origine de la donnée : base de prix, exploitation, référentiel, document. */
-  origine?: "prix" | "exploitation" | "referentiel" | "savoir";
+  /** Origine de la donnée : base de prix, exploitation, référentiel, document, moteur de calcul. */
+  origine?: "prix" | "exploitation" | "referentiel" | "savoir" | "moteur";
   /** Date de la donnée, si elle est connue (AAAA-MM-JJ). */
   date?: string;
 }

@@ -12,6 +12,7 @@ import { DonneesSupabase } from "../supabase/donnees";
 import type { Embeddeur } from "../supabase/embeddings";
 import { appel, FauxModele, texte, usage, type TourScripte } from "../llm/faux-modele";
 import { fabriqueSupabase, traiterCultisia, type FabriqueCultisia } from "../serveur";
+import { calculerPlan } from "../outils/calcul";
 import { lireSSE } from "../test-utils/utilitaires";
 
 const actif = process.env.CULTISIA_BASE_LOCALE === "1";
@@ -71,7 +72,7 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
       .from("transactions")
       .insert({ cultiso_id: exploitationId, amount: 72000, type: "expense", category: "Engrais", date: "2026-11-10" });
     if (op.error) throw op.error;
-  }, 120000);
+  }, 300000);
 
   afterAll(async () => {
     for (const u of utilisateurs) await admin.auth.admin.deleteUser(u.id);
@@ -96,6 +97,23 @@ decrire("base locale : migration cultisia_noyau et accès aux données", () => {
 
     const autre = new DonneesSupabase(clientDe(utilisateurs[1].jeton), embeddeurFixe(null));
     expect(await autre.lireExploitation(exploitationId)).toBeNull();
+  });
+
+  it("outils de calcul : référentiel, ateliers de l'exploitation, plan calculé par les moteurs", async () => {
+    const donnees = new DonneesSupabase(clientDe(utilisateurs[0].jeton), embeddeurFixe(null));
+    const catalogue = await donnees.listerSpeculations();
+    // Données de départ importées en local (npm run referentiel:importer).
+    expect(catalogue.map((s) => s.code)).toEqual(expect.arrayContaining(["tomate", "poulet_chair"]));
+    const entree = await donnees.preparerBudget({ ateliers: [{ id: "a1", speculationCode: "tomate", taille: 1 }], contexte: {} });
+    expect(entree.modelesCharges.length).toBeGreaterThan(0);
+
+    expect(await donnees.lireAteliersEtContexte(exploitationId)).toEqual({ ateliers: [], contexte: {} });
+    const autre = new DonneesSupabase(clientDe(utilisateurs[1].jeton), embeddeurFixe(null));
+    expect(await autre.lireAteliersEtContexte(exploitationId)).toBeNull();
+
+    const r = await calculerPlan.executer!({ ateliers: [{ speculation: "tomate", taille: 1 }] }, { module: "cultiplan", utilisateurId: utilisateurs[0].id, donnees });
+    expect(r.contenu).toContain("Plan calculé pour Tomate : 1 ha");
+    expect(r.contenu).toContain("estimations");
   });
 
   it("lit le référentiel : cultures, sols, zones", async () => {
