@@ -1,14 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import type { PointFaisabilite as Point } from "@/modules/cultiplan";
 import { FEU } from "./reponse";
 
-const COULEURS: Record<keyof typeof FEU, string> = {
-  vert: "border-l-[var(--ork-feu-vert,#1f7a3d)]",
-  orange: "border-l-[var(--ork-feu-orange,#b45309)]",
-  rouge: "border-l-[var(--ork-feu-rouge,#b42318)]",
-  gris: "border-l-[var(--ork-feu-gris,#6b7280)]",
-};
 const FOND: Record<keyof typeof FEU, string> = {
   vert: "bg-[#e8f5ec] text-[#14532d]",
   orange: "bg-[#fdf1e1] text-[#7c3d06]",
@@ -17,7 +12,7 @@ const FOND: Record<keyof typeof FEU, string> = {
 };
 
 /** Le point de faisabilité : un feu par dimension, avec le mot, un symbole et une phrase (la couleur ne porte jamais seule le sens). */
-export function PointFaisabilite({ point }: { point: Point }) {
+export function PointFaisabilite({ point, hrefConsultation }: { point: Point; hrefConsultation?: string }) {
   const global = FEU[point.feuGlobal];
   return (
     <section aria-labelledby="titre-point" className="flex flex-col gap-4">
@@ -33,7 +28,7 @@ export function PointFaisabilite({ point }: { point: Point }) {
         {point.dimensions.map((d) => {
           const f = FEU[d.feu];
           return (
-            <li key={d.dimension} className={`rounded-lg border border-border border-l-4 bg-surface p-4 ${COULEURS[d.feu]}`}>
+            <li key={d.dimension} className={`rounded-card border border-border bg-surface p-4`}>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="m-0 text-base font-semibold">{d.libelle}</h3>
                 <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${FOND[d.feu]}`}>
@@ -50,6 +45,17 @@ export function PointFaisabilite({ point }: { point: Point }) {
                       <li key={p.phrase}>{p.phrase}</li>
                     ))}
                 </ul>
+              )}
+              {hrefConsultation && d.feu !== "vert" && (
+                <details className="mt-3 text-sm">
+                  <summary className="cursor-pointer font-medium">Que faire ?</summary>
+                  <p className="m-0 mt-2">
+                    {d.manques.length + d.inconnus.length > 0
+                      ? `Réponds à ce qui manque : ${[...d.manques, ...d.inconnus].join(", ")}.`
+                      : "Regarde les options avec ton conseiller : louer, réduire la taille, te former, chercher un acheteur ou t'associer."}{" "}
+                    <Link href={hrefConsultation}>Reprendre la consultation</Link>
+                  </p>
+                </details>
               )}
             </li>
           );
