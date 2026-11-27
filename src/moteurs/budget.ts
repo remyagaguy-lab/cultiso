@@ -43,6 +43,17 @@ export const schemaModeleRevenu = z.object({
   produitPrix: z.string().optional(),
   base: z.enum(["cycle", "an"]).default("cycle"),
   moisVente: moisListe,
+  /** Bornes de production pour 1 unité d'échelle, dans l'unité et la période de `quantite` (R10) ; mises à la taille de l'atelier par le générateur. */
+  bornes: z
+    .object({
+      min: z.number().min(0).optional(),
+      typique: z.number().min(0).optional(),
+      max: z.number().min(0).optional(),
+      source: z.string().min(1),
+      dateSource: z.string().min(1),
+      statut,
+    })
+    .optional(),
   statut,
 });
 
@@ -183,6 +194,14 @@ export function genererBudget(entree: EntreeBudget): ResultatBudget {
         base: m.base,
         cyclesParAn: atelier.cyclesParAn,
         moisVente: m.moisVente,
+        bornesQuantite: m.bornes
+          ? {
+              ...(m.bornes.min !== undefined ? { min: m.bornes.min * atelier.taille } : {}),
+              ...(m.bornes.max !== undefined ? { max: m.bornes.max * atelier.taille } : {}),
+              source: `${m.bornes.source} (source du ${m.bornes.dateSource})`,
+              statut: m.bornes.statut,
+            }
+          : undefined,
         atelierId: atelier.atelierId,
         modeleId: m.id,
         unite: m.unite,

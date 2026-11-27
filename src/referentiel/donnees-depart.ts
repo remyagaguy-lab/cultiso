@@ -33,6 +33,20 @@ export interface DonneesDepart {
   regles_par_speculation: (Omit<RegleDepart, "cle" | "speculation_code"> & { prefixe: string; speculations: string[] })[];
   /** Règles des financeurs (R11). */
   financeurs: FinanceurDepart[];
+  /** Bornes de rendement par modèle de revenu (R10). */
+  bornes_rendement: BorneRendementDepart[];
+}
+
+interface BorneRendementDepart {
+  /** Clé « spéculation.revenu » du modèle de revenu visé. */
+  cible: string;
+  min_par_unite?: number;
+  typique_par_unite?: number;
+  max_par_unite?: number;
+  source: string;
+  /** Date du document source, ou de sa lecture (AAAA-MM-JJ). */
+  date_source: string;
+  notes?: string;
 }
 
 interface FinanceurDepart {
@@ -216,5 +230,17 @@ export function deplier(d: DonneesDepart) {
 
   const financeurs = d.financeurs.map(({ cle, ...f }) => ({ id: uuidDe(`financeur:${cle}`), ...f, statut: STATUT }));
 
-  return { speculations, modelesCharges, modelesRevenus, questions, regles, financeurs };
+  const bornesRendement = d.bornes_rendement.map((b) => ({
+    id: uuidDe(`borne:${b.cible}`),
+    modele_revenu_id: uuidDe(`revenu:${b.cible}`),
+    min_par_unite: b.min_par_unite ?? null,
+    typique_par_unite: b.typique_par_unite ?? null,
+    max_par_unite: b.max_par_unite ?? null,
+    source: b.source,
+    date_source: b.date_source,
+    notes: b.notes ?? null,
+    statut: STATUT,
+  }));
+
+  return { speculations, modelesCharges, modelesRevenus, questions, regles, financeurs, bornesRendement };
 }

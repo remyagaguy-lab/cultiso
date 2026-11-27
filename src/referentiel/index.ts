@@ -203,10 +203,54 @@ export async function lireModeles(
   ]);
   if (charges.error) echec("modèles de charges", charges.error);
   if (revenus.error) echec("modèles de revenus", revenus.error);
+  const bornes = await lireBornesRendement(client, revenus.data.map((r) => r.id));
   return {
     modelesCharges: charges.data.map(versModeleCharge),
-    modelesRevenus: revenus.data.map(versModeleRevenu),
+    modelesRevenus: revenus.data.map((r) => {
+      const modele = versModeleRevenu(r);
+      const b = bornes.get(r.id);
+      return b ? { ...modele, bornes: b } : modele;
+    }),
   };
+}
+
+// ---------------------------------------------------------------------------------------------
+// R10 : bornes de rendement par modèle de revenu. Aucune valeur n'est écrite ici : tout vient de ref.bornes_rendement.
+// ---------------------------------------------------------------------------------------------
+
+export type BornesRendement = NonNullable<ModeleRevenu["bornes"]>;
+
+const schemaBornes = z.object({
+  min: z.number().min(0).optional(),
+  typique: z.number().min(0).optional(),
+  max: z.number().min(0).optional(),
+  source: z.string().min(1),
+  dateSource: z.string().min(1),
+  statut: z.enum(["brouillon_ia", "a_valider", "validee"]),
+});
+
+/** Ligne de ref.bornes_rendement → bornes du moteur de budget (validées). */
+export function versBornes(b: Tables["bornes_rendement"]["Row"]): BornesRendement {
+  return conforme(
+    schemaBornes,
+    {
+      ...(b.min_par_unite === null ? {} : { min: Number(b.min_par_unite) }),
+      ...(b.typique_par_unite === null ? {} : { typique: Number(b.typique_par_unite) }),
+      ...(b.max_par_unite === null ? {} : { max: Number(b.max_par_unite) }),
+      source: b.source,
+      dateSource: b.date_source,
+      statut: b.statut,
+    },
+    `bornes de rendement ${b.modele_revenu_id}`,
+  );
+}
+
+/** Bornes de rendement des modèles de revenu donnés, par identifiant de modèle. */
+export async function lireBornesRendement(client: ClientBase, modelesRevenuIds: string[]): Promise<Map<string, BornesRendement>> {
+  if (modelesRevenuIds.length === 0) return new Map();
+  const { data, error } = await ref(client).from("bornes_rendement").select("*").in("modele_revenu_id", modelesRevenuIds);
+  if (error) echec("bornes de rendement", error);
+  return new Map(data.map((b) => [b.modele_revenu_id, versBornes(b)]));
 }
 
 /** Questions de terrain, dans l'ordre ; avec un secteur, seulement celles qui le concernent (ou tous les secteurs). */

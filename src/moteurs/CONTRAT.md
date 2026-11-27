@@ -11,6 +11,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 | 1.2.0 | **M4** : `controles[]` et `ratios` par scénario ; entrées `regleFinanceur` et `bornesQuantite` (par ligne de revenu) |
 | 1.3.0 | **M5** : `sensibilite` (variations, classement, équilibre, test du prix bas, tableau rendement × charges) ; entrées `ecartsScenarios` (scénarios croisés prix, rendement, charges) et `sensibilite` |
 | 1.5.0 | **M4 (suite)** : contrôles du §3.6 portés par des champs optionnels des lignes (itinéraire, bande, pérennes, emploi, débouché, client, fournisseur) et entrée `seuilsControles` ; `bornesQuantite.statut` (R10) |
+| 1.6.0 | **R10** : le générateur de budget met à la taille de l'atelier les bornes de rendement du référentiel (`ModeleRevenu.bornes` → `revenus[].bornesQuantite`, avec source, date et statut) |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -122,6 +123,8 @@ Sorties :
 - `tableauSeuil { axeRendement, axeCharges, coefficientsPrix[i][j], lignePrincipale { prixSeuil[i][j] } }` : seuil de commercialisation (M3) pour chaque couple rendement × charges ; la case centrale égale `seuilCommercialisation`.
 
 ## Règles des financeurs, alertes de prudence et langage simple (moteur 1.4.0)
+
+**R10.** `ref.bornes_rendement` (migration `20261127160000_ref_bornes_rendement.sql`, locale, non appliquée en ligne) porte, pour un modèle de revenu et 1 unité d'échelle, un minimum, une valeur typique et un maximum de production dans l'unité et la période de ce modèle. Source et date de la source obligatoires, statut `brouillon_ia` tant qu'un expert ne les a pas validées. `lireModeles` les joint aux modèles de revenu (`bornes`), `genererBudget` les multiplie par la taille de l'atelier et les pose sur la ligne (`bornesQuantite { min, max, source, statut }`), et le contrôle `RENDEMENT_HORS_BORNES` les lit (`statutBornes` dans ses valeurs). Une borne absente n'est jamais devinée. Aujourd'hui une seule ligne de départ : l'oignon (10 à 70 t/ha, DOC-00015 p. 15-21) ; les autres spéculations n'ont pas encore de source citée. Le plan persistant ne stocke pas encore `bornesQuantite` : ses lignes recalculées n'ont pas ce contrôle tant que `plan_lignes` n'a pas la colonne.
 
 **R11.** `regleFinanceur { nom, apportMinimum?, dureeMaxMois?, dureeInclutDiffere?, differeMaxMois?, source?, statut? }` vient du référentiel (`ref.regles_financeurs`, lu par `lireReglesFinanceurs`, converti par `versRegleMoteur`). Aucune valeur par défaut : une règle absente n'est pas contrôlée. Contrôles ajoutés : `DUREE_HORS_REGLE` (durée du crédit, différé compris sauf si `dureeInclutDiffere` vaut faux) et `DIFFERE_HORS_REGLE`. Les valeurs des contrôles portent la source et le statut de la règle (`statutRegle`).
 

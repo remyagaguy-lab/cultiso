@@ -496,6 +496,26 @@ isOneToOne: false
       referencedColumns: ["code"]
     }
                   ]
+                },"bornes_rendement": {
+                  Row: {
+                    "created_at": string,"date_source": string,"id": string,"max_par_unite": number | null,"min_par_unite": number | null,"modele_revenu_id": string,"notes": string | null,"source": string,"statut": string,"typique_par_unite": number | null,"updated_at": string,"valide_le": string | null,"valide_par": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"date_source": string,"id"?: string,"max_par_unite"?: number | null,"min_par_unite"?: number | null,"modele_revenu_id": string,"notes"?: string | null,"source": string,"statut"?: string,"typique_par_unite"?: number | null,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"date_source"?: string,"id"?: string,"max_par_unite"?: number | null,"min_par_unite"?: number | null,"modele_revenu_id"?: string,"notes"?: string | null,"source"?: string,"statut"?: string,"typique_par_unite"?: number | null,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "bornes_rendement_modele_revenu_id_fkey"
+      columns: ["modele_revenu_id"]
+isOneToOne: true
+      referencedRelation: "modeles_revenus"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"regles_financeurs": {
                   Row: {
                     "apport_minimum": number | null,"created_at": string,"differe_max_mois": number | null,"duree_inclut_differe": boolean,"duree_max_mois": number | null,"format_dossier": string | null,"id": string,"libelle": string,"notes": string | null,"organisme": string,"pays": string | null,"pieces_exigees": (string)[],"produit": string,"source": string | null,"statut": string,"taux_indicatif": number | null,"taxes": NonNullable<Json>,"updated_at": string,"valide_le": string | null,"valide_par": string | null

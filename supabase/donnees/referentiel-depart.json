@@ -292,5 +292,15 @@
       "notes": "Apport du promoteur en nature ou en numéraire (§10.1). Remboursement en quatre ans, différé d'au plus un an (§10.3) : le canevas ne dit pas si les quatre ans comptent le différé, on prend la lecture prudente (différé compris). Aucun taux indicatif dans le canevas. La liste des pièces est celle que le canevas impose ; les pièces administratives (identité, statut, justificatifs fonciers) sont à demander à l'ANPGF.",
       "source": "Canevas de plan d'affaires ANPGF (Togo, mai 2022) §10.1, §10.3, §9 et informations utiles. Brouillon IA : à faire valider par l'ANPGF ou un expert."
     }
+  ],
+  "bornes_rendement": [
+    {
+      "cible": "oignon.vente",
+      "min_par_unite": 10000,
+      "max_par_unite": 70000,
+      "source": "DOC-00015 (plan d'affaires oignon et pomme de terre, cabinet CIRC, Sénégal), fiches techniques p. 15-21 : rendement de l'oignon de 10 à 20 t/ha en milieu paysan, de 40 à 70 t/ha en bonnes conditions. Brouillon IA : à faire valider par un expert togolais.",
+      "date_source": "2026-11-27",
+      "notes": "Minimum : bas du rendement en milieu paysan. Maximum : haut du rendement en bonnes conditions. Pas de valeur typique dans la source. Date : lecture du document, sa date de parution n'étant pas connue. Les données techniques d'un plan sénégalais sont à confirmer pour le Togo."
+    }
   ]
 }
