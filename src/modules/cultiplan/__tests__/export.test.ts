@@ -11,7 +11,7 @@ import { ProfilPorteurVide } from "../test-utils/profil-vide";
 
 const commun = { atelierId: null, unite: "u", base: "an" as const, cyclesParAn: 1, origine: "reference" as const, modeleId: null, ajustements: [], sourcePrix: null, ordre: 0 };
 const lignes: LignePlan[] = [
-  { ...commun, id: "i1", sens: "charge", libelle: "Motopompe", type: "equipement", quantite: 1, prixUnitaire: 600_000, frequence: 1, nature: "fixe", classe: "investissement", dureeVieAns: 5, mois: [1], controles: {}, unite: "pièce" },
+  { ...commun, id: "i1", sens: "charge", libelle: "Motopompe", type: "infrastructures", quantite: 1, prixUnitaire: 600_000, frequence: 1, nature: "fixe", classe: "investissement", dureeVieAns: 5, mois: [1], controles: {}, unite: "pièce" },
   { ...commun, id: "c1", sens: "charge", libelle: "Semences", type: "intrants", quantite: 1, prixUnitaire: 200_000, frequence: 1, nature: "variable", classe: "exploitation", dureeVieAns: null, mois: [3], controles: {} },
   { ...commun, id: "c2", sens: "charge", libelle: "Entretien", type: "main_oeuvre", quantite: 1, prixUnitaire: 120_000, frequence: 1, nature: "variable", classe: "exploitation", dureeVieAns: null, mois: null, controles: {} },
   { ...commun, id: "r1", sens: "revenu", libelle: "Tomate", type: "principal", quantites: { pessimiste: 8000, realiste: 10000, optimiste: 12000 }, prixUnitaire: 150, pertes: 0.1, mois: [7, 8, 9], controles: {}, unite: "kg", sourcePrix: { source: "relevé d'essai", date: "2026-11-01" } },
@@ -83,7 +83,7 @@ describe("dossier de financement (S4)", () => {
     const t = textes(doc);
     const f = (x: number) => Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     expect(t).toContain(f(resultats.scenarios.realiste.annees[0].chiffreAffaires));
-    expect(t).toContain(f(resultats.scenarios.realiste.van));
+    expect(t).toContain(f(resultats.scenarios.realiste.van ?? 0));
     expect(t).toContain(f(resultats.scenarios.realiste.pointBasTresorerie.montant));
     expect(t).toContain(f(financement.planInitial.totalEmplois));
     expect(t).toContain(f(calculerCredit(credit).mensualite));
