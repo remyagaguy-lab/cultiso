@@ -195,6 +195,58 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"plan_lignes": {
+                  Row: {
+                    "ajustements": NonNullable<Json>,"atelier_id": string | null,"base": string,"classe": string | null,"created_at": string,"cycles_par_an": number,"duree_vie_ans": number | null,"frequence": number,"id": string,"libelle": string,"modele_id": string | null,"mois": (number)[] | null,"nature": string | null,"ordre": number,"origine": string,"pertes": number,"plan_id": string,"prix_unitaire": number,"quantite": number | null,"quantite_optimiste": number | null,"quantite_pessimiste": number | null,"quantite_realiste": number | null,"sens": string,"source_prix": Json | null,"type": string,"unite": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ajustements"?: NonNullable<Json>,"atelier_id"?: string | null,"base"?: string,"classe"?: string | null,"created_at"?: string,"cycles_par_an"?: number,"duree_vie_ans"?: number | null,"frequence"?: number,"id"?: string,"libelle": string,"modele_id"?: string | null,"mois"?: (number)[] | null,"nature"?: string | null,"ordre"?: number,"origine": string,"pertes"?: number,"plan_id": string,"prix_unitaire": number,"quantite"?: number | null,"quantite_optimiste"?: number | null,"quantite_pessimiste"?: number | null,"quantite_realiste"?: number | null,"sens": string,"source_prix"?: Json | null,"type": string,"unite": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "ajustements"?: NonNullable<Json>,"atelier_id"?: string | null,"base"?: string,"classe"?: string | null,"created_at"?: string,"cycles_par_an"?: number,"duree_vie_ans"?: number | null,"frequence"?: number,"id"?: string,"libelle"?: string,"modele_id"?: string | null,"mois"?: (number)[] | null,"nature"?: string | null,"ordre"?: number,"origine"?: string,"pertes"?: number,"plan_id"?: string,"prix_unitaire"?: number,"quantite"?: number | null,"quantite_optimiste"?: number | null,"quantite_pessimiste"?: number | null,"quantite_realiste"?: number | null,"sens"?: string,"source_prix"?: Json | null,"type"?: string,"unite"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "plan_lignes_atelier_id_fkey"
+      columns: ["atelier_id"]
+isOneToOne: false
+      referencedRelation: "ateliers"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "plan_lignes_plan_id_fkey"
+      columns: ["plan_id"]
+isOneToOne: false
+      referencedRelation: "plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"plans": {
+                  Row: {
+                    "calcule_le": string | null,"created_at": string,"cree_par": string | null,"cultiso_id": string,"financement": NonNullable<Json>,"generation": NonNullable<Json>,"hypotheses": NonNullable<Json>,"id": string,"resultats": Json | null,"statut": string,"titre": string,"updated_at": string,"variante_de": string | null,"version": number,"version_moteur": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "calcule_le"?: string | null,"created_at"?: string,"cree_par"?: string | null,"cultiso_id": string,"financement"?: NonNullable<Json>,"generation"?: NonNullable<Json>,"hypotheses"?: NonNullable<Json>,"id"?: string,"resultats"?: Json | null,"statut"?: string,"titre": string,"updated_at"?: string,"variante_de"?: string | null,"version"?: number,"version_moteur"?: string | null
+                  }
+                  Update: {
+                    "calcule_le"?: string | null,"created_at"?: string,"cree_par"?: string | null,"cultiso_id"?: string,"financement"?: NonNullable<Json>,"generation"?: NonNullable<Json>,"hypotheses"?: NonNullable<Json>,"id"?: string,"resultats"?: Json | null,"statut"?: string,"titre"?: string,"updated_at"?: string,"variante_de"?: string | null,"version"?: number,"version_moteur"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "plans_cultiso_id_fkey"
+      columns: ["cultiso_id"]
+isOneToOne: false
+      referencedRelation: "cultisos"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "plans_variante_de_fkey"
+      columns: ["variante_de"]
+isOneToOne: false
+      referencedRelation: "plans"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"price_records": {
                   Row: {
                     "country": string | null,"created_at": string,"currency": string,"id": string,"location": string | null,"price": number,"product_id": string,"raw_text": string | null,"record_date": string,"source": string,"unit": string | null
@@ -263,6 +315,11 @@ isOneToOne: false
 "debiter_credits":
 { Args: { "p_montant": number,"p_user_id": string }; Returns: number
                            },
+"derniers_prix_produits":
+{ Args: { "p_depuis": string,"p_produits": (string)[] }; Returns: {
+              "date_releve": string,"lieu": string,"prix": number,"produit": string,"source": string,"unite": string
+            }[]
+                           },
 "est_proprietaire":
 { Args: { "p_cultiso_id": string }; Returns: boolean
                            },
@@ -281,6 +338,9 @@ isOneToOne: false
                            },
 "peut_modifier":
 { Args: { "p_cultiso_id": string }; Returns: boolean
+                           },
+"peut_modifier_plan":
+{ Args: { "p_plan_id": string }; Returns: boolean
                            },
 "search_market_prices":
 { Args: { "search_term": string }; Returns: {
