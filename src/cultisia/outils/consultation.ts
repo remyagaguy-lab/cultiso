@@ -10,6 +10,7 @@ import type { PointDimension, ProchaineQuestion } from "@/modules/cultiplan/entr
 import { manques, pointDeFaisabilite, prochaineQuestion } from "@/modules/cultiplan/entretien";
 import { ErreurReferentiel } from "@/referentiel";
 import type { Source } from "../evenements";
+import { ecartsPourExploitation, lignesEcarts } from "./besoins";
 import { definirOutil, type ContexteOutil, type ResultatOutil } from "./registre";
 
 const ERREUR_ACCES = "ERREUR D'ACCÈS AUX DONNÉES. Dis à l'utilisateur que la consultation est momentanément indisponible, n'invente aucune réponse.";
@@ -127,6 +128,18 @@ export const prochaineQuestionConsultation = definirOutil({
     }),
 });
 
+/** Existant contre besoins du référentiel (R10, M13), seulement quand le projet a des ateliers ; jamais bloquant pour le point de faisabilité. */
+async function sectionBesoins(contexte: ContexteOutil): Promise<string[]> {
+  try {
+    const r = await ecartsPourExploitation({}, contexte);
+    if ("contenu" in r) return [];
+    return ["Existant contre besoins du référentiel (non évalué = donnée manquante, rien n'est deviné) :", ...lignesEcarts(r.ecarts)];
+  } catch (erreur) {
+    console.error("[cultisia] existant contre besoins indisponible", erreur);
+    return [];
+  }
+}
+
 const NOM_FEU: Record<PointDimension["feu"], string> = { vert: "VERT", orange: "ORANGE", rouge: "ROUGE", gris: "GRIS (on n'en sait pas assez)" };
 
 export const pointDeFaisabiliteOutil = definirOutil({
@@ -143,6 +156,7 @@ export const pointDeFaisabiliteOutil = definirOutil({
       if ("refus" in lu) return { contenu: lu.refus };
       const { entretien, etat } = lu;
       const point = pointDeFaisabilite(entretien, etat);
+      const besoins = await sectionBesoins(contexte);
       const lignes = point.dimensions.flatMap((d) => [
         `- ${d.libelle} : ${NOM_FEU[d.feu]}. ${d.phrase}`,
         ...d.points.filter((x) => x.phrase !== d.phrase).map((x) => `    · [${x.feu}] ${x.phrase}`),
@@ -151,6 +165,7 @@ export const pointDeFaisabiliteOutil = definirOutil({
         contenu: [
           `POINT DE FAISABILITÉ (feu d'ensemble : ${NOM_FEU[point.feuGlobal]} ; questions essentielles traitées : ${point.essentielles.traitees} sur ${point.essentielles.total}) :`,
           ...lignes,
+          ...besoins,
           point.aValider ? "ATTENTION : ces règles de lecture (feux et seuils de prudence) sont des brouillons non encore relus par un expert ; dis-le au porteur." : "",
           "Fais le retour au porteur en quatre parties courtes : 1) ce que tu as compris de son projet, 2) ce qui est solide (vert), 3) ce qui inquiète (rouge et orange, avec la phrase telle quelle), 4) ce qu'il reste à éclaircir (gris et « je ne sais pas »).",
           "Un feu n'est pas un verdict financier : propose ensuite de calculer le plan pour les chiffres. Ne cite aucun chiffre qui ne soit pas dans ce point.",

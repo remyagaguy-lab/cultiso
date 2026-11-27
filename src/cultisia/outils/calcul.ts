@@ -223,7 +223,7 @@ async function reglesDuFinanceur(donnees: AccesDonnees, financeur?: Financeur): 
 const estRefus = (x: { regle?: RegleFinanceurRef } | ResultatOutil): x is ResultatOutil => "contenu" in x;
 
 /** Ateliers et contexte d'un calcul : ceux de la demande, sinon ceux de l'exploitation active. */
-async function resoudreAteliers(
+export async function resoudreAteliers(
   args: { ateliers?: { speculation: string; taille: number }[]; contexte?: Record<string, string> },
   { donnees, exploitationId }: Pick<ContexteOutil, "donnees" | "exploitationId">,
   catalogue: SpeculationRef[],
@@ -240,7 +240,7 @@ async function resoudreAteliers(
   if (e.ateliers.length === 0) return { contenu: "L'EXPLOITATION N'A AUCUN ATELIER. Demande à l'utilisateur quelle spéculation et quelle taille." };
   return { ateliers: e.ateliers, contexte: { ...e.contexte, ...contexte } };
 }
-const estRefusAteliers = (x: object): x is ResultatOutil => "contenu" in x;
+export const estRefusAteliers = (x: object): x is ResultatOutil => "contenu" in x;
 
 /** Valeurs du profil du porteur (R9) pour le calcul : coût de vie, revenus extérieurs, apport. Ce que la demande précise l'emporte. */
 async function completerDepuisProfil<A extends { apport?: number; coutVieAnnuel?: number; revenusExterieursAnnuels?: number }>(

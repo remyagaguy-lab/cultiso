@@ -1,6 +1,6 @@
 import type { EntreeBudget } from "@/moteurs";
 import type { EtatEntretien } from "@/modules/cultiplan/entretien";
-import type { ApportDuProfil } from "@/modules/cultiplan/profil";
+import type { ApportDuProfil, ProfilPorteur } from "@/modules/cultiplan/profil";
 import type { Entretien, RegleFinanceurRef } from "@/referentiel";
 
 /**
@@ -89,6 +89,8 @@ export interface AccesDonnees {
 
   /** Ce que le profil du porteur (R9) apporte aux moteurs (coût de vie, revenus extérieurs, apport), lu avec les droits de l'utilisateur. Facultatif. */
   lireProfilPorteur?(exploitationId: string): Promise<ApportDuProfil | null>;
+  /** Profil complet du porteur et de son existant (R9), lu avec les droits de l'utilisateur ; null si l'exploitation est inaccessible. Facultatif. */
+  lireProfil?(exploitationId: string): Promise<ProfilPorteur | null>;
 
   /** Entretien de cadrage (S3) et état des réponses d'une exploitation, lus avec les droits de l'utilisateur ; null si l'exploitation est inaccessible. Facultatif. */
   lireConsultation?(exploitationId: string, options?: { secteurs?: string[]; reportees?: string[] }): Promise<{ entretien: Entretien; etat: EtatEntretien } | null>;
