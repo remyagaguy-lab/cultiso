@@ -6,7 +6,7 @@ import { z } from "zod";
 import { lireExploitation, type ClientBase } from "@/core/exploitation";
 import { calculerFinances, ErreurMoteur, genererBudget, VERSION_MOTEURS, type EntreeBudget, type ResultatFinance } from "@/moteurs";
 import { schemaCredit } from "@/moteurs/credit";
-import { HORIZON_PAR_DEFAUT, TAUX_ACTUALISATION_PAR_DEFAUT, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
+import { HORIZON_PAR_DEFAUT, TAUX_ACTUALISATION_PAR_DEFAUT, type EntreeFinance, type LigneCharge, type LigneRevenu } from "@/moteurs/finance";
 import { preparerBudget } from "@/referentiel";
 import type { Database, Json } from "@/types/supabase";
 import { erreurBase, ErreurPlan } from "./erreurs";
@@ -33,12 +33,21 @@ const champsHypotheses = {
   tauxActualisation: z.number().min(0).max(1),
   hausseCharges: z.number().min(-0.5).max(1),
   haussePrix: z.number().min(-0.5).max(1),
+  // Ménage (M3) : null = coût de vie non renseigné, le revenu du ménage n'est alors pas évalué.
+  prelevementsAnnuels: z.number().min(0, "le coût de vie ne peut pas être négatif").nullable(),
+  revenusExterieursAnnuels: z.number().min(0),
+  salairesAnnuels: z.number().min(0),
+  impotsAnnuels: z.number().min(0),
 };
 export const schemaHypotheses = z.object({
   horizonAnnees: champsHypotheses.horizonAnnees.default(HORIZON_PAR_DEFAUT),
   tauxActualisation: champsHypotheses.tauxActualisation.default(TAUX_ACTUALISATION_PAR_DEFAUT),
   hausseCharges: champsHypotheses.hausseCharges.default(0),
   haussePrix: champsHypotheses.haussePrix.default(0),
+  prelevementsAnnuels: champsHypotheses.prelevementsAnnuels.default(null),
+  revenusExterieursAnnuels: champsHypotheses.revenusExterieursAnnuels.default(0),
+  salairesAnnuels: champsHypotheses.salairesAnnuels.default(0),
+  impotsAnnuels: champsHypotheses.impotsAnnuels.default(0),
 });
 export type Hypotheses = z.output<typeof schemaHypotheses>;
 
@@ -218,7 +227,7 @@ export async function lirePlan(client: ClientBase, planId: string): Promise<Plan
 }
 
 /** Entrée du moteur financier pour un plan (lignes, hypothèses, financement). */
-export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financement">) {
+export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financement">): EntreeFinance {
   const charges: LigneCharge[] = [];
   const revenus: LigneRevenu[] = [];
   for (const l of plan.lignes) {
@@ -226,10 +235,12 @@ export function entreeFinance(plan: Pick<Plan, "lignes" | "hypotheses" | "financ
     if ("charge" in m) charges.push(m.charge);
     else revenus.push(m.revenu);
   }
+  const { prelevementsAnnuels, revenusExterieursAnnuels, ...hypotheses } = plan.hypotheses;
   return {
     charges,
     revenus,
-    ...plan.hypotheses,
+    ...hypotheses,
+    menage: prelevementsAnnuels === null ? undefined : { prelevementsAnnuels, revenusExterieursAnnuels },
     apport: plan.financement.apport,
     credit: plan.financement.credit ?? undefined,
   };

@@ -1,31 +1,9 @@
 /** @jest-environment node */
 import { ErreurMoteur } from "../commun";
-import { calculerFinances, delaiRecuperation, tri, van, type EntreeFinance } from "../finance";
+import { calculerFinances, delaiRecuperation, tri, van } from "../finance";
+import { tomate2ha } from "../test-utils/tomate";
 
-// Cas de référence, vérifié à la main : 2 ha de tomate, 1 cycle par an, 30 % de pertes.
-// Réaliste : 30 000 kg × 150 FCFA × 0,7 = 3 150 000 FCFA de chiffre d'affaires.
-// Charges variables 1 200 000 (semences 300 000, engrais 400 000, main-d'œuvre 500 000),
-// charges fixes 120 000 (location de terre), motopompe 600 000 amortie sur 3 ans (200 000 par an).
-const tomate2ha: EntreeFinance = {
-  charges: [
-    { id: "semences", libelle: "Semences", typeCharge: "intrants", quantite: 2, prixUnitaire: 150_000, nature: "variable", classe: "exploitation", moisDecaissement: [1] },
-    { id: "engrais", libelle: "Engrais NPK", typeCharge: "intrants", quantite: 2, prixUnitaire: 200_000, nature: "variable", classe: "exploitation", moisDecaissement: [2, 3] },
-    { id: "mo", libelle: "Main-d'œuvre", typeCharge: "main_oeuvre", quantite: 2, prixUnitaire: 250_000, nature: "variable", classe: "exploitation" },
-    { id: "terre", libelle: "Location de terre", typeCharge: "infrastructures", quantite: 1, prixUnitaire: 120_000, base: "an", nature: "fixe", classe: "exploitation" },
-    { id: "pompe", libelle: "Motopompe", typeCharge: "infrastructures", quantite: 1, prixUnitaire: 600_000, nature: "fixe", classe: "investissement", dureeVieAns: 3 },
-  ],
-  revenus: [
-    {
-      id: "tomate",
-      libelle: "Tomate fraîche",
-      typeRevenu: "principal",
-      quantite: { pessimiste: 20_000, realiste: 30_000, optimiste: 36_000 },
-      prixUnitaire: 150,
-      pertes: 0.3,
-      moisVente: [4, 5],
-    },
-  ],
-};
+// Cas de référence (2 ha de tomate) : voir test-utils/tomate.ts.
 
 describe("moteur financier", () => {
   const r = calculerFinances(tomate2ha);
@@ -42,10 +20,19 @@ describe("moteur financier", () => {
       excedentBrut: 1_830_000,
       amortissements: 200_000,
       interets: 0,
+      impots: 0,
       resultat: 1_630_000,
       cafNette: 1_830_000,
       remboursementCapital: 0,
       fluxTresorerie: 1_830_000,
+      // Sans ménage, salaires ni crédit : la capacité de remboursement est l'excédent brut.
+      salaires: 0,
+      margeAvantInteretsSalairesAmortissements: 1_830_000,
+      annuites: 0,
+      prelevementsNets: 0,
+      capaciteRemboursement: 1_830_000,
+      soldeResiduel: 1_830_000,
+      cafDisponible: 1_830_000,
     });
     expect(r.investissementTotal).toBe(600_000);
   });
@@ -66,7 +53,7 @@ describe("moteur financier", () => {
 
   it("trésorerie mensuelle, BFR et besoin de financement", () => {
     expect(reel.tresorerieMensuelleAn1).toHaveLength(13);
-    expect(reel.tresorerieMensuelleAn1[0]).toEqual({ mois: 0, entrees: 0, sorties: 600_000, solde: -600_000, cumul: -600_000 });
+    expect(reel.tresorerieMensuelleAn1[0]).toEqual({ mois: 0, entrees: 0, sorties: 600_000, prelevementsNets: 0, solde: -600_000, cumul: -600_000, retraitPossible: 0 });
     // Creux de trésorerie d'exploitation fin mars : 300 000 + 400 000 + 3 × (41 667 + 10 000).
     expect(reel.besoinFondsRoulement).toBe(855_000);
     expect(r.besoinFinancement).toBe(1_455_000);
@@ -76,7 +63,10 @@ describe("moteur financier", () => {
   it("trois scénarios et leur statut", () => {
     expect(r.scenarios.pessimiste.annees[0].chiffreAffaires).toBe(2_100_000);
     expect(r.scenarios.optimiste.annees[0].chiffreAffaires).toBe(3_780_000);
-    expect(r.scenarios.pessimiste.statut).toBe("rentable");
+    // Rentable, mais sans apport la motopompe met la trésorerie à −600 000 au démarrage : statut « limite » (M3).
+    expect(r.scenarios.pessimiste.verdict).toEqual({ rentabilite: "rentable", tresorerieToujoursPositive: false, menageCouvert: null });
+    expect(r.scenarios.pessimiste.statut).toBe("limite");
+    expect(calculerFinances({ ...tomate2ha, apport: 1_455_000 }).scenarios.pessimiste.statut).toBe("rentable");
     expect(reel.rentabilite).toBeCloseTo(1_630_000 / 1_520_000, 4);
   });
 

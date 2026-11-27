@@ -4,6 +4,7 @@
  * Essai avec le VRAI modèle configuré dans .env.local (CULTISIA_FOURNISSEUR), sur une fausse base.
  * Ignoré dans `npm test`. Lancement : `npm run test:modele-reel`. Peut coûter des crédits si le fournisseur est payant.
  */
+import { VERSION_MOTEURS } from "@/moteurs";
 import { CreditsEnMemoire } from "../credits";
 import { creerModeleConfigure } from "../llm/compatible-openai";
 import { lancerCultisia } from "../orchestrateur";
@@ -62,7 +63,7 @@ decrire("essai avec le vrai modèle", () => {
     console.log("Réponse :", texte);
     // L'outil serveur a tourné : sa source (le moteur de crédit) est diffusée.
     expect(evenements).toEqual(
-      expect.arrayContaining([{ type: "sources", sources: [{ file_name: "Moteur de crédit Cultiso (version 1.0.0)", origine: "moteur" }] }]),
+      expect.arrayContaining([{ type: "sources", sources: [{ file_name: `Moteur de crédit Cultiso (version ${VERSION_MOTEURS})`, origine: "moteur" }] }]),
     );
     // Mensualité du moteur : 94 560 FCFA (séparateur de milliers libre).
     expect(texte.replace(/[\s .  ]/g, "")).toContain("94560");

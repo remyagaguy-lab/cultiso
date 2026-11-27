@@ -27,6 +27,9 @@ const RAPPEL =
 const nombre = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
 /** Mise en forme d'un montant déjà calculé par un moteur (aucun calcul ici). */
 export const enFcfa = (montant: number) => `${nombre.format(montant).replace(/\s/g, " ")} FCFA`;
+const nombrePrix = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+/** Mise en forme d'un prix unitaire déjà calculé (centimes gardés : un kg se vend parfois moins de 100 FCFA). */
+export const enFcfaPrix = (prix: number) => `${nombrePrix.format(prix).replace(/\s/g, " ")} FCFA`;
 export const enPourcent = (tauxDecimal: number | null) =>
   tauxDecimal === null ? "non calculable" : `${(tauxDecimal * 100).toFixed(1).replace(".", ",")} %`;
 
@@ -99,6 +102,8 @@ const schemaFinancementOutil = {
   horizonAnnees: z.number().int().min(1).max(5).optional().describe(`Horizon en années (${HORIZON_PAR_DEFAUT} par défaut, 5 au plus)`),
   apport: z.number().min(0).optional().describe("Apport personnel en FCFA"),
   credit: schemaCreditOutil.omit({ revenuMensuelNet: true }).optional().describe("Crédit envisagé, s'il y en a un"),
+  coutVieAnnuel: z.number().min(0).optional().describe("Coût de vie annuel du ménage en FCFA (ce que la famille dépense par an), seulement si l'utilisateur l'a donné"),
+  revenusExterieursAnnuels: z.number().min(0).optional().describe("Revenus annuels du ménage hors de ce projet, en FCFA, seulement si l'utilisateur les a donnés"),
 };
 
 interface Simulation {
@@ -111,7 +116,7 @@ async function simuler(
   donnees: AccesDonnees,
   ateliers: { id: string; speculationCode: string; taille: number }[],
   contexte: Record<string, string>,
-  financement: { horizonAnnees?: number; apport?: number; credit?: z.infer<typeof schemaCreditOutil> },
+  financement: { horizonAnnees?: number; apport?: number; credit?: z.infer<typeof schemaCreditOutil>; coutVieAnnuel?: number; revenusExterieursAnnuels?: number },
 ): Promise<Simulation> {
   const budget = genererBudget(await donnees.preparerBudget({ ateliers, contexte }));
   const resultats = calculerFinances({
@@ -120,6 +125,10 @@ async function simuler(
     horizonAnnees: financement.horizonAnnees,
     apport: financement.apport,
     credit: financement.credit,
+    menage:
+      financement.coutVieAnnuel === undefined
+        ? undefined
+        : { prelevementsAnnuels: financement.coutVieAnnuel, revenusExterieursAnnuels: financement.revenusExterieursAnnuels ?? 0 },
   });
   const lignes = [...budget.charges, ...budget.revenus];
   return { resultats, estimations: lignes.some((l) => l.origine === "estimation"), ateliersSansModele: budget.ateliersSansModele };
@@ -137,11 +146,38 @@ function resumeScenarios(r: ResultatFinance): string[] {
   });
 }
 
+/** Revenu du ménage, trésorerie et seuil de commercialisation du scénario réaliste (M3), tels que calculés par le moteur. */
+export function resumeMenage(r: ResultatFinance): string[] {
+  const s = r.scenarios.realiste;
+  const sc = s.seuilCommercialisation;
+  const lignes = [
+    `- point bas de trésorerie (an 1, scénario réaliste) : ${enFcfa(s.pointBasTresorerie.montant)} au mois ${s.pointBasTresorerie.mois}` +
+      (s.moisTresorerieNegative.length > 0 ? ` ; trésorerie négative aux mois ${s.moisTresorerieNegative.join(", ")}` : " ; trésorerie jamais négative"),
+  ];
+  if (s.verdict.menageCouvert === null) {
+    lignes.push("- revenu du ménage : non évalué (coût de vie du ménage inconnu ; demande-le si la question porte sur le revenu ou le remboursement)");
+  } else {
+    lignes.push(
+      ...s.annees.map(
+        (a) =>
+          `- an ${a.an} : capacité de remboursement ${enFcfa(a.capaciteRemboursement)}, annuités ${enFcfa(a.annuites)}, solde résiduel ${enFcfa(a.soldeResiduel)}, CAF disponible ${enFcfa(a.cafDisponible)}`,
+      ),
+      `- ménage couvert chaque année : ${s.verdict.menageCouvert ? "oui" : "non"}`,
+    );
+  }
+  lignes.push(
+    ...sc.parLigne.map(
+      (l) => `- seuil de commercialisation (an ${sc.an}) de ${l.libelle} : ${enFcfaPrix(l.prixSeuil)} par unité vendue, pour un prix prévu de ${enFcfaPrix(l.prixActuel)}`,
+    ),
+  );
+  return lignes;
+}
+
 export const calculerPlan = definirOutil({
   nom: "calculer_plan",
   description:
     "Calcule un plan d'affaires agricole avec les moteurs de Cultiso (budget du référentiel, prix du marché, règles du terrain, " +
-    "compte de résultat, VAN, TRI, trésorerie, trois scénarios). Sans `ateliers`, calcule les ateliers de l'exploitation active. " +
+    "compte de résultat, VAN, TRI, trésorerie, trois scénarios, revenu du ménage et capacité de remboursement, seuil de commercialisation). Sans `ateliers`, calcule les ateliers de l'exploitation active. " +
     "Rien n'est enregistré : propose ensuite d'ouvrir Cultiplan pour enregistrer et ajuster le plan.",
   famille: "calcul",
   modules: ["cultisia", "cultiplan"],
@@ -188,6 +224,7 @@ export const calculerPlan = definirOutil({
         `- investissement total : ${enFcfa(r.investissementTotal)}`,
         `- besoin de financement (investissement + fonds de roulement − apport) : ${enFcfa(r.besoinFinancement)}`,
         ...resumeScenarios(r),
+        ...resumeMenage(r),
         sim.estimations
           ? "ATTENTION : une partie des données sont des estimations non encore validées par un expert ; dis-le à l'utilisateur."
           : "Données du référentiel validées.",

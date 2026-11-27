@@ -1,11 +1,11 @@
 /** @jest-environment node */
-import { calculerCredit, calculerFinances, genererBudget } from "@/moteurs";
+import { calculerCredit, calculerFinances, genererBudget, VERSION_MOTEURS } from "@/moteurs";
 import { CreditsEnMemoire } from "../credits";
 import type { AccesDonnees } from "../donnees";
 import { appel, FauxModele, texte, usage } from "../llm/faux-modele";
 import { lancerCultisia } from "../orchestrateur";
 import { registreParDefaut } from "../outils";
-import { calculerCreditOutil, calculerPlan, comparerFilieres, enFcfa, enPourcent, trouverSpeculation } from "../outils/calcul";
+import { calculerCreditOutil, calculerPlan, comparerFilieres, enFcfa, enFcfaPrix, enPourcent, trouverSpeculation } from "../outils/calcul";
 import type { ContexteOutil } from "../outils/registre";
 import { fausseBase, REFERENTIEL_TEST } from "../test-utils/fausse-base";
 import { collecter, texteDe } from "../test-utils/utilitaires";
@@ -43,7 +43,7 @@ describe("calculer_credit", () => {
     expect(r.contenu).toContain(`coût du crédit (intérêts) : ${enFcfa(moteur.coutTotal)}`);
     expect(r.contenu).toContain(`taux d'endettement : ${enPourcent(moteur.tauxEndettement)}`);
     expect(r.contenu).toContain("mensualité : 94 560 FCFA");
-    expect(r.sources).toEqual([{ file_name: "Moteur de crédit Cultiso (version 1.0.0)", origine: "moteur" }]);
+    expect(r.sources).toEqual([{ file_name: `Moteur de crédit Cultiso (version ${VERSION_MOTEURS})`, origine: "moteur" }]);
   });
 
   it("renvoie au modèle le refus du moteur, sans chiffre", async () => {
@@ -71,6 +71,25 @@ describe("calculer_plan", () => {
     expect(r.contenu).toContain("chiffre d'affaires an 1 3 840 000 FCFA");
     expect(r.contenu).toContain("ATTENTION : une partie des données sont des estimations");
     expect(r.sources?.map((s) => s.origine)).toEqual(["moteur", "referentiel"]);
+  });
+
+  it("M3 : revenu du ménage, point bas et seuil de commercialisation, tels que calculés par le moteur", async () => {
+    const finance = { apport: 100_000, coutVieAnnuel: 900_000, revenusExterieursAnnuels: 300_000 };
+    const moteur = attendu([{ id: "atelier_1", speculationCode: "tomate", taille: 2, cyclesParAn: 2 }], {}, {
+      apport: 100_000,
+      menage: { prelevementsAnnuels: 900_000, revenusExterieursAnnuels: 300_000 },
+    });
+    const r = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }], ...finance }, contexte());
+    const re = moteur.scenarios.realiste;
+    const a1 = re.annees[0];
+    expect(a1.prelevementsNets).toBe(600_000);
+    expect(r.contenu).toContain(`- an 1 : capacité de remboursement ${enFcfa(a1.capaciteRemboursement)}, annuités ${enFcfa(a1.annuites)}, solde résiduel ${enFcfa(a1.soldeResiduel)}`);
+    expect(r.contenu).toContain(`ménage couvert chaque année : ${re.verdict.menageCouvert ? "oui" : "non"}`);
+    expect(r.contenu).toContain(`point bas de trésorerie (an 1, scénario réaliste) : ${enFcfa(re.pointBasTresorerie.montant)}`);
+    expect(r.contenu).toContain(`${enFcfaPrix(re.seuilCommercialisation.parLigne[0].prixSeuil)} par unité vendue`);
+    const sansMenage = await calculerPlan.executer!({ ateliers: [{ speculation: "Tomate", taille: 2 }] }, contexte());
+    expect(sansMenage.contenu).toContain("revenu du ménage : non évalué");
+    expect(enFcfaPrix(91.43)).toBe("91,43 FCFA");
   });
 
   it("sans ateliers, calcule l'exploitation active avec son contexte terrain", async () => {
@@ -145,7 +164,7 @@ describe("orchestrateur avec un faux modèle : l'IA ne calcule jamais", () => {
     expect(evenements.find((e) => e.type === "sources")).toEqual({
       type: "sources",
       sources: [
-        { file_name: "Moteur financier Cultiso (version 1.0.0)", origine: "moteur" },
+        { file_name: `Moteur financier Cultiso (version ${VERSION_MOTEURS})`, origine: "moteur" },
         { file_name: "Référentiel agricole Cultiso", origine: "referentiel" },
       ],
     });

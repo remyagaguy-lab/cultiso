@@ -1,5 +1,5 @@
 /** @jest-environment node */
-import { genererBudget, type EntreeBudget } from "@/moteurs";
+import { calculerFinances, genererBudget, type EntreeBudget } from "@/moteurs";
 import {
   appliquerCorrection,
   depuisBudget,
@@ -124,8 +124,33 @@ describe("conversions des lignes", () => {
   });
 
   it("hypothèses et financement prennent les valeurs validées par défaut", () => {
-    expect(schemaHypotheses.parse({})).toEqual({ horizonAnnees: 3, tauxActualisation: 0.12, hausseCharges: 0, haussePrix: 0 });
+    expect(schemaHypotheses.parse({})).toEqual({
+      horizonAnnees: 3,
+      tauxActualisation: 0.12,
+      hausseCharges: 0,
+      haussePrix: 0,
+      prelevementsAnnuels: null,
+      revenusExterieursAnnuels: 0,
+      salairesAnnuels: 0,
+      impotsAnnuels: 0,
+    });
     expect(schemaFinancement.parse({})).toEqual({ apport: 0, credit: null });
     expect(() => schemaHypotheses.parse({ horizonAnnees: 6 })).toThrow();
+  });
+
+  it("ménage (M3) : transmis au moteur seulement si le coût de vie est renseigné", () => {
+    const sans = entreeFinance({ lignes, hypotheses: schemaHypotheses.parse({}), financement: schemaFinancement.parse({}) });
+    expect(sans.menage).toBeUndefined();
+    const avec = entreeFinance({
+      lignes,
+      hypotheses: schemaHypotheses.parse({ prelevementsAnnuels: 900_000, revenusExterieursAnnuels: 300_000, salairesAnnuels: 120_000 }),
+      financement: schemaFinancement.parse({}),
+    });
+    expect(avec.menage).toEqual({ prelevementsAnnuels: 900_000, revenusExterieursAnnuels: 300_000 });
+    expect(avec.salairesAnnuels).toBe(120_000);
+    expect(avec).not.toHaveProperty("prelevementsAnnuels");
+    const r = calculerFinances(avec);
+    expect(r.scenarios.realiste.annees[0].prelevementsNets).toBe(600_000);
+    expect(r.scenarios.realiste.verdict.menageCouvert).not.toBeNull();
   });
 });
