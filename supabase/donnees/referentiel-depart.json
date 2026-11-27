@@ -399,6 +399,13 @@
       "source": "DOC-00015 (plan d'affaires oignon et pomme de terre, cabinet CIRC, Sénégal), fiches techniques p. 15-21 : rendement de l'oignon de 10 à 20 t/ha en milieu paysan, de 40 à 70 t/ha en bonnes conditions. Brouillon IA : à faire valider par un expert togolais.",
       "date_source": "2026-11-27",
       "notes": "Minimum : bas du rendement en milieu paysan. Maximum : haut du rendement en bonnes conditions. Pas de valeur typique dans la source. Date : lecture du document, sa date de parution n'étant pas connue. Les données techniques d'un plan sénégalais sont à confirmer pour le Togo."
+    },
+    {
+      "cible": "poule_pondeuse.oeufs",
+      "max_par_unite": 305,
+      "source": "DOC-00655 (modèle de projet d'élevage de poules pondeuses, Lupajote-Togo, village d'Avéta, Togo), p. 4 : souche rouge à « ponte d'environ 295-305 œufs en 72 semaines ». Brouillon IA : à faire valider par un expert togolais.",
+      "date_source": "2026-11-27",
+      "notes": "Maximum seulement : haut de la fourchette de la souche, par poule. Ni minimum ni valeur typique dans la source. Limite connue : « 72 semaines » compte l'âge de la poule (la ponte commence vers le sixième mois d'âge, même page), alors que le modèle de revenu est par poule logée sur un cycle de 365 jours ; c'est donc une borne de recoupement large, à resserrer par un expert. Le même document retient 80 % de taux de ponte et 2 % de mortalité (p. 4), non repris. Date : lecture du document, sa date de parution n'étant pas connue (projet de 2012-2013). Document ancien, à confirmer pour le Togo d'aujourd'hui."
     }
   ]
 }

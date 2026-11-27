@@ -29,13 +29,27 @@ function faussClient(parTable: Record<string, unknown[]>) {
 
 describe("données de départ des bornes de rendement", () => {
   it("oignon : bornes de DOC-00015, en brouillon IA, avec source et date", () => {
-    expect(d.bornesRendement).toHaveLength(1);
     const b = d.bornesRendement[0];
     expect(b.modele_revenu_id).toBe(idOignon);
     expect(b).toMatchObject({ min_par_unite: 10_000, max_par_unite: 70_000, statut: "brouillon_ia" });
     expect(b.typique_par_unite).toBeNull(); // la source ne donne pas de valeur typique : on n'en invente pas
     expect(b.source).toMatch(/DOC-00015/);
     expect(b.date_source).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("poule pondeuse : maximum seul de DOC-00655 p. 4, sans minimum ni valeur typique inventés", () => {
+    const b = d.bornesRendement.find((x) => x.modele_revenu_id === uuidDe("revenu:poule_pondeuse.oeufs"));
+    expect(b).toMatchObject({ min_par_unite: null, typique_par_unite: null, max_par_unite: 305, statut: "brouillon_ia" });
+    expect(b?.source).toMatch(/DOC-00655.*p. 4/);
+  });
+
+  it("seules les spéculations qui ont une source citée ont des bornes (oignon et poule pondeuse)", () => {
+    expect(d.bornesRendement.map((b) => b.modele_revenu_id).sort()).toEqual([idOignon, uuidDe("revenu:poule_pondeuse.oeufs")].sort());
+    for (const b of d.bornesRendement) {
+      expect(b.source.length).toBeGreaterThan(20);
+      expect(b.date_source).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(b.statut).toBe("brouillon_ia");
+    }
   });
 
   it("chaque borne vise un modèle de revenu qui existe", () => {
