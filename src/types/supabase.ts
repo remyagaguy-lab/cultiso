@@ -630,6 +630,20 @@ isOneToOne: true
                   Relationships: [
                     
                   ]
+                },"circuits_commercialisation": {
+                  Row: {
+                    "code": string,"contractuel": boolean,"created_at": string,"description": string | null,"libelle": string,"ordre": number,"source": string,"statut": string,"updated_at": string,"valide_le": string | null,"valide_par": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "code": string,"contractuel"?: boolean,"created_at"?: string,"description"?: string | null,"libelle": string,"ordre"?: number,"source": string,"statut"?: string,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Update: {
+                    "code"?: string,"contractuel"?: boolean,"created_at"?: string,"description"?: string | null,"libelle"?: string,"ordre"?: number,"source"?: string,"statut"?: string,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Relationships: [
+
+                  ]
                 },"baremes_credit_campagne": {
                   Row: {
                     "created_at": string,"date_source": string,"duree_max_mois": number | null,"id": string,"notes": string | null,"organisme": string | null,"plafond_par_unite": number,"produit": string | null,"source": string,"speculation_code": string,"statut": string,"taux_indicatif": number | null,"updated_at": string,"valide_le": string | null,"valide_par": string | null

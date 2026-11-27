@@ -35,3 +35,25 @@ Ce que ce moteur ne fait pas : il ne ramène pas ses flux dans `calculerFinances
 Données : `ref.baremes_credit_campagne` (migration locale `20261127190000`, non appliquée en ligne, **aucune ligne** : le lot ne donne aucun barème chiffré par spéculation). Lecture : `src/referentiel/financement.ts` (`lireBaremesCampagne`, `choisirBareme`).
 
 Service et route : `src/modules/cultiplan/financement.ts` (`financerPlan`), `POST /api/cultiplan/plans/:id/financement` (voir l'en-tête de la route). Calcul à la demande, **rien n'est enregistré** : la persistance du financement détaillé dans `plans.financement` attend l'accord avec le front-end et le socle calendaire.
+
+## R2 : `calculerMainOeuvre(entree)` (`src/moteurs/main-oeuvre.ts`)
+
+Entrées : `membres[] { id, libelle, type: famille | salarie | saisonnier, heuresParMois (un nombre ou 12 valeurs), equivalentActif? }`, `besoinsHeuresParMois[12]` (le calendrier de travail R1/M1 les fournira ; aujourd'hui, saisie), `taches[]` (détail facultatif pour nommer la tâche qui fait la pointe), `surfaceHa`, `normeSurface { valeur, source }` (hectares par actif), `heuresParJour { valeur, source }`, `prixHeure { valeur, source }`, `coutsDecaissesAn`, `quantiteVendueAn`. Les paramètres sans valeur ne sont pas devinés : la dimension est `non_evalue`.
+
+Sorties : `mois[]` (besoin, capacité famille et salariés, heures de la famille utilisées, heures manquantes, jours manquants, occupation), `pointes[]` (mois où le besoin dépasse la capacité totale, avec la tâche principale), `norme` (actifs, surface maximale, ratio), `valorisationFamille` (heures familiales utilisées × prix de l'heure ; `impactTresorerie` vaut toujours 0), `coutRevient` (coûts décaissés + travail familial, par unité vendue, avec et sans la famille), `controles[]` (`PIC_DE_TRAVAIL`, `SURFACE_AU_DESSUS_NORME`, `NORME_NON_EVALUEE`, `PRIX_HEURE_NON_RENSEIGNE`, `TACHES_INCOHERENTES`), `lecture[]`.
+
+Les heures de la famille sont utilisées en premier ; les salariés prennent le reste. La valorisation ne touche **jamais** la trésorerie ni `calculerFinances` : elle sert au coût de revient et à la comparaison avec le prix de vente.
+
+Service : `src/modules/cultiplan/main-oeuvre.ts` ; sans `membres`, la famille vient du profil R9 (`familleActifs`, `familleHeuresSemaine` converties à 52/12 semaines par mois, un actif compte pour un). Route : `POST /api/cultiplan/exploitations/:id/main-oeuvre`. Aucune donnée de référence nouvelle : la norme de surface par actif et le prix de l'heure n'ont **aucune source dans le lot** (relu le 27/11/2026) ; à fournir par l'appelant ou à poser dans `ref` après validation d'un expert.
+
+## R3 : débouchés (`src/modules/cultiplan/debouches.ts`)
+
+Service pur `analyserDebouches(entree, circuitsRef)`. Entrées : `produit`, `unite`, `volumeAn { pessimiste, realiste, optimiste }` (volume vendable, après pertes), `moisVente?`, `circuits[] { circuit (code de ref), part (0 à 1), client?, prix (nombre ou [{ mois[], prix }] par saison), sourcePrix?, volumeAbsorbable?, contrat? { volumeFixe, prixFixe, servicesDeduits[], acheteur, source } }`. Un mois de vente sans prix, un circuit inconnu ou en double, un contrat sur un circuit non contractuel sont refusés.
+
+Sorties : `circuits[]` (volume, prix moyen, recettes, part des recettes, `prixParMois` = saisonnalité, prix min et max), `volumeVendu`, `volumeNonVendu` (part non répartie : aucune recette), `recettesAn`, `contrats[]` (paiement net par unité = prix fixé − services déduits, volume fixé, marge de volume, écart de prix avec le marché), `concentration`, `lignesRevenu[]` et `controles[]` : `VOLUME_NON_VENDU`, `PARTS_SUPERIEURES_A_UN` (bloquant), `AU_DESSUS_DU_DEBOUCHE`, `CONTRAT_NON_COUVERT`, `RISQUE_VENTE_PARALLELE` (un autre circuit paie plus que le net du contrat, sans seuil : c'est une mesure), `SERVICES_DEDUITS_A_RETIRER_DES_CHARGES`, `CIRCUIT_SANS_NOM_DE_CLIENT`.
+
+**Branchement.** `lignesRevenu` se passe à `calculerFinances` : une ligne par circuit et par saison de prix, avec `client` et `debouche.volumeAbsorbable` (le volume fixé pour un contrat), donc les contrôles `VOLUME_HORS_DEBOUCHE` et `CONCENTRATION_CLIENT` (seuil `seuilsControles.concentrationMax` à fournir) se déclenchent sans autre code. Le prix d'une ligne de contrat est **net** des services : retire alors ces postes des charges. `debouchePourDimensionnement(resultat, { source, origine?, moisVente? })` donne à M13 le `debouche` (volume vendu ÷ mois de vente ; origine « contrat » si tout est sous contrat).
+
+Données : `ref.circuits_commercialisation` (migration locale `20261127191000`, non appliquée en ligne) : la **liste** des six circuits (bord champ, marché local, grossiste, transformateur, export, contrat), `brouillon_ia`, sans aucune valeur chiffrée. Les prix et les parts viennent du porteur, de l'étude de marché ou d'un contrat. Lecture : `src/referentiel/debouches.ts`.
+
+Routes : `POST /api/cultiplan/exploitations/:id/debouches` (avec `dimensionnement { source, speculation, parametres }`, M13 tourne sur le volume vendu et la réponse contient les trois tailles), `GET /api/cultiplan/circuits`.
