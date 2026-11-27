@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ['@xenova/transformers'],
+  serverExternalPackages: ['@xenova/transformers', 'pdfkit'],
 };
 
 export default nextConfig;

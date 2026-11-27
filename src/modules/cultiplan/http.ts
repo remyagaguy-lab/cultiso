@@ -84,6 +84,7 @@ export async function traiter(
   if (!client) return json({ error: "Jeton invalide", code: "non_authentifie" }, 401);
   try {
     const resultat = await action(client);
+    if (resultat instanceof Response) return resultat; // fichier (PDF, HTML) : l'action a déjà fabriqué la réponse
     return resultat === undefined ? new Response(null, { status: 204 }) : json(resultat, statutSucces);
   } catch (erreur) {
     return reponseErreur(erreur);
