@@ -326,6 +326,58 @@ export async function enregistrerReponses(
   return chargerEtat(client, exploitationId);
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// Pour l'interface : toutes les questions qui s'appliquent, avec leur état et la réponse actuelle
+// ---------------------------------------------------------------------------------------------------------------
+
+export interface QuestionAffichee {
+  cle: string;
+  temps: string;
+  tempsTitre: string;
+  libelle: string;
+  aide: string | null;
+  type: QuestionEntretien["type"];
+  unite: string | null;
+  reponses: QuestionEntretien["reponses"];
+  /** Où va la réponse : le profil, le contexte terrain, ou une des deux listes (existant, crédits). */
+  cible: QuestionEntretien["remplit"]["cible"];
+  champ: string;
+  /** Réponse déjà donnée : valeur, liste (existant, crédits, choix multiple) ou null ; « je ne sais pas » se lit dans `etat`. */
+  valeur: unknown;
+  etat: Exclude<EtatQuestion, "masquee">;
+}
+
+/** Réponse actuelle d'une question, dans la forme que l'interface renvoie à l'enregistrement. */
+export function valeurActuelle(q: QuestionEntretien, e: EtatEntretien): unknown {
+  const { cible, champ } = q.remplit;
+  if (cible === "existant") return e.profil.existant.map(({ id: _i, ...reste }) => (void _i, reste));
+  if (cible === "credits") return e.profil.credits.map(({ id: _i, ...reste }) => (void _i, reste));
+  if (cible === "profil") return e.profil.valeurs[champ as ChampProfil] ?? null;
+  const texte = e.contexte[champ];
+  if (texte === undefined || texte === VALEUR_INCONNUE) return null;
+  if (q.type === "choix_multiple") return texte.split(",");
+  if (q.type === "oui_non") return texte === "true";
+  return texte;
+}
+
+/** Toutes les questions qui s'appliquent à ce porteur, dans l'ordre de la consultation. */
+export function questionsAffichees(entretien: Entretien, e: EtatEntretien): QuestionAffichee[] {
+  return questionsApplicables(entretien, e).map(({ question: q, etat }) => ({
+    cle: q.cle,
+    temps: q.temps,
+    tempsTitre: entretien.temps.find((t) => t.cle === q.temps)?.titre ?? q.temps,
+    libelle: q.libelle,
+    aide: q.aide,
+    type: q.type,
+    unite: q.unite,
+    reponses: q.reponses,
+    cible: q.remplit.cible,
+    champ: q.remplit.champ,
+    valeur: etat === "repondue" ? valeurActuelle(q, e) : null,
+    etat,
+  }));
+}
+
 /** Lit le profil, le contexte et les secteurs des ateliers d'une exploitation. */
 export async function chargerEtat(client: ClientBase, exploitationId: string, options: { secteurs?: string[]; reportees?: string[] } = {}): Promise<EtatEntretien> {
   const [profil, exploitation] = await Promise.all([lireProfil(client, exploitationId, { tolerant: true }), lireExploitation(client, exploitationId)]);
@@ -340,5 +392,5 @@ export async function chargerEtat(client: ClientBase, exploitationId: string, op
 /** Prochaine question et point de faisabilité d'une exploitation (route GET et outils de Cultisia). */
 export async function consulterEntretien(client: ClientBase, exploitationId: string, options: { secteurs?: string[]; reportees?: string[] } = {}) {
   const [entretien, etat] = await Promise.all([lireEntretien(client), chargerEtat(client, exploitationId, options)]);
-  return { prochaine: prochaineQuestion(entretien, etat), manques: manques(entretien, etat), point: pointDeFaisabilite(entretien, etat) };
+  return { prochaine: prochaineQuestion(entretien, etat), manques: manques(entretien, etat), point: pointDeFaisabilite(entretien, etat), questions: questionsAffichees(entretien, etat) };
 }

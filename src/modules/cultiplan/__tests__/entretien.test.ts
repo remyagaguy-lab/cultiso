@@ -7,6 +7,7 @@ import {
   manques,
   pointDeFaisabilite,
   prochaineQuestion,
+  questionsAffichees,
   traduireReponse,
   VALEUR_INCONNUE,
   type EtatEntretien,
@@ -292,5 +293,23 @@ describe("débit de l'eau", () => {
   it("n'est pas essentiel : un débit inconnu ne rend pas l'eau orange", () => {
     const d = pointDeFaisabilite(entretien, etat({ eauSource: "forage", eauSaison: "toute_annee" }, { profil: { inconnus: ["eauDebitM3Jour"] } })).dimensions.find((x) => x.dimension === "eau")!;
     expect(d.feu).toBe("vert");
+  });
+});
+
+describe("questions affichées à l'interface", () => {
+  it("renvoie les questions qui s'appliquent avec leur état et la réponse actuelle, sans exposer les identifiants des listes", () => {
+    const e = etat({ eauSource: "forage", epargneFcfa: 50000, finalites: ["revenu"] }, { contexte: { idee: "des tomates", risques: "prix,vol", marche_prix_connu: "true" }, profil: { existant: [{ id: "x1", categorie: "materiel", libelle: "Motopompe" }], inconnus: ["credits"] } });
+    const liste = questionsAffichees(entretien, e);
+    const par = (cle: string) => liste.find((x) => x.cle === cle)!;
+    expect(par("eau_source")).toMatchObject({ etat: "repondue", valeur: "forage", cible: "profil", champ: "eauSource", tempsTitre: "Ce que tu as déjà" });
+    expect(par("epargne").valeur).toBe(50000);
+    expect(par("finalites").valeur).toEqual(["revenu"]);
+    expect(par("idee")).toMatchObject({ etat: "repondue", valeur: "des tomates" });
+    expect(par("risques").valeur).toEqual(["prix", "vol"]);
+    expect(par("marche_prix_connu").valeur).toBe(true);
+    expect(par("existant_liste").valeur).toEqual([{ categorie: "materiel", libelle: "Motopompe" }]);
+    expect(par("credits_liste")).toMatchObject({ etat: "inconnue", valeur: null });
+    expect(par("avancement")).toMatchObject({ etat: "a_poser", valeur: null });
+    expect(liste.find((x) => x.cle === "terrain_logement")).toBeUndefined();
   });
 });
