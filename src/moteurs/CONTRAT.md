@@ -13,6 +13,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 | 1.5.0 | **M4 (suite)** : contrôles du §3.6 portés par des champs optionnels des lignes (itinéraire, bande, pérennes, emploi, débouché, client, fournisseur) et entrée `seuilsControles` ; `bornesQuantite.statut` (R10) |
 | 1.6.0 | **R10** : le générateur de budget met à la taille de l'atelier les bornes de rendement du référentiel (`ModeleRevenu.bornes` → `revenus[].bornesQuantite`, avec source, date et statut) |
 | 1.7.0 | **S5 (intensité)** : `sensibilite.intensite` (part des intrants et de la main d'oeuvre, coût à l'unité vendue, rendement requis pour qu'une hausse d'intensité ne fasse pas perdre d'argent) ; l'alerte `ALERTE_EXPOSITION_PRIX` en reprend les chiffres |
+| 1.8.0 | **M14** : `simulerBandes` (atelier animal à bandes) et `simulerTroupeau` (cheptel en flux), deux moteurs autonomes ; `calculerFinances` est inchangé |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -137,6 +138,27 @@ Sorties :
 Quand M2 et R1 existeront : ajouter `itineraire: "extensif" | "intensif"` aux lignes d'intrants du référentiel, générer la variante moins intensive depuis le référentiel (jamais depuis un coefficient du moteur) et comparer résultat, point bas et test du prix bas des deux plans.
 
 **S8.** `donnees/explications.json` : pour chaque indicateur (`indicateurs`) et chaque code de contrôle ou d'alerte (`controles`), un `nom`, une phrase `simple` sans sigle et une version `technique` dépliable ; `lexique` pour l'annexe de l'export (`lexique()`, `lexiqueEnMarkdown()`). Les tests exigent une explication pour tout code de `CODES_CONTROLE` et pour tout champ de résultat.
+
+## M14 : atelier animal à bandes et cheptel en flux (moteur 1.8.0)
+
+Deux moteurs **autonomes** : ils ont leur propre grille mensuelle, car le moteur calendaire M1 n'existe pas encore (`calculerFinances` répète une année type). Quand M1 existera, leurs flux mensuels (`mois[]`) devront alimenter la grille de M1 au lieu d'une trésorerie séparée. Aucune courbe, aucun prix, aucune durée n'est écrit dans le code.
+
+**`simulerBandes(entree)`** (`bandes.ts`) : entrées `courbes { mortalite, consommation, production }` (points `{ age, valeur }`, âge en mois), `joursParMois`, `dureeBandeMois` (âge de réforme), `bandes[] { debutMois, effectif }` (plusieurs = bandes décalées), `prix { animal, aliment, produit, reforme }`, `chargesParSujetMois[]`, `chargesFixesMensuelles[]`, `investissement` (mois 0), `apport` (mois 0). Les courbes viennent du référentiel (`ref.courbes_age` : source, date et statut par valeur, migration locale `20261127180000_ref_courbes_age.sql`, lecture `lireVariantesElevage`) ; **une courbe sans valeur à un âge de la bande est refusée, jamais prolongée**.
+
+Conventions du modèle source (DOC-00686) : mortalité, consommation et production d'un mois se calculent sur l'effectif présent en **début** de mois ; le mois compte `joursParMois` jours ; la production est en unités par sujet et par jour (0,75 œuf par poule) ; les réformées sont l'effectif restant à la **fin** du dernier mois de la bande (le modèle source les vend sur l'effectif de début de mois : écart de quelques sujets, assumé).
+
+| Sortie | Sens |
+|---|---|
+| `mois[]` (0 à N) | effectifs, morts, aliment (kg), production, ventes du produit et des réformées, achats, charges, investissement, entrées, sorties, solde, trésorerie cumulée (apport compris) |
+| `coutAnimalPretAProduire` | achat + aliment + charges par sujet de la **première bande** pendant la phase improductive (mois avant la première production de la courbe), par sujet mis en place et par sujet vivant au début de la production ; les charges fixes de la phase sont montrées à part, non imputées (elles sont partagées entre les bandes) |
+| `seuilTechnique` | production par sujet et par jour qui couvre juste les charges d'exploitation (aliment, charges par sujet, charges fixes) des mois où au moins une bande produit, contre la production prévue ; `seuilMoyen`, `prevuMoyen`, `margeSecurite`, `parMois[]` ; null sans prix du produit |
+| `pointBasTresorerie`, `besoinFinancement`, `apportSuffisant` | point bas de la trésorerie ; besoin = point bas **sans apport**, investissement compris |
+| `renouvellement` | `autofinancement` (trésorerie de fin hors investissement et apport), `besoinRedemarrage` (point bas d'une bande identique seule), `autofinance`, `retraitPossible` et `retraitPossibleParMois` (étalé sur la durée d'une bande : DOC-00686) |
+| `lecture[]` | phrases simples, au tutoiement, dont ce qui n'est pas évalué |
+
+**`simulerTroupeau(entree)`** (`troupeau.ts`) : effectif de chaque catégorie, mois par mois, avec entrées (`naissance`, `achat`, `don_recu`, `confiage_recu`) et sorties (`mortalite`, `vente`, `autoconsommation`, `don_donne`, `vol_perte`), croît = effectif de fin − effectif de début (structure du tableau DOC-00279 p. 40). Aucun taux de mise bas, de mortalité ou de vente : l'appelant donne les mouvements. Un mouvement impossible (sortir plus d'animaux qu'on n'en a) est refusé avec le mois et la catégorie. Trésorerie des achats et des ventes aux prix donnés ; `mouvementsSansPrix` signale ce qui n'est pas valorisé.
+
+Service Cultiplan : `simulerAtelierAnimal` (`src/modules/cultiplan/atelier-animal.ts`) prend la variante de courbes, la durée de bande et les jours par mois du référentiel (ou de l'appelant, avec sa source) ; sans courbe ou sans durée, l'atelier est « non évalué » et la liste de ce qui manque est donnée. Outil Cultisia `simuler_atelier_animal`, routes `POST /api/cultiplan/elevage/bandes` et `/elevage/troupeau`.
 
 ## Limites connues (moteur actuel, avant M1)
 

@@ -2,6 +2,7 @@ import type { EntreeBudget } from "@/moteurs";
 import type { EtatEntretien } from "@/modules/cultiplan/entretien";
 import type { ApportDuProfil, ProfilPorteur } from "@/modules/cultiplan/profil";
 import type { Entretien, RegleFinanceurRef } from "@/referentiel";
+import type { VarianteElevage } from "@/referentiel/elevage";
 
 /**
  * Accès aux données lues par les outils de Cultisia.
@@ -83,6 +84,9 @@ export interface AccesDonnees {
   preparerBudget(entree: { ateliers: AtelierSimule[]; contexte: Record<string, string> }): Promise<EntreeBudget>;
   /** Ateliers et contexte terrain d'une exploitation, lus avec les droits de l'utilisateur ; null si inaccessible. */
   lireAteliersEtContexte(exploitationId: string): Promise<{ ateliers: AtelierSimule[]; contexte: Record<string, string> } | null>;
+
+  /** Courbes par âge et paramètres d'élevage du référentiel (M14) pour une spéculation, par variante ; liste vide si le référentiel n'a rien. Facultatif. */
+  lireVariantesElevage?(speculationCode: string): Promise<VarianteElevage[]>;
 
   /** Règles des financeurs du référentiel (R11), éventuellement d'un organisme (et d'un produit) précis. */
   lireReglesFinanceurs(filtre?: { organisme?: string; produit?: string }): Promise<RegleFinanceurRef[]>;

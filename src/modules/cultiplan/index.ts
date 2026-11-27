@@ -7,3 +7,5 @@ export * from "./profil";
 export * from "./service";
 export * from "./dimensionnement";
 export { dimensionnerExploitation, schemaDemandeDimensionnement, type DemandeDimensionnement } from "./dimensionnement-service";
+export * from "./atelier-animal";
+export { schemaDemandeAtelierAnimal, simulerAtelierPourSpeculation, suivreCheptel } from "./atelier-animal-service";

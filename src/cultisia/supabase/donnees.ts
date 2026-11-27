@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { ErreurExploitation, lireExploitation, type ClientBase } from "@/core/exploitation";
 import type { EntreeBudget } from "@/moteurs";
 import { chargerEtat, type EtatEntretien } from "@/modules/cultiplan/entretien";
+import { lireVariantesElevage, type VarianteElevage } from "@/referentiel/elevage";
 import { deduireDuProfil, lireProfil, type ApportDuProfil, type ProfilPorteur } from "@/modules/cultiplan/profil";
 import { preparerEntreeBudget } from "@/modules/cultiplan/service";
 import { lireEntretien, lireReglesFinanceurs as lireReglesFinanceursRef, lireSpeculations, type Entretien, type RegleFinanceurRef } from "@/referentiel";
@@ -80,6 +81,10 @@ export class DonneesSupabase implements AccesDonnees {
       throw erreur;
     }
     return lireProfil(this.clientType, exploitationId, { tolerant: true });
+  }
+
+  async lireVariantesElevage(speculationCode: string): Promise<VarianteElevage[]> {
+    return lireVariantesElevage(this.clientType, speculationCode);
   }
 
   async lireProfilPorteur(exploitationId: string): Promise<ApportDuProfil | null> {

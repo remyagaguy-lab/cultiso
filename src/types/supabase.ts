@@ -556,6 +556,46 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"courbes_age": {
+                  Row: {
+                    "created_at": string,"date_source": string,"id": string,"notes": string | null,"source": string,"speculation_code": string,"statut": string,"unite": string,"updated_at": string,"valeur": number,"valide_le": string | null,"valide_par": string | null,"variante": string,"age_mois": number,"grandeur": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"date_source": string,"id"?: string,"notes"?: string | null,"source": string,"speculation_code": string,"statut"?: string,"unite": string,"updated_at"?: string,"valeur": number,"valide_le"?: string | null,"valide_par"?: string | null,"variante": string,"age_mois": number,"grandeur": string
+                  }
+                  Update: {
+                    "created_at"?: string,"date_source"?: string,"id"?: string,"notes"?: string | null,"source"?: string,"speculation_code"?: string,"statut"?: string,"unite"?: string,"updated_at"?: string,"valeur"?: number,"valide_le"?: string | null,"valide_par"?: string | null,"variante"?: string,"age_mois"?: number,"grandeur"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "courbes_age_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
+                },"parametres_elevage": {
+                  Row: {
+                    "created_at": string,"date_source": string,"id": string,"notes": string | null,"source": string,"speculation_code": string,"statut": string,"unite": string,"updated_at": string,"valeur": number,"valide_le": string | null,"valide_par": string | null,"variante": string,"code": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"date_source": string,"id"?: string,"notes"?: string | null,"source": string,"speculation_code": string,"statut"?: string,"unite": string,"updated_at"?: string,"valeur": number,"valide_le"?: string | null,"valide_par"?: string | null,"variante": string,"code": string
+                  }
+                  Update: {
+                    "created_at"?: string,"date_source"?: string,"id"?: string,"notes"?: string | null,"source"?: string,"speculation_code"?: string,"statut"?: string,"unite"?: string,"updated_at"?: string,"valeur"?: number,"valide_le"?: string | null,"valide_par"?: string | null,"variante"?: string,"code"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "parametres_elevage_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
                 },"bornes_rendement": {
                   Row: {
                     "created_at": string,"date_source": string,"id": string,"max_par_unite": number | null,"min_par_unite": number | null,"modele_revenu_id": string,"notes": string | null,"source": string,"statut": string,"typique_par_unite": number | null,"updated_at": string,"valide_le": string | null,"valide_par": string | null
