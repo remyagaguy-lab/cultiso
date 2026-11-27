@@ -1,18 +1,20 @@
 "use client";
 import React, { useState } from 'react';
 import { 
-  Building2, 
-  ShieldCheck, 
-  Wallet, 
-  TrendingUp, 
-  PlusCircle, 
-  Calculator, 
-  Download, 
-  Bell, 
-  ChevronDown,
-  RefreshCw,
-  Sparkles
-} from 'lucide-react';
+  ShieldCheckIcon as ShieldCheck,
+  GraphNewUpIcon as TrendingUp,
+  AddCircleIcon as PlusCircle,
+  CalculatorIcon as Calculator,
+  DownloadIcon as Download,
+  BellIcon as Bell,
+  AltArrowDownIcon as ChevronDown,
+  RefreshIcon as RefreshCw,
+} from '@solar-icons/react/linear';
+import {
+  Buildings2Icon as Building2,
+  WalletMoneyIcon as Wallet,
+  StarsIcon as Sparkles,
+} from '@solar-icons/react/bold-duotone';
 import { ZootechKPIs } from './types';
 
 interface HeaderProps {
@@ -38,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const sites = [
-    { id: 'site-1', name: 'Ferme Espoir · Kpalimé', role: 'Siège & Multi-Ateliers' },
+    { id: 'site-1', name: 'Ferme Cultiso · Kpalimé', role: 'Siège & Multi-Ateliers' },
     { id: 'site-2', name: 'Station Avicole Agou', role: 'Volaille Chair & Pondeuses' },
     { id: 'site-3', name: 'Complexe Porcin Zio', role: 'Naisseur-Engraisseur' },
     { id: 'site-4', name: 'Ferme Aquacole Kpémé', role: 'Pisciculture Tilapia & Silure' },

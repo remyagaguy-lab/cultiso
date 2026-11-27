@@ -3,7 +3,7 @@
 import Logo from "@/components/ui/Logo";
 import React, { useState } from "react";
 import { Form, Input, Alert, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { UserIcon, LockPasswordIcon } from "@solar-icons/react/linear";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -82,7 +82,7 @@ export default function LoginPage() {
               rules={[{ required: true, message: 'Veuillez renseigner votre email' }, { type: 'email', message: 'Email invalide' }]}
             >
               <Input 
-                prefix={<UserOutlined className="text-muted mr-1" />} 
+                prefix={<UserIcon className="w-4 h-4 text-muted mr-1" />} 
                 placeholder="vous@exemple.com" 
                 className="rounded-lg transition-colors"
               />
@@ -102,7 +102,7 @@ export default function LoginPage() {
               rules={[{ required: true, message: 'Veuillez renseigner votre mot de passe' }]}
             >
               <Input.Password
-                prefix={<LockOutlined className="text-muted mr-1" />}
+                prefix={<LockPasswordIcon className="w-4 h-4 text-muted mr-1" />}
                 placeholder="Votre mot de passe"
                 className="rounded-lg transition-colors"
               />

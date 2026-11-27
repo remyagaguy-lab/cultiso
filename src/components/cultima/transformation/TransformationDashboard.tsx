@@ -5,10 +5,26 @@ import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, Cell, PieChart, Pie
 } from 'recharts';
 import { 
-  LayoutDashboard, Factory, FlaskConical, PackageSearch, Wallet, Wrench, 
-  Bell, Search, UserCircle, ArrowUpRight, ArrowDownRight, Settings, Menu, 
-  AlertTriangle, CheckCircle2, Clock, ChevronDown
-} from 'lucide-react';
+  Widget2Icon as LayoutDashboard,
+  FlaskIcon as FlaskConical,
+  BoxMinimalisticIcon as PackageSearch,
+  WrenchIcon as Wrench,
+  BellIcon as Bell,
+  MagnifierIcon as Search,
+  UserCircleIcon as UserCircle,
+  ArrowRightUpIcon as ArrowUpRight,
+  ArrowRightDownIcon as ArrowDownRight,
+  SettingsIcon as Settings,
+  HamburgerMenuIcon as Menu,
+  DangerTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle2,
+  ClockCircleIcon as Clock,
+  AltArrowDownIcon as ChevronDown,
+} from '@solar-icons/react/linear';
+import {
+  FactoryIcon as Factory,
+  WalletMoneyIcon as Wallet,
+} from '@solar-icons/react/bold-duotone';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

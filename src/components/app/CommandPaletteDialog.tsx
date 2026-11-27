@@ -3,18 +3,28 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Search,
-  LayoutDashboard,
-  LineChart,
-  Zap,
-  Bot,
-  TrendingUp,
-  Plus,
-  ArrowRight,
-  Building2,
-  FileSpreadsheet,
-  X,
-} from "lucide-react";
+  MagnifierIcon,
+  Widget2Icon,
+  GraphNewUpIcon,
+  BoltIcon,
+  BotIcon,
+  Chart2Icon,
+  AddCircleIcon,
+  ArrowRightIcon,
+  Buildings2Icon,
+  DocumentTextIcon,
+  CloseIcon,
+} from "@solar-icons/react/linear";
+import {
+  Widget2Icon as Widget2BoldDuotoneIcon,
+  GraphNewUpIcon as GraphNewUpBoldDuotoneIcon,
+  BoltIcon as BoltBoldDuotoneIcon,
+  BotIcon as BotBoldDuotoneIcon,
+  Chart2Icon as Chart2BoldDuotoneIcon,
+  AddCircleIcon as AddCircleBoldDuotoneIcon,
+  Buildings2Icon as Buildings2BoldDuotoneIcon,
+  DocumentTextIcon as DocumentTextBoldDuotoneIcon,
+} from "@solar-icons/react/bold-duotone";
 import { useAppWorkspace } from "./AppWorkspaceContext";
 
 interface CommandItem {
@@ -22,7 +32,7 @@ interface CommandItem {
   group: "Navigation" | "Actions rapides" | "Business Plans" | "Exploitations";
   label: string;
   hint?: string;
-  icon: React.ReactNode;
+  renderIcon: (active: boolean) => React.ReactNode;
   onSelect: () => void;
 }
 
@@ -72,7 +82,7 @@ export function CommandPaletteDialog() {
         group: "Navigation",
         label: "Tableau de bord",
         hint: "Centre de commandement",
-        icon: <LayoutDashboard className="w-4 h-4 text-t-brand" />,
+        renderIcon: (active) => active ? <Widget2BoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <Widget2Icon className="w-4 h-4 text-t-brand" />,
         onSelect: () => router.push("/dashboard"),
       },
       {
@@ -80,7 +90,7 @@ export function CommandPaletteDialog() {
         group: "Navigation",
         label: "Cultiplan",
         hint: "Simuler & modéliser un business plan",
-        icon: <LineChart className="w-4 h-4 text-t-brand" />,
+        renderIcon: (active) => active ? <Chart2BoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <Chart2Icon className="w-4 h-4 text-t-brand" />,
         onSelect: () => router.push("/cultiplan"),
       },
       {
@@ -88,7 +98,7 @@ export function CommandPaletteDialog() {
         group: "Navigation",
         label: "Cultima ERP",
         hint: "Parcelles, élevage, trésorerie & stocks",
-        icon: <Zap className="w-4 h-4 text-t-action" />,
+        renderIcon: (active) => active ? <BoltBoldDuotoneIcon className="w-4 h-4 text-t-action" /> : <BoltIcon className="w-4 h-4 text-t-action" />,
         onSelect: () => router.push("/cultima"),
       },
       {
@@ -96,7 +106,7 @@ export function CommandPaletteDialog() {
         group: "Navigation",
         label: "Cours des prix agricoles",
         hint: "Relevés des marchés locaux",
-        icon: <TrendingUp className="w-4 h-4 text-t-brand" />,
+        renderIcon: (active) => active ? <GraphNewUpBoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <GraphNewUpIcon className="w-4 h-4 text-t-brand" />,
         onSelect: () => router.push("/marches"),
       },
       {
@@ -104,7 +114,7 @@ export function CommandPaletteDialog() {
         group: "Navigation",
         label: "Cultisia (Plein écran)",
         hint: "Historique & discussions agronomiques",
-        icon: <Bot className="w-4 h-4 text-t-brand" />,
+        renderIcon: (active) => active ? <BotBoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <BotIcon className="w-4 h-4 text-t-brand" />,
         onSelect: () => router.push("/cultisia"),
       },
     ];
@@ -115,7 +125,7 @@ export function CommandPaletteDialog() {
         group: "Actions rapides",
         label: "Créer un nouveau Business Plan",
         hint: "Ouvrir le copilote Cultiplan",
-        icon: <Plus className="w-4 h-4 text-t-action" />,
+        renderIcon: (active) => active ? <AddCircleBoldDuotoneIcon className="w-4 h-4 text-t-action" /> : <AddCircleIcon className="w-4 h-4 text-t-action" />,
         onSelect: () => router.push("/cultiplan"),
       },
       {
@@ -123,7 +133,7 @@ export function CommandPaletteDialog() {
         group: "Actions rapides",
         label: "Ouvrir le copilote Cultisia (panneau latéral)",
         hint: "Poser une question sur n'importe quelle page",
-        icon: <Bot className="w-4 h-4 text-t-brand" />,
+        renderIcon: (active) => active ? <BotBoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <BotIcon className="w-4 h-4 text-t-brand" />,
         onSelect: () => openCultisia("cultisia"),
       },
       {
@@ -131,7 +141,7 @@ export function CommandPaletteDialog() {
         group: "Actions rapides",
         label: "Ouvrir la Trésorerie (Cultima)",
         hint: "Saisir une recette ou une dépense en FCFA",
-        icon: <Zap className="w-4 h-4 text-t-action" />,
+        renderIcon: (active) => active ? <BoltBoldDuotoneIcon className="w-4 h-4 text-t-action" /> : <BoltIcon className="w-4 h-4 text-t-action" />,
         onSelect: () => router.push("/cultima?view=finance"),
       },
     ];
@@ -141,7 +151,7 @@ export function CommandPaletteDialog() {
       group: "Business Plans",
       label: plan.title,
       hint: "Cultiplan",
-      icon: <FileSpreadsheet className="w-4 h-4 text-muted" />,
+      renderIcon: (active) => active ? <DocumentTextBoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <DocumentTextIcon className="w-4 h-4 text-muted" />,
       onSelect: () => router.push("/cultiplan"),
     }));
 
@@ -150,7 +160,7 @@ export function CommandPaletteDialog() {
       group: "Exploitations",
       label: ws.name,
       hint: ws.location || ws.domain || "Espace d'exploitation",
-      icon: <Building2 className="w-4 h-4 text-t-brand" />,
+      renderIcon: (active) => active ? <Buildings2BoldDuotoneIcon className="w-4 h-4 text-t-brand" /> : <Buildings2Icon className="w-4 h-4 text-t-brand" />,
       onSelect: () => setActiveWorkspaceId(ws.id),
     }));
 
@@ -234,7 +244,7 @@ export function CommandPaletteDialog() {
       </h2>
 
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-        <Search className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />
+        <MagnifierIcon className="w-4 h-4 text-muted shrink-0" aria-hidden="true" />
         <input
           ref={inputRef}
           type="search"
@@ -254,7 +264,7 @@ export function CommandPaletteDialog() {
           aria-label="Fermer la recherche rapide"
           className="p-1.5 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-sunken transition-colors"
         >
-          <X className="w-4 h-4" />
+          <CloseIcon className="w-4 h-4" />
         </button>
       </div>
 
@@ -275,7 +285,7 @@ export function CommandPaletteDialog() {
               }}
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[var(--ork-use-radius-button)] bg-brand text-on-brand text-xs font-semibold hover:bg-[var(--ork-use-background-brand-bold-hover)] transition-colors"
             >
-              <Bot className="w-3.5 h-3.5" />
+              <BotBoldDuotoneIcon className="w-3.5 h-3.5" />
               Demander à Cultisia
             </button>
           </div>
@@ -303,7 +313,7 @@ export function CommandPaletteDialog() {
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span className="w-7 h-7 rounded-[var(--ork-use-radius-control)] bg-surface border border-border flex items-center justify-center shrink-0">
-                            {item.icon}
+                            {item.renderIcon(isActive)}
                           </span>
                           <div className="min-w-0">
                             <div className="text-[13.5px] font-semibold truncate">
@@ -316,7 +326,7 @@ export function CommandPaletteDialog() {
                             )}
                           </div>
                         </div>
-                        <ArrowRight
+                        <ArrowRightIcon
                           className={`w-3.5 h-3.5 shrink-0 transition-opacity ${
                             isActive ? "opacity-100 text-t-brand" : "opacity-0"
                           }`}

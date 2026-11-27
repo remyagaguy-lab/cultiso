@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from "@ant-design/icons";
-import { Wallet } from "lucide-react";
+import { ArrowUpIcon as ArrowUpOutlined, ArrowDownIcon as ArrowDownOutlined, AddCircleIcon as PlusOutlined } from "@solar-icons/react/linear";
+import { WalletMoneyIcon as Wallet } from "@solar-icons/react/bold-duotone";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",

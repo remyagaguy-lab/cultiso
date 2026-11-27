@@ -1,13 +1,15 @@
 "use client";
 import React from 'react';
 import { 
-  Egg, 
-  Fish, 
-  Layers, 
-  Milk, 
-  Beef,
-  Sparkles
-} from 'lucide-react';
+  HeartPulseIcon as Egg,
+  FishIcon as Fish,
+  LayersIcon as Layers,
+  BottleIcon as Milk,
+  BoneIcon as Beef,
+} from '@solar-icons/react/linear';
+import {
+  StarsIcon as Sparkles,
+} from '@solar-icons/react/bold-duotone';
 import { SpeciesCategory } from './types';
 
 interface SpeciesSelectorProps {

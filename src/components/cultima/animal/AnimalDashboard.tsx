@@ -23,19 +23,21 @@ import { ZootechSimulatorModal } from './ZootechSimulatorModal';
 import { BatchDetailModal } from './BatchDetailModal';
 import { NewEntryModal } from './NewEntryModal';
 import { 
-  Fish, 
-  Waves, 
-  Thermometer, 
-  Wind, 
-  ShieldCheck, 
-  Sparkles, 
-  FileText, 
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+  FishIcon as Fish,
+  WaterdropsIcon as Waves,
+  ThermometerIcon as Thermometer,
+  WindIcon as Wind,
+  ShieldCheckIcon as ShieldCheck,
+  DocumentTextIcon as FileText,
+  CheckCircleIcon as CheckCircle,
+  DangerCircleIcon as AlertCircle,
+} from '@solar-icons/react/linear';
+import {
+  StarsIcon as Sparkles,
+} from '@solar-icons/react/bold-duotone';
 
 export default function AnimalDashboard({ embedded = false }: { embedded?: boolean }) {
-  const [currentSite, setCurrentSite] = useState<string>('Ferme Espoir · Kpalimé');
+  const [currentSite, setCurrentSite] = useState<string>('Ferme Cultiso · Kpalimé');
   const [selectedSpecies, setSelectedSpecies] = useState<SpeciesCategory>('all');
   const [batches, setBatches] = useState<BatchItem[]>(mockBatches);
   const [silos, setSilos] = useState<SiloItem[]>(mockSilos);

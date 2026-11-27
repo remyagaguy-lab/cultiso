@@ -1,16 +1,18 @@
 "use client";
 import React, { useState } from 'react';
 import { 
-  X, 
-  Calculator, 
-  TrendingUp, 
-  DollarSign, 
-  Scale, 
-  HelpCircle,
-  CheckCircle,
-  Sparkles,
-  ArrowRight
-} from 'lucide-react';
+  CloseIcon as X,
+  CalculatorIcon as Calculator,
+  GraphNewUpIcon as TrendingUp,
+  DollarIcon as DollarSign,
+  ScaleIcon as Scale,
+  QuestionCircleIcon as HelpCircle,
+  CheckCircleIcon as CheckCircle,
+  ArrowRightIcon as ArrowRight,
+} from '@solar-icons/react/linear';
+import {
+  StarsIcon as Sparkles,
+} from '@solar-icons/react/bold-duotone';
 
 interface ZootechSimulatorModalProps {
   isOpen: boolean;

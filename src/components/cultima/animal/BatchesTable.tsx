@@ -1,19 +1,19 @@
 "use client";
 import React, { useState } from 'react';
 import { 
-  Search, 
-  Filter, 
-  ExternalLink, 
-  AlertCircle, 
-  CheckCircle, 
-  Scale, 
-  Calendar, 
-  Clock, 
-  ChevronRight,
-  ShieldAlert,
-  ArrowUpDown,
-  Tag
-} from 'lucide-react';
+  MagnifierIcon as Search,
+  FilterIcon as Filter,
+  SquareTopDownIcon as ExternalLink,
+  DangerCircleIcon as AlertCircle,
+  CheckCircleIcon as CheckCircle,
+  ScaleIcon as Scale,
+  CalendarIcon as Calendar,
+  ClockCircleIcon as Clock,
+  AltArrowRightIcon as ChevronRight,
+  ShieldWarningIcon as ShieldAlert,
+  SortVerticalIcon as ArrowUpDown,
+  TagIcon as Tag,
+} from '@solar-icons/react/linear';
 import { BatchItem, SpeciesCategory } from './types';
 
 interface BatchesTableProps {

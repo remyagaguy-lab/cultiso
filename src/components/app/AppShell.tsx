@@ -7,32 +7,43 @@ const useIsomorphicLayoutEffect =
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard,
-  LineChart,
-  ListChecks,
-  Zap,
-  Bot,
-  TrendingUp,
-  ShoppingBag,
-  UserCheck,
-  Search,
-  Bell,
-  Plus,
-  ChevronDown,
-  Pin,
-  PinOff,
-  Building2,
-  Check,
-  Sparkles,
-  Menu,
-  X,
-  LogOut,
-  Settings,
-  User,
-  ChevronRight,
-  Sun,
-  Moon,
-} from "lucide-react";
+  Widget2Icon,
+  Chart2Icon,
+  ChecklistMinimalisticIcon,
+  BoltIcon,
+  BotIcon,
+  GraphNewUpIcon,
+  Bag2Icon,
+  UserCheckIcon,
+  MagnifierIcon,
+  BellIcon,
+  AddCircleIcon,
+  AltArrowDownIcon,
+  PinIcon,
+  Buildings2Icon,
+  CheckCircleIcon,
+  StarsIcon,
+  HamburgerMenuIcon,
+  CloseIcon,
+  Logout2Icon,
+  SettingsIcon,
+  UserIcon,
+  AltArrowRightIcon,
+  SunIcon,
+  MoonIcon,
+} from "@solar-icons/react/linear";
+import {
+  Widget2Icon as Widget2BoldDuotoneIcon,
+  Chart2Icon as Chart2BoldDuotoneIcon,
+  ChecklistMinimalisticIcon as ChecklistMinimalisticBoldDuotoneIcon,
+  BoltIcon as BoltBoldDuotoneIcon,
+  BotIcon as BotBoldDuotoneIcon,
+  GraphNewUpIcon as GraphNewUpBoldDuotoneIcon,
+  PinIcon as PinBoldDuotoneIcon,
+  Buildings2Icon as Buildings2BoldDuotoneIcon,
+  CheckCircleIcon as CheckCircleBoldDuotoneIcon,
+  StarsIcon as StarsBoldDuotoneIcon,
+} from "@solar-icons/react/bold-duotone";
 import { Dropdown, Avatar } from "antd";
 import Logo from "@/components/ui/Logo";
 import {
@@ -49,24 +60,25 @@ interface NavItem {
   name: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  activeIcon: React.ComponentType<{ className?: string }>;
   badge?: string;
 }
 
 const PILOTAGE_ITEMS: NavItem[] = [
-  { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Cours des prix", href: "/marches", icon: TrendingUp },
+  { name: "Tableau de bord", href: "/dashboard", icon: Widget2Icon, activeIcon: Widget2BoldDuotoneIcon },
+  { name: "Cours des prix", href: "/marches", icon: GraphNewUpIcon, activeIcon: GraphNewUpBoldDuotoneIcon },
 ];
 
 const SUITE_ITEMS: NavItem[] = [
-  { name: "Cultiplan", href: "/cultiplan", icon: LineChart },
-  { name: "Mes plans", href: "/cultiplan/mes-plans", icon: ListChecks },
-  { name: "Cultima ERP", href: "/cultima", icon: Zap },
-  { name: "Cultisia IA", href: "/cultisia", icon: Bot },
+  { name: "Cultiplan", href: "/cultiplan", icon: Chart2Icon, activeIcon: Chart2BoldDuotoneIcon },
+  { name: "Mes plans", href: "/cultiplan/mes-plans", icon: ChecklistMinimalisticIcon, activeIcon: ChecklistMinimalisticBoldDuotoneIcon },
+  { name: "Cultima ERP", href: "/cultima", icon: BoltIcon, activeIcon: BoltBoldDuotoneIcon },
+  { name: "Cultisia IA", href: "/cultisia", icon: BotIcon, activeIcon: BotBoldDuotoneIcon },
 ];
 
 const UPCOMING_ITEMS = [
-  { name: "Cultishop", desc: "Achats d'intrants", icon: ShoppingBag },
-  { name: "Cultiseil", desc: "Experts agronomes", icon: UserCheck },
+  { name: "Cultishop", desc: "Achats d'intrants", icon: Bag2Icon },
+  { name: "Cultiseil", desc: "Experts agronomes", icon: UserCheckIcon },
 ];
 
 const ROUTE_TITLES: Record<string, string> = {
@@ -192,7 +204,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
               {ws.id === activeWorkspace.id && (
-                <Check className="w-4 h-4 text-t-brand shrink-0" />
+                <CheckCircleBoldDuotoneIcon className="w-4 h-4 text-t-brand shrink-0" />
               )}
             </div>
           ),
@@ -201,7 +213,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       { type: "divider" as const },
       {
         key: "new-project",
-        icon: <Plus className="w-3.5 h-3.5 text-t-action" />,
+        icon: <AddCircleIcon className="w-3.5 h-3.5 text-t-action" />,
         label: (
           <span className="text-[13px] font-semibold text-t-action">
             Nouveau projet Cultiplan
@@ -216,19 +228,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     items: [
       {
         key: "new-bp",
-        icon: <LineChart className="w-4 h-4 text-t-brand" />,
+        icon: <Chart2Icon className="w-4 h-4 text-t-brand" />,
         label: "Nouveau Business Plan (Cultiplan)",
         onClick: () => router.push("/cultiplan"),
       },
       {
         key: "new-tx",
-        icon: <Zap className="w-4 h-4 text-t-action" />,
+        icon: <BoltIcon className="w-4 h-4 text-t-action" />,
         label: "Saisir une opération (Cultima)",
         onClick: () => router.push("/cultima?view=finance"),
       },
       {
         key: "new-ai",
-        icon: <Sparkles className="w-4 h-4 text-t-brand" />,
+        icon: <StarsIcon className="w-4 h-4 text-t-brand" />,
         label: "Consulter Cultisia IA",
         onClick: () => toggleCultisia(activeCultisiaContext),
       },
@@ -297,20 +309,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {
         key: "dashboard",
         label: "Tableau de bord",
-        icon: <User className="w-3.5 h-3.5" />,
+        icon: <UserIcon className="w-3.5 h-3.5" />,
         onClick: () => router.push("/dashboard"),
       },
       {
         key: "cultima",
         label: "Configuration Cultima",
-        icon: <Settings className="w-3.5 h-3.5" />,
+        icon: <SettingsIcon className="w-3.5 h-3.5" />,
         onClick: () => router.push("/cultima"),
       },
       { type: "divider" as const },
       {
         key: "logout",
         label: "Se déconnecter",
-        icon: <LogOut className="w-3.5 h-3.5" />,
+        icon: <Logout2Icon className="w-3.5 h-3.5" />,
         onClick: handleLogout,
         danger: true,
       },
@@ -345,7 +357,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
             </div>
             {expanded && (
-              <ChevronDown
+              <AltArrowDownIcon
                 className="w-3.5 h-3.5 text-muted shrink-0"
                 aria-hidden="true"
               />
@@ -364,7 +376,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ul className="list-none m-0 p-0 space-y-1">
           {PILOTAGE_ITEMS.map((item) => {
             const isActive = pathname?.startsWith(item.href);
-            const Icon = item.icon;
+            const Icon = isActive ? item.activeIcon : item.icon;
             return (
               <li key={item.href}>
                 <Link
@@ -402,7 +414,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <ul className="list-none m-0 p-0 space-y-1">
           {SUITE_ITEMS.map((item) => {
             const isActive = pathname?.startsWith(item.href);
-            const Icon = item.icon;
+            const Icon = isActive ? item.activeIcon : item.icon;
             return (
               <li key={item.href}>
                 <Link
@@ -532,9 +544,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             }`}
           >
             {isPinned ? (
-              <PinOff className="w-3.5 h-3.5 shrink-0" />
+              <PinBoldDuotoneIcon className="w-3.5 h-3.5 shrink-0 text-t-brand" />
             ) : (
-              <Pin className="w-3.5 h-3.5 shrink-0" />
+              <PinIcon className="w-3.5 h-3.5 shrink-0" />
             )}
             {isExpanded && (
               <span className="truncate">
@@ -582,7 +594,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             aria-label="Fermer le menu"
             className="p-1.5 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-sunken"
           >
-            <X className="w-5 h-5" />
+            <CloseIcon className="w-5 h-5" />
           </button>
         </div>
         <div
@@ -614,15 +626,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-expanded={isMobileDrawerOpen}
               className="lg:hidden p-1.5 rounded-[var(--ork-use-radius-control)] text-foreground hover:bg-sunken transition-colors"
             >
-              <Menu className="w-5 h-5" />
+              <HamburgerMenuIcon className="w-5 h-5" />
             </button>
 
             <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-[13px] min-w-0">
               <span className="hidden md:inline-flex items-center gap-1.5 text-muted font-medium truncate max-w-[150px]">
-                <Building2 className="w-3.5 h-3.5 text-t-brand shrink-0" aria-hidden="true" />
+                <Buildings2BoldDuotoneIcon className="w-3.5 h-3.5 text-t-brand shrink-0" aria-hidden="true" />
                 <span className="truncate">{activeWorkspace.name}</span>
               </span>
-              <ChevronRight
+              <AltArrowRightIcon
                 className="hidden md:inline w-3.5 h-3.5 text-muted/70 shrink-0"
                 aria-hidden="true"
               />
@@ -640,7 +652,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             className="hidden lg:flex items-center justify-between gap-4 w-full max-w-[340px] h-8 px-3 rounded-[var(--ork-use-radius-control)] bg-sunken hover:bg-selected/50 border border-border text-xs text-muted transition-colors"
           >
             <span className="flex items-center gap-2 truncate">
-              <Search className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <MagnifierIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span className="truncate">Rechercher, naviguer, créer...</span>
             </span>
             <kbd className="hidden xl:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-muted bg-surface border border-border rounded">
@@ -656,7 +668,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-label="Rechercher"
               className="lg:hidden p-2 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-sunken"
             >
-              <Search className="w-4 h-4" />
+              <MagnifierIcon className="w-4 h-4" />
             </button>
 
             <button
@@ -667,9 +679,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="p-2 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-sunken transition-colors"
             >
               {themeMode === "dark" ? (
-                <Sun className="w-4 h-4 text-[var(--ork-use-icon-warning)]" aria-hidden="true" />
+                <SunIcon className="w-4 h-4 text-[var(--ork-use-icon-warning)]" aria-hidden="true" />
               ) : (
-                <Moon className="w-4 h-4" aria-hidden="true" />
+                <MoonIcon className="w-4 h-4" aria-hidden="true" />
               )}
             </button>
 
@@ -679,7 +691,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 aria-label="Créer un nouvel élément"
                 className="inline-flex items-center gap-1.5 h-8 px-2.5 sm:px-3 rounded-[var(--ork-use-radius-button)] bg-action hover:bg-[var(--ork-use-background-action-bold-hover)] text-on-action text-xs font-semibold transition-colors shadow-raised"
               >
-                <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                <AddCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />
                 <span className="hidden sm:inline">Nouveau</span>
               </button>
             </Dropdown>
@@ -695,12 +707,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   : "bg-[var(--ork-use-background-brand-subtle)] hover:bg-selected text-t-brand border-[var(--ork-use-border-selected)]"
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              {isCultisiaOpen ? (
+                <StarsBoldDuotoneIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              ) : (
+                <StarsIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              )}
               <span className="hidden sm:inline">Cultisia</span>
             </button>
 
             <div className="hidden xl:flex items-center gap-1 bg-[var(--ork-use-background-brand-subtle)] text-t-brand px-2 py-1 rounded-[var(--ork-use-radius-badge)] border border-[var(--ork-use-border-selected)]">
-              <Zap className="w-3 h-3 text-t-action" aria-hidden="true" />
+              <BoltBoldDuotoneIcon className="w-3 h-3 text-t-action" aria-hidden="true" />
               <span className="text-[11.5px] font-bold font-mono-numbers">
                 {new Intl.NumberFormat("fr-FR").format(tokensBalance)}
               </span>
@@ -712,7 +728,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 aria-label="Notifications"
                 className="relative p-1.5 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-sunken transition-colors"
               >
-                <Bell className="w-4 h-4" />
+                <BellIcon className="w-4 h-4" />
                 <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-action" />
               </button>
             </Dropdown>
@@ -757,13 +773,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         className="lg:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border flex justify-around items-center h-16 z-30"
       >
         {[
-          { name: "Accueil", href: "/dashboard", icon: LayoutDashboard },
-          { name: "Cultiplan", href: "/cultiplan", icon: LineChart },
-          { name: "Cultima", href: "/cultima", icon: Zap },
-          { name: "Marchés", href: "/marches", icon: TrendingUp },
+          { name: "Accueil", href: "/dashboard", icon: Widget2Icon, activeIcon: Widget2BoldDuotoneIcon },
+          { name: "Cultiplan", href: "/cultiplan", icon: Chart2Icon, activeIcon: Chart2BoldDuotoneIcon },
+          { name: "Cultima", href: "/cultima", icon: BoltIcon, activeIcon: BoltBoldDuotoneIcon },
+          { name: "Marchés", href: "/marches", icon: GraphNewUpIcon, activeIcon: GraphNewUpBoldDuotoneIcon },
         ].map((item) => {
           const isActive = pathname?.startsWith(item.href);
-          const Icon = item.icon;
+          const Icon = isActive ? item.activeIcon : item.icon;
           return (
             <Link
               key={item.href}
@@ -783,7 +799,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           onClick={() => setIsMobileDrawerOpen(true)}
           className="flex flex-col items-center justify-center flex-1 h-full gap-1 text-muted"
         >
-          <Menu className="w-5 h-5" />
+          <HamburgerMenuIcon className="w-5 h-5" />
           <span className="text-[10.5px] font-semibold">Plus</span>
         </button>
       </nav>

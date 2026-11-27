@@ -1,16 +1,16 @@
 "use client";
 import React, { useState } from 'react';
 import { 
-  X, 
-  PlusCircle, 
-  Scale, 
-  Egg, 
-  Activity, 
-  Wheat, 
-  Stethoscope, 
-  CheckCircle,
-  Milk
-} from 'lucide-react';
+  CloseIcon as X,
+  AddCircleIcon as PlusCircle,
+  ScaleIcon as Scale,
+  HeartPulseIcon as Egg,
+  Pulse2Icon as Activity,
+  SproutIcon as Wheat,
+  StethoscopeIcon as Stethoscope,
+  CheckCircleIcon as CheckCircle,
+  BottleIcon as Milk,
+} from '@solar-icons/react/linear';
 import { BatchItem } from './types';
 
 interface NewEntryModalProps {

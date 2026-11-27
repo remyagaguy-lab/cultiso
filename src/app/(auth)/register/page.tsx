@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Typography, Alert, Result } from "antd";
-import { UserOutlined, MailOutlined } from "@ant-design/icons";
+import { UserIcon, LetterIcon } from "@solar-icons/react/linear";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -46,19 +46,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex-grow flex items-center justify-center bg-[#fcfcfc] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex-grow flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <Card className="shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl border border-[rgba(0,52,47,0.06)] overflow-hidden" styles={{ body: { padding: '40px 32px' } }}>
+        <Card className="shadow-md rounded-2xl border border-border overflow-hidden" styles={{ body: { padding: '40px 32px' } }}>
           
           {isSubmitted ? (
             <Result
               status="success"
-              title={<span className="font-unbounded text-forest-ink">Demande envoyée !</span>}
-              subTitle={<span className="font-manrope text-gray-500">Merci pour votre intérêt. Cultiso est actuellement en Beta privée. Notre équipe examinera votre profil et vous enverra une invitation très prochainement.</span>}
+              title={<span className="font-title text-foreground">Demande envoyée !</span>}
+              subTitle={<span className="font-sans text-muted">Merci pour votre intérêt. Cultiso est actuellement en Bêta privée. Notre équipe examinera votre profil et vous enverra une invitation très prochainement.</span>}
               extra={[
                 <Link href="/" key="home">
                   <Button type="primary" size="large" className="w-full font-bold shadow-sm rounded-lg">
-                    Retour à l'accueil
+                    Retour à l&apos;accueil
                   </Button>
                 </Link>
               ]}
@@ -66,10 +66,10 @@ export default function RegisterPage() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <Title level={2} className="!mb-2 !text-forest-ink !font-unbounded">
-                  Bienvenue sur Cultiso 🌱
+                <Title level={2} className="!mb-2 !text-foreground !font-title">
+                  Bienvenue sur Cultiso
                 </Title>
-                <Text className="text-gray-500 text-base">
+                <Text className="text-muted text-base">
                   Cultiso est actuellement en version bêta privée. Inscrivez-vous pour obtenir un accès privilégié et faire partie de nos premiers testeurs !
                 </Text>
               </div>
@@ -87,31 +87,31 @@ export default function RegisterPage() {
                 requiredMark={false}
               >
                 <Form.Item
-                  label={<span className="font-semibold text-gray-700">Nom complet</span>}
+                  label={<span className="font-semibold text-foreground">Nom complet</span>}
                   name="nom"
                   rules={[{ required: true, message: 'Veuillez renseigner votre nom' }]}
                 >
                   <Input 
-                    prefix={<UserOutlined className="text-gray-400" />} 
+                    prefix={<UserIcon className="w-4 h-4 text-muted" />} 
                     placeholder="Ex: Jean Dupont" 
-                    className="rounded-lg py-2"
+                    className="rounded-lg"
                   />
                 </Form.Item>
 
                 <Form.Item
-                  label={<span className="font-semibold text-gray-700">Adresse e-mail</span>}
+                  label={<span className="font-semibold text-foreground">Adresse e-mail</span>}
                   name="email"
                   rules={[{ required: true, message: 'Veuillez renseigner votre email' }, { type: 'email', message: 'Email invalide' }]}
                 >
                   <Input 
-                    prefix={<MailOutlined className="text-gray-400" />} 
+                    prefix={<LetterIcon className="w-4 h-4 text-muted" />} 
                     placeholder="jean@agrobusiness.com" 
-                    className="rounded-lg py-2"
+                    className="rounded-lg"
                   />
                 </Form.Item>
 
                 <Form.Item
-                  label={<span className="font-semibold text-gray-700">Parlez-nous de votre projet (Optionnel)</span>}
+                  label={<span className="font-semibold text-foreground">Parlez-nous de votre projet (Optionnel)</span>}
                   name="projet"
                 >
                   <TextArea 
@@ -125,7 +125,7 @@ export default function RegisterPage() {
                   <Button 
                     type="primary" 
                     htmlType="submit" 
-                    className="w-full py-3 text-[16px] font-bold tracking-wide shadow-md rounded-lg h-auto"
+                    className="w-full !h-[48px] text-[16px] font-bold tracking-wide shadow-sm rounded-lg"
                     loading={loading}
                   >
                     Demander mon accès anticipé
@@ -133,9 +133,9 @@ export default function RegisterPage() {
                 </Form.Item>
               </Form>
 
-              <div className="mt-8 text-center text-gray-500 text-sm">
+              <div className="mt-8 text-center text-muted text-sm">
                 Déjà membre ou invité ?{' '}
-                <Link href="/login" className="text-brand-orange hover:text-[#E67E22] font-semibold transition-colors">
+                <Link href="/login" className="text-t-action hover:underline font-semibold transition-colors">
                   Se connecter
                 </Link>
               </div>

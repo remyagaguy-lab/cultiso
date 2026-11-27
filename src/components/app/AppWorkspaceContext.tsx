@@ -67,8 +67,8 @@ interface AppWorkspaceContextValue {
 }
 
 const DEMO_WORKSPACE: CultisoWorkspace = {
-  id: "demo-ferme-espoir",
-  name: "Ferme Espoir",
+  id: "demo-ferme-cultiso",
+  name: "Ferme Cultiso",
   domain: "Polyculure & Élevage",
   status: "demo",
   surface_area: 12,

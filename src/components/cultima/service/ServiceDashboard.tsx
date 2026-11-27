@@ -2,28 +2,30 @@
 
 import React, { useState } from 'react';
 import { 
-  Tractor, 
-  Droplets, 
-  Users, 
-  LineChart, 
-  FileText, 
-  Settings, 
-  Bell, 
-  Search, 
-  Menu,
-  MoreVertical,
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  Wrench,
-  CheckCircle2,
-  Clock,
-  ArrowRight,
-  ChevronDown,
-  Activity,
-  MapPin,
-  Calendar
-} from 'lucide-react';
+  WaterdropsIcon as Droplets,
+  UsersGroupRoundedIcon as Users,
+  Chart2Icon as LineChart,
+  DocumentTextIcon as FileText,
+  SettingsIcon as Settings,
+  BellIcon as Bell,
+  MagnifierIcon as Search,
+  HamburgerMenuIcon as Menu,
+  MenuDotsVerticalIcon as MoreVertical,
+  GraphNewUpIcon as TrendingUp,
+  GraphDownNewIcon as TrendingDown,
+  CheckCircleIcon as CheckCircle2,
+  ClockCircleIcon as Clock,
+  ArrowRightIcon as ArrowRight,
+  AltArrowDownIcon as ChevronDown,
+  Pulse2Icon as Activity,
+  MapPointIcon as MapPin,
+  CalendarIcon as Calendar,
+} from '@solar-icons/react/linear';
+import {
+  WrenchIcon as Tractor,
+  WrenchIcon as Wrench,
+  WalletMoneyIcon as Wallet,
+} from '@solar-icons/react/bold-duotone';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   BarChart, Bar, Legend, Cell, PieChart, Pie
@@ -47,7 +49,7 @@ const fleetStatusData = [
 ];
 
 const activeMissions = [
-  { id: 'MSN-809', type: 'Forage Profond', client: 'Ferme Espoir', team: 'Équipe Alpha', status: 'En cours', progress: 65, equipement: 'Foreuse T-90', location: 'Parcelle Nord' },
+  { id: 'MSN-809', type: 'Forage Profond', client: 'Ferme Cultiso', team: 'Équipe Alpha', status: 'En cours', progress: 65, equipement: 'Foreuse T-90', location: 'Parcelle Nord' },
   { id: 'MSN-810', type: 'Récolte mécanisée', client: 'Coopérative Kloto', team: 'Équipe Beta', status: 'En cours', progress: 40, equipement: 'Moissonneuse C-2', location: 'Secteur 4' },
   { id: 'MSN-811', type: 'Labour', client: 'Domaine Zio', team: 'Équipe Gamma', status: 'En attente', progress: 0, equipement: 'Tracteur 140 CV', location: 'Champs Est' },
   { id: 'MSN-812', type: 'Irrigation', client: 'Verger Agou', team: 'Équipe Delta', status: 'Terminé', progress: 100, equipement: 'Goutte-à-goutte', location: 'Vergers Sud' },

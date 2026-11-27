@@ -3,13 +3,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
-  SendOutlined,
-  LoadingOutlined,
-  CheckCircleFilled,
-  ExperimentOutlined,
-  CloudOutlined,
-  BugOutlined,
-} from "@ant-design/icons";
+  SendSquareIcon,
+  RefreshIcon,
+  TestTubeIcon,
+  CloudIcon,
+  BugIcon,
+} from "@solar-icons/react/linear";
+import { CheckCircleIcon as CheckCircleBoldDuotoneIcon } from "@solar-icons/react/bold-duotone";
 import ReactMarkdown from "react-markdown";
 import { Logo } from "@/components/ui/Logo";
 
@@ -157,7 +157,7 @@ export default function CultiseilPage() {
             <div className="max-w-3xl mx-auto w-full bg-surface rounded-2xl border border-border p-8 md:p-10 shadow-sm">
               <div className="flex items-center gap-4 mb-10">
                 <div className="w-10 h-10 rounded-full bg-sunken flex items-center justify-center text-t-brand">
-                  <ExperimentOutlined style={{ fontSize: "20px" }} />
+                  <TestTubeIcon className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="font-title text-xl font-bold text-foreground m-0">
@@ -259,9 +259,8 @@ export default function CultiseilPage() {
               </div>
 
               <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-6 shadow-sm relative">
-                <ExperimentOutlined
-                  style={{ fontSize: "28px", color: "var(--ork-use-text-brand)" }}
-                  className="relative z-10"
+                <TestTubeIcon
+                  className="w-7 h-7 text-t-brand relative z-10"
                 />
               </div>
 
@@ -276,7 +275,7 @@ export default function CultiseilPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
                 <div className="bg-surface border border-border rounded-xl p-5 text-left shadow-sm">
                   <div className="w-8 h-8 rounded-lg bg-sunken flex items-center justify-center mb-3 text-t-brand">
-                    <CloudOutlined />
+                    <CloudIcon className="w-4 h-4" />
                   </div>
                   <h3 className="font-bold text-foreground text-sm mb-1">
                     Climat &amp; Sol
@@ -287,7 +286,7 @@ export default function CultiseilPage() {
                 </div>
                 <div className="bg-surface border border-border rounded-xl p-5 text-left shadow-sm">
                   <div className="w-8 h-8 rounded-lg bg-sunken flex items-center justify-center mb-3 text-t-action">
-                    <BugOutlined />
+                    <BugIcon className="w-4 h-4" />
                   </div>
                   <h3 className="font-bold text-foreground text-sm mb-1">
                     Pathologies
@@ -337,7 +336,7 @@ export default function CultiseilPage() {
               return (
                 <div key={i} className="flex justify-start">
                   <div className="bg-sunken text-muted border border-border text-[11px] font-bold px-3 py-1.5 rounded-md flex items-center gap-2">
-                    <CheckCircleFilled className="text-t-brand" /> Analyse requise
+                    <CheckCircleBoldDuotoneIcon className="w-3.5 h-3.5 text-t-brand" /> Analyse requise
                   </div>
                 </div>
               );
@@ -403,9 +402,9 @@ export default function CultiseilPage() {
               className="absolute right-2 w-8 h-8 rounded-lg bg-action flex items-center justify-center text-on-action hover:bg-[var(--ork-use-background-action-bold-hover)] transition-colors disabled:opacity-50"
             >
               {isThinking ? (
-                <LoadingOutlined style={{ fontSize: "14px" }} className="animate-spin" />
+                <RefreshIcon className="w-3.5 h-3.5 animate-spin" />
               ) : (
-                <SendOutlined style={{ fontSize: "14px" }} className="-ml-0.5" />
+                <SendSquareIcon className="w-3.5 h-3.5 -ml-0.5" />
               )}
             </button>
           </form>

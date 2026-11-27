@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Card, Statistic } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined, MinusOutlined } from '@ant-design/icons';
+import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@solar-icons/react/linear';
 import { PriceRecord } from '@/types/prices';
 
 export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
@@ -70,7 +70,7 @@ export default function MarketPulseStrip({ data }: { data: PriceRecord[] }) {
                 value={pulse.price}
                 precision={0}
                 styles={{ content: { color: color, fontSize: '1.25rem', fontWeight: 600 } }}
-              prefix={isUp ? <ArrowUpOutlined className="relative -top-[1px]" /> : isDown ? <ArrowDownOutlined className="relative -top-[1px]" /> : <MinusOutlined className="relative -top-[1px]" />}
+              prefix={isUp ? <ArrowUpIcon className="w-4 h-4 inline relative -top-[1px]" /> : isDown ? <ArrowDownIcon className="w-4 h-4 inline relative -top-[1px]" /> : <MinusIcon className="w-4 h-4 inline relative -top-[1px]" />}
               suffix={<span className="text-[11px] text-muted font-normal ml-1">F/{pulse.unit}</span>}
               />
             </div>

@@ -3,17 +3,27 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  Sprout,
-  Tractor,
-  Layers,
-  Factory,
-  Wrench,
-  Scale,
-  Wallet,
-  LayoutGrid,
-  Sparkles,
-  ArrowRight,
-} from "lucide-react";
+  SproutIcon,
+  BoneIcon,
+  LayersIcon,
+  FactoryIcon,
+  WrenchIcon,
+  ScaleIcon,
+  WalletMoneyIcon,
+  Widget2Icon,
+  ArrowRightIcon,
+} from "@solar-icons/react/linear";
+import {
+  SproutIcon as SproutBoldDuotoneIcon,
+  BoneIcon as BoneBoldDuotoneIcon,
+  LayersIcon as LayersBoldDuotoneIcon,
+  FactoryIcon as FactoryBoldDuotoneIcon,
+  WrenchIcon as WrenchBoldDuotoneIcon,
+  ScaleIcon as ScaleBoldDuotoneIcon,
+  WalletMoneyIcon as WalletMoneyBoldDuotoneIcon,
+  Widget2Icon as Widget2BoldDuotoneIcon,
+  StarsIcon as StarsBoldDuotoneIcon,
+} from "@solar-icons/react/bold-duotone";
 import VegetalDashboard from "@/components/cultima/vegetal/VegetalDashboard";
 import AnimalDashboard from "@/components/cultima/animal/AnimalDashboard";
 import TransformationDashboard from "@/components/cultima/transformation/TransformationDashboard";
@@ -37,54 +47,63 @@ const VIEWS: {
   label: string;
   desc: string;
   icon: React.ComponentType<{ className?: string }>;
+  activeIcon: React.ComponentType<{ className?: string }>;
 }[] = [
   {
     id: "overview",
     label: "Vue globale",
     desc: "Accès rapide à tous vos ateliers agricoles",
-    icon: LayoutGrid,
+    icon: Widget2Icon,
+    activeIcon: Widget2BoldDuotoneIcon,
   },
   {
     id: "vegetal",
     label: "Végétal",
     desc: "Parcelles, calendrier cultural, sols & rendements",
-    icon: Sprout,
+    icon: SproutIcon,
+    activeIcon: SproutBoldDuotoneIcon,
   },
   {
     id: "animal",
     label: "Élevage",
     desc: "Bandes, silos provende, suivi sanitaire & aquaculture",
-    icon: Tractor,
+    icon: BoneIcon,
+    activeIcon: BoneBoldDuotoneIcon,
   },
   {
     id: "mixte",
     label: "Mixte",
     desc: "Supervision combinée Végétal & Élevage",
-    icon: Layers,
+    icon: LayersIcon,
+    activeIcon: LayersBoldDuotoneIcon,
   },
   {
     id: "transformation",
     label: "Transformation",
     desc: "Lots de production, qualité & maintenance",
-    icon: Factory,
+    icon: FactoryIcon,
+    activeIcon: FactoryBoldDuotoneIcon,
   },
   {
     id: "service",
     label: "Services",
     desc: "Missions terrain, flotte & devis",
-    icon: Wrench,
+    icon: WrenchIcon,
+    activeIcon: WrenchBoldDuotoneIcon,
   },
   {
     id: "negoce",
     label: "Négoce",
     desc: "Entrepôts, flux logistiques & marges",
-    icon: Scale,
+    icon: ScaleIcon,
+    activeIcon: ScaleBoldDuotoneIcon,
   },
   {
     id: "finance",
     label: "Trésorerie",
     desc: "Entrées, sorties & solde en FCFA",
-    icon: Wallet,
+    icon: WalletMoneyIcon,
+    activeIcon: WalletMoneyBoldDuotoneIcon,
   },
 ];
 
@@ -154,8 +173,8 @@ function CultimaContent() {
           className="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto tabstrip-scroll"
         >
           {VIEWS.map((view, idx) => {
-            const Icon = view.icon;
             const selected = activeView === view.id;
+            const Icon = selected ? view.activeIcon : view.icon;
             return (
               <button
                 key={view.id}
@@ -188,7 +207,7 @@ function CultimaContent() {
           aria-label="Configurer Cultima avec Cultisia"
           className="hidden md:inline-flex items-center gap-1.5 min-h-[36px] px-3 rounded-[var(--ork-use-radius-button)] bg-[var(--ork-use-background-brand-subtle)] hover:bg-selected border border-[var(--ork-use-border-selected)] text-t-brand text-xs font-semibold shrink-0 transition-colors"
         >
-          <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          <StarsBoldDuotoneIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
           <span className="xl:hidden">Copilote ERP</span>
           <span className="hidden xl:inline">Configurer avec Cultisia</span>
         </button>
@@ -212,7 +231,7 @@ function CultimaContent() {
                 onClick={() => openCultisia("cultima")}
                 className="inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-[var(--ork-use-radius-button)] bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand text-xs font-semibold shrink-0 transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                <StarsBoldDuotoneIcon className="w-3.5 h-3.5" aria-hidden="true" />
                 Assistant de configuration
               </button>
             </div>
@@ -242,7 +261,7 @@ function CultimaContent() {
                       >
                         <Icon className="w-5 h-5" aria-hidden="true" />
                       </span>
-                      <ArrowRight
+                      <ArrowRightIcon
                         className="w-4 h-4 text-muted group-hover:text-foreground group-hover:translate-x-0.5 transition-all"
                         aria-hidden="true"
                       />

@@ -10,7 +10,7 @@ const appel = appeler as jest.MockedFunction<typeof appeler>;
 
 const plan: PlanDeLaListe = {
   id: "p1", exploitationId: "e1", exploitationNom: "Ferme de Kara", titre: "Tomate 2 ha", version: 2, varianteDe: null,
-  statut: "brouillon", versionMoteur: "1.7.0", calculeLe: null, majLe: "2026-11-27T10:00:00Z",
+  statut: "brouillon", versionMoteur: "1.7.0", moteurObsolete: false, calculeLe: null, majLe: "2026-11-27T10:00:00Z",
 };
 
 describe("MesPlans", () => {

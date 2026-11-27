@@ -78,13 +78,13 @@ export function ProjectStep() {
   return (
     <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h2 className="font-unbounded text-2xl text-white font-bold mb-2">Définition du projet</h2>
-        <p className="text-[#6B857E] text-sm">Localisez votre ferme pour une déduction automatique du sol.</p>
+        <h2 className="font-title text-2xl text-white font-bold mb-2">Définition du projet</h2>
+        <p className="text-[var(--ork-ref-ink-80)] text-sm">Localisez votre ferme pour une déduction automatique du sol.</p>
       </div>
 
       <TextInput
         label="Nom du projet"
-        placeholder="Ex: Ferme Espoir..."
+        placeholder="Ex: Ferme Cultiso..."
         value={state.project.name}
         onChange={e => updateProject({ name: e.target.value })}
       />
@@ -96,14 +96,14 @@ export function ProjectStep() {
           value={locationSearch}
           onChange={handleLocationSearch}
           placeholder="Ex: Kpalimé..."
-          className="w-full bg-[#0A1A14] border border-[#1A3329] text-white rounded-lg p-3 outline-none focus:border-brand-orange transition-colors"
+          className="w-full min-h-[44px] bg-[var(--ork-ref-primary-10)] border border-white/15 text-white rounded-lg p-3 outline-none focus:border-[var(--ork-ref-secondary-70)] transition-colors"
         />
         {locationResults.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-[#1A3329] border border-[#2D4A3E] rounded-lg z-10 max-h-48 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--ork-ref-primary-20)] border border-white/15 rounded-lg z-10 max-h-48 overflow-y-auto">
             {locationResults.map((loc, i) => (
               <div 
                 key={i} 
-                className="p-3 text-sm text-white hover:bg-[#0A1A14] cursor-pointer"
+                className="p-3 text-sm text-white hover:bg-[var(--ork-ref-primary-12)] cursor-pointer"
                 onClick={() => selectLocation(loc)}
               >
                 {loc.name}
@@ -114,13 +114,13 @@ export function ProjectStep() {
       </div>
 
       {detectedSoil && (
-        <div className="p-3 rounded-lg bg-[#0D211A] border border-brand-orange text-brand-orange text-sm font-medium">
+        <div className="p-3 rounded-lg bg-[var(--ork-ref-primary-12)] border border-[var(--ork-ref-secondary-70)] text-[var(--ork-ref-secondary-80)] text-sm font-medium">
           {detectedSoil}
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-[#6B857E]">Chargement...</div>
+        <div className="text-[var(--ork-ref-ink-80)]">Chargement...</div>
       ) : (
         <SelectInput
           label="Culture"

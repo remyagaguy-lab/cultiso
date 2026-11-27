@@ -2,7 +2,8 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { X, Maximize2, Sparkles } from "lucide-react";
+import { CloseIcon, MaximizeSquare2Icon } from "@solar-icons/react/linear";
+import { StarsIcon as StarsBoldDuotoneIcon } from "@solar-icons/react/bold-duotone";
 import { SharedChat } from "@/components/cultisia/SharedChat";
 import { useAppWorkspace } from "./AppWorkspaceContext";
 
@@ -37,7 +38,7 @@ export function CultisiaSidePanel() {
             className="ork-avatar ork-avatar--ai w-8 h-8 flex items-center justify-center shrink-0"
             aria-hidden="true"
           >
-            <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <StarsBoldDuotoneIcon className="w-4 h-4" />
           </span>
           <div className="min-w-0">
             <div className="text-[13px] font-title font-bold text-foreground flex items-center gap-1.5 truncate">
@@ -58,7 +59,7 @@ export function CultisiaSidePanel() {
             aria-label="Ouvrir Cultisia en plein écran"
             className="p-1.5 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-surface transition-colors"
           >
-            <Maximize2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <MaximizeSquare2Icon className="w-4 h-4" />
           </Link>
           <button
             type="button"
@@ -66,7 +67,7 @@ export function CultisiaSidePanel() {
             aria-label="Fermer le panneau Cultisia"
             className="p-1.5 rounded-[var(--ork-use-radius-control)] text-muted hover:text-foreground hover:bg-surface transition-colors"
           >
-            <X className="w-4 h-4" strokeWidth={1.75} />
+            <CloseIcon className="w-4 h-4" />
           </button>
         </div>
       </div>

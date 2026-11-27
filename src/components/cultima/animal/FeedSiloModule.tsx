@@ -1,16 +1,16 @@
 "use client";
 import React from 'react';
 import { 
-  Wheat, 
-  AlertTriangle, 
-  CheckCircle, 
-  Truck, 
-  Clock, 
-  TrendingDown, 
-  Layers,
-  ArrowRight,
-  Plus
-} from 'lucide-react';
+  SproutIcon as Wheat,
+  DangerTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle,
+  DeliveryIcon as Truck,
+  ClockCircleIcon as Clock,
+  GraphDownNewIcon as TrendingDown,
+  LayersIcon as Layers,
+  ArrowRightIcon as ArrowRight,
+  AddCircleIcon as Plus,
+} from '@solar-icons/react/linear';
 import { SiloItem } from './types';
 
 interface FeedSiloModuleProps {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Select, Drawer, Button } from 'antd';
-import { FilterOutlined, ReloadOutlined } from '@ant-design/icons';
+import { FilterIcon, RestartIcon } from '@solar-icons/react/linear';
 import { Product } from '@/types/prices';
 import { PriceFilters } from '@/hooks/usePriceFilters';
 
@@ -95,7 +95,7 @@ export default function MarketFilters({
       </div>
       <div className="pt-2">
         <Button 
-          icon={<ReloadOutlined />} 
+          icon={<RestartIcon className="w-4 h-4" />} 
           onClick={onReset}
           className="w-full !bg-sunken hover:!bg-[var(--ork-use-background-neutral-default-hover)] !text-foreground !border-border-strong rounded-[var(--ork-use-radius-button)]"
         >
@@ -117,7 +117,7 @@ export default function MarketFilters({
       <div className="lg:hidden mb-4">
         <Button 
           type="primary" 
-          icon={<FilterOutlined />} 
+          icon={<FilterIcon className="w-4 h-4" />} 
           onClick={() => setMobileDrawerOpen(true)}
           className="w-full bg-action hover:bg-[var(--ork-use-background-action-bold-hover)] text-on-action border-none rounded-[var(--ork-use-radius-button)] shadow-none"
         >

@@ -1,21 +1,23 @@
 "use client";
 import React from 'react';
 import { 
-  Users, 
-  Activity, 
-  Scale, 
-  Wheat, 
-  Egg, 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle2, 
-  ArrowUpRight, 
-  ArrowDownRight,
-  Droplets,
-  Wallet,
-  Milk,
-  Fish
-} from 'lucide-react';
+  UsersGroupRoundedIcon as Users,
+  Pulse2Icon as Activity,
+  ScaleIcon as Scale,
+  SproutIcon as Wheat,
+  HeartPulseIcon as Egg,
+  GraphNewUpIcon as TrendingUp,
+  DangerTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle2,
+  ArrowRightUpIcon as ArrowUpRight,
+  ArrowRightDownIcon as ArrowDownRight,
+  WaterdropsIcon as Droplets,
+  BottleIcon as Milk,
+  FishIcon as Fish,
+} from '@solar-icons/react/linear';
+import {
+  WalletMoneyIcon as Wallet,
+} from '@solar-icons/react/bold-duotone';
 import { ZootechKPIs, SpeciesCategory } from './types';
 
 interface MetricCardsProps {

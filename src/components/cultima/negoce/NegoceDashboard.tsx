@@ -6,11 +6,28 @@ import {
   AreaChart, Area, ComposedChart, Scatter, Cell, PieChart, Pie
 } from 'recharts';
 import { 
-  TrendingUp, TrendingDown, Wallet, Package, Truck, 
-  Search, Bell, Settings, Menu, ChevronDown, 
-  ArrowUpRight, ArrowDownRight, Activity, Percent, Scale, 
-  Warehouse, Zap, Anchor, Info
-} from 'lucide-react';
+  GraphNewUpIcon as TrendingUp,
+  GraphDownNewIcon as TrendingDown,
+  BoxIcon as Package,
+  DeliveryIcon as Truck,
+  MagnifierIcon as Search,
+  BellIcon as Bell,
+  SettingsIcon as Settings,
+  HamburgerMenuIcon as Menu,
+  AltArrowDownIcon as ChevronDown,
+  ArrowRightUpIcon as ArrowUpRight,
+  ArrowRightDownIcon as ArrowDownRight,
+  Pulse2Icon as Activity,
+  PercentIcon as Percent,
+  ScaleIcon as Scale,
+  Buildings2Icon as Warehouse,
+  AnchorIcon as Anchor,
+  InfoCircleIcon as Info,
+} from '@solar-icons/react/linear';
+import {
+  WalletMoneyIcon as Wallet,
+  BoltIcon as Zap,
+} from '@solar-icons/react/bold-duotone';
 
 // --- MOCK DATA ---
 const marketPrices = [

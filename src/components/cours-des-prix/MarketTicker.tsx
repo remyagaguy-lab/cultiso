@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ArrowUpOutlined, ArrowDownOutlined, MinusOutlined } from '@ant-design/icons';
+import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@solar-icons/react/linear';
 import { PriceRecord } from '@/types/prices';
 
 export default function MarketTicker({ data }: { data: PriceRecord[] }) {
@@ -75,7 +75,7 @@ export default function MarketTicker({ data }: { data: PriceRecord[] }) {
                 {pulse.price.toLocaleString('fr-FR')} F
               </span>
               <span className={`flex items-center text-[12px] font-mono-numbers font-medium ml-1 ${colorClass}`}>
-                {isUp ? <ArrowUpOutlined className="text-[10px] mr-1" /> : isDown ? <ArrowDownOutlined className="text-[10px] mr-1" /> : <MinusOutlined className="text-[10px] mr-1" />}
+                {isUp ? <ArrowUpIcon className="w-3 h-3 mr-1" /> : isDown ? <ArrowDownIcon className="w-3 h-3 mr-1" /> : <MinusIcon className="w-3 h-3 mr-1" />}
                 {pulse.diff !== 0 ? `${pulse.percent.toFixed(1)}%` : '---'}
               </span>
             </div>

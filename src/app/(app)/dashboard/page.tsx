@@ -3,29 +3,54 @@
 import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
-  Plus,
-  ArrowRight,
-  LineChart,
-  Wallet,
-  CheckSquare,
-  TrendingUp,
-  Sparkles,
-  Sprout,
-  Tractor,
-  Factory,
-  Scale,
-  Wrench,
-  Search,
-  Trash2,
-  MapPin,
-  ShoppingBag,
-  UserCheck,
-  FileSpreadsheet,
-} from "lucide-react";
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  AddCircleIcon,
+  ArrowRightIcon,
+  Chart2Icon,
+  WalletMoneyIcon,
+  GraphNewUpIcon,
+  SproutIcon,
+  BoneIcon,
+  FactoryIcon,
+  ScaleIcon,
+  WrenchIcon,
+  MagnifierIcon,
+  TrashBinTrashIcon,
+  Bag2Icon,
+  UserCheckIcon,
+  DocumentTextIcon,
+  CloudSunIcon,
+  CompassIcon,
+  CheckCircleIcon,
+} from "@solar-icons/react/linear";
+import {
+  Chart2Icon as Chart2BoldDuotoneIcon,
+  WalletMoneyIcon as WalletMoneyBoldDuotoneIcon,
+  StarsIcon as StarsBoldDuotoneIcon,
+  MapPointIcon as MapPointBoldDuotoneIcon,
+  GraphNewUpIcon as GraphNewUpBoldDuotoneIcon,
+  ShieldCheckIcon as ShieldCheckBoldDuotoneIcon,
+  DangerTriangleIcon as DangerTriangleBoldDuotoneIcon,
+} from "@solar-icons/react/bold-duotone";
 import { useAppWorkspace } from "@/components/app/AppWorkspaceContext";
 import { getLocalItem, setLocalItem, subscribeLocalStore } from "@/components/app/localStore";
 import { getFilteredPrices } from "@/app/actions/priceActions";
 import type { PriceRecord } from "@/types/prices";
+import {
+  DEMO_ATELIERS,
+  DEMO_CASHFLOW_SERIES,
+  DEMO_DECISION_ALERTS,
+  DEMO_FARM_SUMMARY,
+} from "@/components/dashboard/demoFarmData";
+import { DashboardTour } from "@/components/dashboard/DashboardTour";
 
 interface TaskItem {
   id: string;
@@ -36,22 +61,30 @@ interface TaskItem {
 
 type PlanFilter = "all" | "draft" | "done";
 
+const TOUR_STORAGE_KEY = "cultiso_dashboard_tour_done";
+
 const DEFAULT_STARTER_TASKS: TaskItem[] = [
   {
     id: "starter-1",
-    title: "Modéliser un business plan dans Cultiplan",
+    title: "Commander 1,5 t de provende croissance (Bande B-14)",
     priority: "urgent",
     done: false,
   },
   {
     id: "starter-2",
-    title: "Choisir votre filière active dans Cultima ERP",
-    priority: "normal",
+    title: "Valider le traitement préventif Tomate irriguée (06h-09h)",
+    priority: "urgent",
     done: false,
   },
   {
     id: "starter-3",
-    title: "Vérifier les derniers cours des céréales",
+    title: "Modéliser un business plan dans Cultiplan",
+    priority: "normal",
+    done: false,
+  },
+  {
+    id: "starter-4",
+    title: "Vérifier les derniers cours du maïs sur Lomé",
     priority: "normal",
     done: false,
   },
@@ -62,37 +95,37 @@ const CULTIMA_POLES = [
     id: "vegetal",
     label: "Végétal",
     desc: "Parcelles & rendements",
-    icon: Sprout,
+    icon: SproutIcon,
   },
   {
     id: "animal",
     label: "Élevage",
     desc: "Bandes & zootechnie",
-    icon: Tractor,
+    icon: BoneIcon,
   },
   {
     id: "transformation",
     label: "Transformation",
     desc: "Lots & qualité",
-    icon: Factory,
+    icon: FactoryIcon,
   },
   {
     id: "service",
     label: "Services",
     desc: "Missions & flotte",
-    icon: Wrench,
+    icon: WrenchIcon,
   },
   {
     id: "negoce",
     label: "Négoce",
     desc: "Stocks & marchés",
-    icon: Scale,
+    icon: ScaleIcon,
   },
   {
     id: "finance",
     label: "Trésorerie",
     desc: "Recettes & dépenses",
-    icon: Wallet,
+    icon: WalletMoneyIcon,
   },
 ];
 
@@ -122,10 +155,29 @@ export default function DashboardPage() {
     openCultisia,
   } = useAppWorkspace();
 
+  const isDemo = Boolean(activeWorkspace.isDemo);
+
   const firstName = useMemo(
     () => userDisplayName.split(" ")[0] || "Agripreneur",
     [userDisplayName]
   );
+
+  // Visite guidée : ouverture automatique la 1ère fois sur l'espace démo (hors jsdom)
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (navigator.userAgent.toLowerCase().includes("jsdom")) return;
+    if (!isDemo) return;
+    if (getLocalItem(TOUR_STORAGE_KEY) !== "true") {
+      const timer = window.setTimeout(() => setIsTourOpen(true), 450);
+      return () => window.clearTimeout(timer);
+    }
+  }, [isDemo]);
+
+  const handleCloseTour = () => {
+    setIsTourOpen(false);
+    setLocalItem(TOUR_STORAGE_KEY, "true");
+  };
 
   // Market pill from real Supabase price records
   const [latestPrice, setLatestPrice] = useState<PriceRecord | null>(null);
@@ -148,7 +200,7 @@ export default function DashboardPage() {
     };
   }, []);
 
-  // LocalStorage draft from Cultiplan (hydrated cleanly via useSyncExternalStore)
+  // LocalStorage draft from Cultiplan
   const rawDraft = useSyncExternalStore(
     subscribeLocalStore,
     () => getLocalItem("cultiplan_latest"),
@@ -326,28 +378,35 @@ export default function DashboardPage() {
     tabRefs.current[nextIdx]?.focus();
   };
 
+  const displayedCashNet = isDemo
+    ? DEMO_FARM_SUMMARY.cashBalanceFcfa
+    : treasuryStats.net;
+
   return (
     <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* ─── 1. Compact Header Strip ─── */}
-      <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* ─── 1. Bandeau de Contexte & Pilotage ─── */}
+      <section
+        data-tour="workspace-banner"
+        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+      >
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <h1 className="text-xl sm:text-2xl font-title font-bold text-foreground tracking-[-0.02em] m-0">
               Bonjour {firstName}
             </h1>
-            {activeWorkspace.isDemo && (
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--ork-use-radius-badge)] bg-sunken text-muted border border-border">
-                Espace démo
+            {isDemo && (
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-[var(--ork-use-radius-badge)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand border border-[var(--ork-use-border-selected)]">
+                Mode Démo · Données simulées
               </span>
             )}
           </div>
-          <p className="text-[13.5px] text-muted m-0 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <p className="text-[13.5px] text-muted m-0 flex flex-wrap items-center gap-x-2.5 gap-y-1">
             <span className="font-semibold text-foreground">
               {activeWorkspace.name}
             </span>
             {activeWorkspace.location && (
               <span className="inline-flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-t-brand" aria-hidden="true" />
+                <MapPointBoldDuotoneIcon className="w-3.5 h-3.5 text-t-brand" aria-hidden="true" />
                 {activeWorkspace.location}
               </span>
             )}
@@ -355,6 +414,12 @@ export default function DashboardPage() {
               <span>
                 · {activeWorkspace.surface_area}{" "}
                 {activeWorkspace.surface_unit || "ha"}
+              </span>
+            )}
+            {isDemo && (
+              <span className="inline-flex items-center gap-1 text-xs text-muted">
+                · <CloudSunIcon className="w-3.5 h-3.5 text-t-action" aria-hidden="true" />
+                {DEMO_FARM_SUMMARY.weatherBadge}
               </span>
             )}
           </p>
@@ -366,7 +431,7 @@ export default function DashboardPage() {
               href="/marches"
               className="inline-flex items-center gap-2 min-h-[38px] px-3 rounded-[var(--ork-use-radius-control)] bg-surface border border-border hover:border-[var(--ork-use-border-selected)] text-xs font-medium text-foreground no-underline transition-colors"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-t-brand shrink-0" aria-hidden="true" />
+              <GraphNewUpIcon className="w-3.5 h-3.5 text-t-brand shrink-0" aria-hidden="true" />
               <span className="text-muted">Marché :</span>
               <span className="font-bold">{latestPrice.product?.name}</span>
               <span className="font-mono-numbers font-bold text-t-brand">
@@ -376,28 +441,81 @@ export default function DashboardPage() {
             </Link>
           )}
 
-          <Link
-            href="/marches"
-            className="inline-flex items-center gap-1.5 min-h-[38px] px-3.5 rounded-[var(--ork-use-radius-button)] bg-surface border border-border hover:bg-sunken text-foreground text-xs font-semibold no-underline transition-colors"
+          <button
+            type="button"
+            onClick={() => setIsTourOpen(true)}
+            className="inline-flex items-center gap-1.5 min-h-[38px] px-3 rounded-[var(--ork-use-radius-button)] bg-surface border border-border hover:bg-sunken text-foreground text-xs font-semibold transition-colors"
           >
-            Cours des prix
-          </Link>
+            <CompassIcon className="w-3.5 h-3.5 text-t-brand" aria-hidden="true" />
+            Visite guidée
+          </button>
 
           <Link
             href="/cultiplan"
             className="inline-flex items-center gap-1.5 min-h-[38px] px-4 rounded-[var(--ork-use-radius-button)] bg-action hover:bg-[var(--ork-use-background-action-bold-hover)] text-on-action text-xs font-semibold no-underline transition-colors shadow-raised"
           >
-            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+            <AddCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />
             Nouveau Business Plan
           </Link>
         </div>
       </section>
 
-      {/* ─── 2. Three Focused KPI Cards ─── */}
+      {/* ─── 2. Les 4 KPIs Décisionnels ─── */}
       <section
+        data-tour="kpis-row"
         aria-label="Indicateurs clés de pilotage"
-        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
       >
+        <Link
+          href="/cultima?view=finance"
+          className="group bg-surface rounded-[var(--ork-use-radius-card)] border border-border hover:border-[var(--ork-use-border-selected)] p-4 no-underline transition-colors flex flex-col justify-between gap-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
+              Trésorerie nette
+            </span>
+            <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-action-subtle)] text-t-action flex items-center justify-center">
+              <WalletMoneyBoldDuotoneIcon className="w-4 h-4" aria-hidden="true" />
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-xl sm:text-2xl font-bold text-foreground font-mono-numbers truncate">
+              {loadingData && !isDemo ? "—" : formatFcfa(displayedCashNet)}
+            </span>
+            <span className="text-xs font-semibold text-t-brand shrink-0">
+              {isDemo
+                ? DEMO_FARM_SUMMARY.cashDeltaPct
+                : treasuryStats.count > 0
+                  ? `${treasuryStats.count} op.`
+                  : "Aucune op."}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href="/cultima"
+          className="group bg-surface rounded-[var(--ork-use-radius-card)] border border-border hover:border-[var(--ork-use-border-selected)] p-4 no-underline transition-colors flex flex-col justify-between gap-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
+              Marge brute campagne
+            </span>
+            <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center">
+              <GraphNewUpBoldDuotoneIcon className="w-4 h-4" aria-hidden="true" />
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-xl sm:text-2xl font-bold text-foreground font-mono-numbers truncate">
+              {isDemo
+                ? formatFcfa(DEMO_FARM_SUMMARY.projectedMarginFcfa)
+                : formatFcfa(Math.max(0, treasuryStats.income - treasuryStats.expense))}
+            </span>
+            <span className="text-xs font-semibold text-t-brand shrink-0">
+              {isDemo ? `Marge ${DEMO_FARM_SUMMARY.marginRatePct} %` : "Campagne"}
+            </span>
+          </div>
+        </Link>
+
         <Link
           href="/cultiplan"
           className="group bg-surface rounded-[var(--ork-use-radius-card)] border border-border hover:border-[var(--ork-use-border-selected)] p-4 no-underline transition-colors flex flex-col justify-between gap-3"
@@ -407,39 +525,20 @@ export default function DashboardPage() {
               Business Plans · Cultiplan
             </span>
             <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center">
-              <LineChart className="w-4 h-4" aria-hidden="true" />
+              <Chart2BoldDuotoneIcon className="w-4 h-4" aria-hidden="true" />
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="text-2xl font-bold text-foreground font-mono-numbers">
-              {loadingData ? "—" : normalizedPlans.length}
+            <span className="text-xl sm:text-2xl font-bold text-foreground font-mono-numbers">
+              {isDemo
+                ? `ROI ${DEMO_FARM_SUMMARY.cultiplanRoiPct} %`
+                : loadingData
+                  ? "—"
+                  : normalizedPlans.length}
             </span>
             <span className="text-xs font-semibold text-t-brand group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-              Ouvrir <ArrowRight className="w-3.5 h-3.5" />
-            </span>
-          </div>
-        </Link>
-
-        <Link
-          href="/cultima?view=finance"
-          className="group bg-surface rounded-[var(--ork-use-radius-card)] border border-border hover:border-[var(--ork-use-border-selected)] p-4 no-underline transition-colors flex flex-col justify-between gap-3"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
-              Trésorerie nette · Cultima
-            </span>
-            <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-action-subtle)] text-t-action flex items-center justify-center">
-              <Wallet className="w-4 h-4" aria-hidden="true" />
-            </span>
-          </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="text-2xl font-bold text-foreground font-mono-numbers truncate">
-              {loadingData ? "—" : formatFcfa(treasuryStats.net)}
-            </span>
-            <span className="text-xs text-muted shrink-0">
-              {treasuryStats.count > 0
-                ? `${treasuryStats.count} op.`
-                : "Aucune op."}
+              {isDemo ? `Retour ${DEMO_FARM_SUMMARY.paybackMonths} mois` : "Ouvrir"}{" "}
+              <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </div>
         </Link>
@@ -447,25 +546,29 @@ export default function DashboardPage() {
         <div className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border p-4 flex flex-col justify-between gap-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
-              Priorités du jour
+              Santé opérationnelle
             </span>
             <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center">
-              <CheckSquare className="w-4 h-4" aria-hidden="true" />
+              <ShieldCheckBoldDuotoneIcon className="w-4 h-4" aria-hidden="true" />
             </span>
           </div>
           <div>
             <div className="flex items-baseline justify-between gap-2 mb-2">
-              <span className="text-2xl font-bold text-foreground font-mono-numbers">
-                {tasksSummary.remaining}
+              <span className="text-xl sm:text-2xl font-bold text-foreground font-mono-numbers">
+                {isDemo ? `${DEMO_FARM_SUMMARY.operationalHealthPct} %` : `${tasksSummary.pct} %`}
               </span>
               <span className="text-xs text-muted">
-                {tasksSummary.completed}/{tasksSummary.total} terminées
+                {isDemo
+                  ? `${DEMO_FARM_SUMMARY.activeAlertsCount} alertes · ${tasksSummary.remaining} tâches`
+                  : `${tasksSummary.completed}/${tasksSummary.total} tâches`}
               </span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-sunken overflow-hidden">
               <div
                 className="h-full bg-brand rounded-full transition-all duration-300"
-                style={{ width: `${tasksSummary.pct}%` }}
+                style={{
+                  width: `${isDemo ? DEMO_FARM_SUMMARY.operationalHealthPct : tasksSummary.pct}%`,
+                }}
               />
             </div>
           </div>
@@ -474,9 +577,157 @@ export default function DashboardPage() {
 
       {/* ─── 3. Bento Workspace Grid (8 / 4) ─── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* LEFT COLUMN (8 cols) */}
-        <div className="lg:col-span-8 space-y-5 min-w-0">
-          {/* Business Plans List View (ClickUp List Style) */}
+        {/* COLONNE GAUCHE (8 cols) */}
+        <div data-tour="ateliers-section" className="lg:col-span-8 space-y-5 min-w-0">
+          {/* Graphique Flux de Trésorerie : Réel vs Prévisionnel + Ateliers Actifs (en mode démo) */}
+          {isDemo && (
+            <>
+              <section className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h2 className="text-[15px] font-title font-bold text-foreground m-0">
+                      Trésorerie : Réel (Cultima) vs Prévisionnel (Cultiplan)
+                    </h2>
+                    <p className="text-xs text-muted m-0 mt-0.5">
+                      Suivi mensuel cumulé sur les 6 derniers mois (en FCFA).
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px] font-semibold">
+                    <span className="inline-flex items-center gap-1.5 text-t-brand">
+                      <span className="w-2.5 h-2.5 rounded-full bg-brand" />
+                      Réel Cultima
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-t-action">
+                      <span className="w-2.5 h-2.5 rounded-full bg-action" />
+                      Prévisionnel
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-[220px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={DEMO_CASHFLOW_SERIES}
+                      margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="dashReelGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#007468" stopOpacity={0.28} />
+                          <stop offset="95%" stopColor="#007468" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--ork-use-border-default)" vertical={false} />
+                      <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--ork-use-text-subtle)" />
+                      <YAxis
+                        tick={{ fontSize: 11 }}
+                        stroke="var(--ork-use-text-subtle)"
+                        tickFormatter={(v: number) => `${(v / 1_000_000).toFixed(1)}M`}
+                        width={44}
+                      />
+                      <RechartsTooltip
+                        formatter={(value) => formatFcfa(Number(value ?? 0))}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="previsionFcfa"
+                        name="Prévisionnel"
+                        stroke="#D0541F"
+                        strokeWidth={2}
+                        strokeDasharray="4 4"
+                        fill="none"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="reelFcfa"
+                        name="Réel Cultima"
+                        stroke="#007468"
+                        strokeWidth={2.5}
+                        fill="url(#dashReelGrad)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              <section className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border overflow-hidden">
+                <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-2">
+                  <div>
+                    <h2 className="text-[15px] font-title font-bold text-foreground m-0">
+                      Ateliers actifs sur Ferme Cultiso
+                    </h2>
+                    <p className="text-xs text-muted m-0 mt-0.5">
+                      Vue consolidée Végétal, Élevage et Transformation.
+                    </p>
+                  </div>
+                  <Link
+                    href="/cultima"
+                    className="text-xs font-semibold text-t-brand hover:underline no-underline inline-flex items-center gap-1 shrink-0"
+                  >
+                    Ouvrir Cultima <ArrowRightIcon className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b border-border bg-sunken/50 text-[11px] uppercase tracking-wider text-muted">
+                        <th className="py-2.5 px-4 font-bold">Atelier</th>
+                        <th className="py-2.5 px-3 font-bold">Cycle</th>
+                        <th className="py-2.5 px-3 font-bold text-right">Coût engagé</th>
+                        <th className="py-2.5 px-3 font-bold text-right">Revenu estimé</th>
+                        <th className="py-2.5 px-4 font-bold text-right">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {DEMO_ATELIERS.map((row) => (
+                        <tr key={row.id} className="hover:bg-sunken/50 transition-colors">
+                          <td className="py-3 px-4">
+                            <Link
+                              href={row.href}
+                              className="font-semibold text-foreground hover:text-t-brand no-underline block"
+                            >
+                              {row.name}
+                            </Link>
+                            <span className="text-[11px] text-muted">{row.poleLabel}</span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <div className="text-foreground/90">{row.cycleInfo}</div>
+                            <div className="w-24 h-1.5 rounded-full bg-sunken mt-1 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-brand"
+                                style={{ width: `${row.progress}%` }}
+                              />
+                            </div>
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono-numbers text-muted">
+                            {formatFcfa(row.costFcfa)}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono-numbers font-semibold text-foreground">
+                            {formatFcfa(row.expectedRevenueFcfa)}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-[var(--ork-use-radius-badge)] text-[11px] font-semibold ${
+                                row.status === "critique"
+                                  ? "bg-[var(--ork-use-background-action-subtle)] text-t-action border border-[var(--ork-use-border-warning)]"
+                                  : row.status === "attention"
+                                    ? "bg-sunken text-foreground border border-border"
+                                    : "bg-[var(--ork-use-background-brand-subtle)] text-t-brand"
+                              }`}
+                            >
+                              {row.statusLabel}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
+
+          {/* Business Plans List View (Cultiplan) */}
           <section className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border overflow-hidden">
             <div className="px-5 pt-4 pb-3 border-b border-border">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3">
@@ -490,7 +741,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="relative w-full sm:w-56">
-                  <Search
+                  <MagnifierIcon
                     className="w-3.5 h-3.5 text-muted absolute left-2.5 top-1/2 -translate-y-1/2"
                     aria-hidden="true"
                   />
@@ -498,19 +749,15 @@ export default function DashboardPage() {
                     type="search"
                     value={planSearch}
                     onChange={(e) => setPlanSearch(e.target.value)}
-                    placeholder="Filtrer les projets..."
-                    aria-label="Filtrer les business plans"
-                    className="w-full h-9 pl-8 pr-2.5 rounded-[var(--ork-use-radius-control)] bg-sunken border border-border text-xs text-foreground placeholder:text-muted focus:outline-none focus:border-[var(--ork-use-border-brand)]"
+                    placeholder="Filtrer mes projets..."
+                    aria-label="Filtrer mes business plans"
+                    className="w-full h-8 pl-8 pr-3 rounded-[var(--ork-use-radius-control)] bg-sunken border border-border text-xs text-foreground placeholder:text-muted focus:outline-none focus:border-[var(--ork-use-border-brand)]"
                   />
                 </div>
               </div>
 
-              {/* Accessible Tabs */}
-              <div
-                role="tablist"
-                aria-label="Filtrer les business plans par statut"
-                className="flex items-center gap-2 overflow-x-auto tabstrip-scroll"
-              >
+              {/* Filter Tabs */}
+              <div role="tablist" aria-label="Filtrer par statut" className="flex items-center gap-1">
                 {tabItems.map((tab, idx) => {
                   const selected = planFilter === tab.id;
                   return (
@@ -520,25 +767,18 @@ export default function DashboardPage() {
                         tabRefs.current[idx] = el;
                       }}
                       role="tab"
-                      type="button"
                       aria-selected={selected}
                       tabIndex={selected ? 0 : -1}
                       onClick={() => setPlanFilter(tab.id)}
                       onKeyDown={(e) => handleTabKeyDown(e, idx)}
-                      className={`relative px-3 py-1.5 min-h-[34px] rounded-[var(--ork-use-radius-control)] text-xs font-semibold whitespace-nowrap shrink-0 flex items-center gap-1.5 transition-colors ${
+                      className={`px-3 py-1.5 rounded-[var(--ork-use-radius-control)] text-xs font-semibold transition-colors ${
                         selected
                           ? "bg-selected text-t-brand ring-1 ring-inset ring-[var(--ork-use-border-selected)]"
                           : "text-muted hover:text-foreground hover:bg-sunken"
                       }`}
                     >
-                      <span>{tab.label}</span>
-                      <span
-                        className={`px-1.5 py-0.2 rounded-[var(--ork-use-radius-badge)] text-[10.5px] font-mono-numbers ${
-                          selected
-                            ? "bg-[var(--ork-use-background-brand-subtle)] text-t-brand"
-                            : "bg-sunken text-muted"
-                        }`}
-                      >
+                      {tab.label}
+                      <span className="ml-1.5 text-[11px] font-mono-numbers opacity-75">
                         {tab.count}
                       </span>
                     </button>
@@ -548,7 +788,7 @@ export default function DashboardPage() {
             </div>
 
             {loadingData ? (
-              <div className="p-6 space-y-3">
+              <div className="p-5 space-y-3">
                 {[1, 2, 3].map((row) => (
                   <div
                     key={row}
@@ -559,7 +799,7 @@ export default function DashboardPage() {
             ) : filteredPlans.length === 0 ? (
               <div className="px-6 py-10 text-center">
                 <div className="w-10 h-10 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center mx-auto mb-3">
-                  <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
+                  <DocumentTextIcon className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <p className="text-sm font-semibold text-foreground mb-1">
                   {planSearch
@@ -573,7 +813,7 @@ export default function DashboardPage() {
                   href="/cultiplan"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[var(--ork-use-radius-button)] bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand text-xs font-semibold no-underline transition-colors"
                 >
-                  <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                  <AddCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />
                   Démarrer un Business Plan
                 </Link>
               </div>
@@ -587,7 +827,7 @@ export default function DashboardPage() {
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="w-8 h-8 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center shrink-0 group-hover:bg-brand group-hover:text-on-brand transition-colors">
-                          <LineChart className="w-4 h-4" aria-hidden="true" />
+                          <Chart2Icon className="w-4 h-4" aria-hidden="true" />
                         </span>
                         <div className="min-w-0">
                           <div className="text-[13.5px] font-semibold text-foreground truncate">
@@ -641,7 +881,7 @@ export default function DashboardPage() {
             )}
           </section>
 
-          {/* Cultima ERP Direct Pole Access (Spaces grid) */}
+          {/* Cultima ERP Direct Pole Access */}
           <section className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border p-5">
             <div className="flex items-center justify-between gap-2 mb-4">
               <div>
@@ -656,7 +896,7 @@ export default function DashboardPage() {
                 href="/cultima"
                 className="text-xs font-semibold text-t-brand hover:underline no-underline inline-flex items-center gap-1 shrink-0"
               >
-                Tout voir <ArrowRight className="w-3.5 h-3.5" />
+                Tout voir <ArrowRightIcon className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -687,8 +927,65 @@ export default function DashboardPage() {
           </section>
         </div>
 
-        {/* RIGHT COLUMN (4 cols) */}
+        {/* COLONNE DROITE (4 cols) */}
         <div className="lg:col-span-4 space-y-5 min-w-0">
+          {/* Alertes & Décisions du Jour */}
+          <section
+            data-tour="decisions-section"
+            className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border overflow-hidden"
+          >
+            <div className="px-4 py-3.5 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <DangerTriangleBoldDuotoneIcon className="w-4 h-4 text-t-action" aria-hidden="true" />
+                <h2 className="text-[14px] font-title font-bold text-foreground m-0">
+                  Alertes &amp; Décisions
+                </h2>
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-[var(--ork-use-radius-badge)] bg-[var(--ork-use-background-action-subtle)] text-t-action">
+                {isDemo ? `${DEMO_DECISION_ALERTS.length} actions` : "À jour"}
+              </span>
+            </div>
+
+            {isDemo ? (
+              <div className="divide-y divide-border">
+                {DEMO_DECISION_ALERTS.map((alert) => (
+                  <div key={alert.id} className="p-4 space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`text-[10.5px] font-bold uppercase tracking-wider ${
+                          alert.severity === "urgent"
+                            ? "text-t-action"
+                            : alert.severity === "opportunity"
+                              ? "text-t-brand"
+                              : "text-muted"
+                        }`}
+                      >
+                        {alert.category}
+                      </span>
+                      <Link
+                        href={alert.href}
+                        className="text-[11px] font-semibold text-t-brand hover:underline no-underline"
+                      >
+                        {alert.actionLabel} →
+                      </Link>
+                    </div>
+                    <div className="text-[13px] font-bold text-foreground">
+                      {alert.title}
+                    </div>
+                    <p className="text-xs text-muted m-0 leading-relaxed">
+                      {alert.detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 flex items-center gap-2.5 text-xs text-muted">
+                <CheckCircleIcon className="w-4 h-4 text-t-brand shrink-0" />
+                <span>Aucune alerte critique détectée sur votre exploitation.</span>
+              </div>
+            )}
+          </section>
+
           {/* Interactive Daily Checklist */}
           <section className="bg-surface rounded-[var(--ork-use-radius-card)] border border-border overflow-hidden">
             <div className="px-4 py-3.5 border-b border-border flex items-center justify-between">
@@ -729,7 +1026,7 @@ export default function DashboardPage() {
               </div>
             </form>
 
-            <ul className="divide-y divide-border list-none m-0 p-0 max-h-[280px] overflow-y-auto custom-scrollbar">
+            <ul className="divide-y divide-border list-none m-0 p-0 max-h-[260px] overflow-y-auto custom-scrollbar">
               {tasks.length === 0 ? (
                 <li className="px-4 py-6 text-center text-xs text-muted">
                   Tout est à jour pour aujourd&apos;hui.
@@ -769,7 +1066,7 @@ export default function DashboardPage() {
                         aria-label={`Supprimer ${task.title}`}
                         className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-[var(--ork-use-radius-control)] text-muted hover:text-t-action transition-opacity"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <TrashBinTrashIcon className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </li>
@@ -778,11 +1075,14 @@ export default function DashboardPage() {
             </ul>
           </section>
 
-          {/* Compact Cultisia Copilot Card (ClickUp Brain style) */}
-          <section className="rounded-[var(--ork-use-radius-card)] border border-[var(--ork-use-border-selected)] bg-selected/60 p-4 space-y-3">
+          {/* Compact Cultisia Copilot Card */}
+          <section
+            data-tour="cultisia-card"
+            className="rounded-[var(--ork-use-radius-card)] border border-[var(--ork-use-border-selected)] bg-selected/60 p-4 space-y-3"
+          >
             <div className="flex items-center gap-2.5">
               <span className="ork-avatar ork-avatar--ai w-8 h-8 flex items-center justify-center shrink-0" aria-hidden="true">
-                <Sparkles className="w-3.5 h-3.5" strokeWidth={1.75} />
+                <StarsBoldDuotoneIcon className="w-4 h-4" />
               </span>
               <div className="min-w-0">
                 <h2 className="text-[13.5px] font-title font-bold text-foreground m-0 flex items-center gap-1.5">
@@ -790,12 +1090,14 @@ export default function DashboardPage() {
                   <span className="ork-avatar-ai-label">IA</span>
                 </h2>
                 <p className="text-[11px] text-muted m-0">
-                  Agronomie, rentabilité & prix du marché
+                  Agronomie, rentabilité &amp; prix du marché
                 </p>
               </div>
             </div>
             <p className="text-xs text-foreground/85 leading-relaxed m-0">
-              Besoin d&apos;un avis technique sur une culture, d&apos;un dosage NPK ou d&apos;estimer votre marge ? Ouvrez le panneau latéral sans quitter cette page.
+              {isDemo
+                ? "Simulez l'impact d'une extension de 2 ha de tomate sur votre BFR ou obtenez un dosage NPK adapté à Kpalimé."
+                : "Besoin d'un avis technique sur une culture, d'un dosage NPK ou d'estimer votre marge ? Ouvrez le panneau latéral sans quitter cette page."}
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <button
@@ -803,7 +1105,7 @@ export default function DashboardPage() {
                 onClick={() => openCultisia("cultisia")}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] rounded-[var(--ork-use-radius-button)] bg-brand hover:bg-[var(--ork-use-background-brand-bold-hover)] text-on-brand text-xs font-semibold transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                <StarsBoldDuotoneIcon className="w-3.5 h-3.5" aria-hidden="true" />
                 Ouvrir le copilote
               </button>
               <Link
@@ -828,27 +1130,27 @@ export default function DashboardPage() {
             <div className="space-y-2.5">
               <div className="flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-brand-subtle)] text-t-brand flex items-center justify-center shrink-0">
-                  <ShoppingBag className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Bag2Icon className="w-3.5 h-3.5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-foreground">
                     Cultishop
                   </div>
                   <div className="text-[11px] text-muted truncate">
-                    Approvisionnement direct en intrants & semences
+                    Approvisionnement direct en intrants &amp; semences
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="w-7 h-7 rounded-[var(--ork-use-radius-control)] bg-[var(--ork-use-background-action-subtle)] text-t-action flex items-center justify-center shrink-0">
-                  <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                  <UserCheckIcon className="w-3.5 h-3.5" aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-foreground">
                     Cultiseil
                   </div>
                   <div className="text-[11px] text-muted truncate">
-                    Accompagnement par des ingénieurs agronomes
+                    Accompagnement terrain par nos agronomes
                   </div>
                 </div>
               </div>
@@ -856,6 +1158,9 @@ export default function DashboardPage() {
           </section>
         </div>
       </div>
+
+      {/* Visite guidée interactive */}
+      <DashboardTour open={isTourOpen} onClose={handleCloseTour} />
     </div>
   );
 }

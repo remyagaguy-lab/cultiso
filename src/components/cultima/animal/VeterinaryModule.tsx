@@ -1,16 +1,16 @@
 "use client";
 import React from 'react';
 import { 
-  ShieldCheck, 
-  Stethoscope, 
-  AlertTriangle, 
-  Clock, 
-  Calendar, 
-  User, 
-  CheckCircle2, 
-  AlertCircle,
-  FileText
-} from 'lucide-react';
+  ShieldCheckIcon as ShieldCheck,
+  StethoscopeIcon as Stethoscope,
+  DangerTriangleIcon as AlertTriangle,
+  ClockCircleIcon as Clock,
+  CalendarIcon as Calendar,
+  UserIcon as User,
+  CheckCircleIcon as CheckCircle2,
+  DangerCircleIcon as AlertCircle,
+  DocumentTextIcon as FileText,
+} from '@solar-icons/react/linear';
 import { VeterinaryRecord } from './types';
 
 interface VeterinaryModuleProps {

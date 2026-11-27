@@ -28,8 +28,18 @@ const config: Config = {
   modulePathIgnorePatterns: ['<rootDir>/ui-ux-pro-max/', '<rootDir>/workers/', '<rootDir>/Cloud/'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@solar-icons/react/linear$': '<rootDir>/node_modules/@solar-icons/react/dist/icons/style/linear.mjs',
+    '^@solar-icons/react/bold-duotone$': '<rootDir>/node_modules/@solar-icons/react/dist/icons/style/bold-duotone.mjs',
   },
 }
 
 // Exporté ainsi pour que next/jest puisse charger la configuration Next.js (asynchrone)
-export default createJestConfig(config)
+const makeConfig = createJestConfig(config)
+
+export default async function jestConfig() {
+  const resolved = await makeConfig()
+  resolved.transformIgnorePatterns = (resolved.transformIgnorePatterns ?? []).map((pattern) =>
+    pattern.includes('node_modules') ? '/node_modules/(?!@solar-icons/)' : pattern
+  )
+  return resolved
+}

@@ -5,12 +5,39 @@ import {
   ResponsiveContainer, CartesianGrid,
 } from "recharts";
 import {
-  LayoutDashboard, MapPin, CalendarDays, CloudSun, Boxes, Wallet,
-  TrendingUp, Sprout, Users, Bug, FlaskConical, Satellite, Bell, Search,
-  Settings, ChevronRight, ArrowUpRight, ArrowDownRight, Droplets, Wind,
-  ThermometerSun, AlertTriangle, CheckCircle2, Warehouse, Sun, CloudRain,
-  BarChart3, PiggyBank, Leaf, Fuel,
-} from "lucide-react";
+  Widget2Icon as LayoutDashboard,
+  MapPointIcon as MapPin,
+  CalendarIcon as CalendarDays,
+  CloudSunIcon as CloudSun,
+  BoxIcon as Boxes,
+  GraphNewUpIcon as TrendingUp,
+  UsersGroupRoundedIcon as Users,
+  BugIcon as Bug,
+  FlaskIcon as FlaskConical,
+  SatelliteIcon as Satellite,
+  BellIcon as Bell,
+  MagnifierIcon as Search,
+  SettingsIcon as Settings,
+  AltArrowRightIcon as ChevronRight,
+  ArrowRightUpIcon as ArrowUpRight,
+  ArrowRightDownIcon as ArrowDownRight,
+  WaterdropsIcon as Droplets,
+  WindIcon as Wind,
+  ThermometerIcon as ThermometerSun,
+  DangerTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle2,
+  Buildings2Icon as Warehouse,
+  SunIcon as Sun,
+  CloudRainIcon as CloudRain,
+  Chart2Icon as BarChart3,
+  PiggyBankIcon as PiggyBank,
+  LeafIcon as Leaf,
+  GasStationIcon as Fuel,
+} from "@solar-icons/react/linear";
+import {
+  SproutIcon as Sprout,
+  WalletMoneyIcon as Wallet,
+} from "@solar-icons/react/bold-duotone";
 
 /* ------------------------------------------------------------------ */
 /*  TOKENS                                                             */

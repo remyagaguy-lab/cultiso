@@ -20,13 +20,15 @@ import {
   SpeciesCategory 
 } from '../types';
 import { 
-  TrendingUp, 
-  Egg, 
-  Wheat, 
-  Wallet, 
-  Info,
-  Maximize2
-} from 'lucide-react';
+  GraphNewUpIcon as TrendingUp,
+  HeartPulseIcon as Egg,
+  SproutIcon as Wheat,
+  InfoCircleIcon as Info,
+  MaximizeIcon as Maximize2,
+} from '@solar-icons/react/linear';
+import {
+  WalletMoneyIcon as Wallet,
+} from '@solar-icons/react/bold-duotone';
 
 interface ZootechChartsProps {
   growthData: GrowthDataPoint[];

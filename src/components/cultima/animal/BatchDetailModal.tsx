@@ -1,19 +1,19 @@
 "use client";
 import React from 'react';
 import { 
-  X, 
-  Tag, 
-  Calendar, 
-  Scale, 
-  Wheat, 
-  Activity, 
-  Clock, 
-  CheckCircle2, 
-  AlertTriangle,
-  Building,
-  Layers,
-  FileCheck
-} from 'lucide-react';
+  CloseIcon as X,
+  TagIcon as Tag,
+  CalendarIcon as Calendar,
+  ScaleIcon as Scale,
+  SproutIcon as Wheat,
+  Pulse2Icon as Activity,
+  ClockCircleIcon as Clock,
+  CheckCircleIcon as CheckCircle2,
+  DangerTriangleIcon as AlertTriangle,
+  Buildings2Icon as Building,
+  LayersIcon as Layers,
+  DocumentTextIcon as FileCheck,
+} from '@solar-icons/react/linear';
 import { BatchItem } from './types';
 
 interface BatchDetailModalProps {
