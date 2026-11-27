@@ -244,3 +244,61 @@ export function deplier(d: DonneesDepart) {
 
   return { speculations, modelesCharges, modelesRevenus, questions, regles, financeurs, bornesRendement };
 }
+
+/** Entretien de cadrage (S3) : fichier supabase/donnees/entretien-cadrage.json. */
+export interface DonneesEntretien {
+  version: string;
+  temps: { cle: string; ordre: number; titre: string; intro: string }[];
+  dimensions: { cle: string; libelle: string; phrase_sans_alerte: string; regles: unknown[] }[];
+  questions: {
+    cle?: string;
+    terrain?: string;
+    temps: string;
+    ordre: number;
+    libelle?: string;
+    aide?: string;
+    type?: string;
+    unite?: string;
+    reponses?: { valeur: string; libelle: string }[];
+    remplit?: unknown;
+    si?: unknown;
+    dimension: string | null;
+    essentielle: boolean;
+    court: string;
+  }[];
+}
+
+const SOURCE_ENTRETIEN = "Cultiso, entretien de cadrage (consultation en six temps) ; rédigé par Cultiso, à faire relire par un agroéconomiste.";
+
+/** Déplie le fichier de l'entretien en lignes des tables ref.entretien_*. */
+export function deplierEntretien(d: DonneesEntretien) {
+  const temps = d.temps.map((t) => ({ ...t, statut: STATUT, source: SOURCE_ENTRETIEN }));
+  const dimensions = d.dimensions.map((x, i) => ({
+    cle: x.cle,
+    ordre: i + 1,
+    libelle: x.libelle,
+    phrase_sans_alerte: x.phrase_sans_alerte,
+    regles: x.regles,
+    statut: STATUT,
+    source: SOURCE_ENTRETIEN,
+  }));
+  const questions = d.questions.map((q) => ({
+    cle: q.cle ?? `terrain_${q.terrain}`,
+    temps: q.temps,
+    ordre: q.ordre,
+    question_terrain: q.terrain ?? null,
+    libelle: q.libelle ?? null,
+    aide: q.aide ?? null,
+    type: q.type ?? null,
+    unite: q.unite ?? null,
+    reponses: q.reponses ?? null,
+    remplit: q.remplit ?? null,
+    condition: q.si ?? null,
+    dimension: q.dimension,
+    essentielle: q.essentielle,
+    court: q.court,
+    statut: STATUT,
+    source: SOURCE_ENTRETIEN,
+  }));
+  return { temps, dimensions, questions };
+}

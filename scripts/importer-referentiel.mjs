@@ -5,7 +5,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { deplier } from "../src/referentiel/donnees-depart.ts";
+import { deplier, deplierEntretien } from "../src/referentiel/donnees-depart.ts";
 
 // Les tests passent l'adresse et la clé locales pour éviter un second `supabase status` (lent).
 const statut = process.env.REFERENTIEL_API_URL
@@ -50,6 +50,8 @@ async function retirerObsoletes(table, ids, codes) {
   if (data.length > 0) console.log(`  ${table} : ${data.length} brouillon(s) obsolète(s) retiré(s)`);
 }
 
+const entretien = deplierEntretien(JSON.parse(readFileSync(new URL("../supabase/donnees/entretien-cadrage.json", import.meta.url), "utf8")));
+
 console.log(`Import du référentiel de départ (version ${donnees.version}) dans la base locale :`);
 const codes = d.speculations.map((s) => s.code);
 await ecrire("speculations", "code", d.speculations);
@@ -59,6 +61,9 @@ await ecrire("modeles_revenus", "id", d.modelesRevenus);
 await ecrire("regles_ajustement", "id", d.regles);
 await ecrire("regles_financeurs", "id", d.financeurs);
 await ecrire("bornes_rendement", "id", d.bornesRendement);
+await ecrire("entretien_temps", "cle", entretien.temps);
+await ecrire("entretien_dimensions", "cle", entretien.dimensions);
+await ecrire("entretien_questions", "cle", entretien.questions);
 await retirerObsoletes("modeles_charges", d.modelesCharges.map((c) => c.id), codes);
 await retirerObsoletes("modeles_revenus", d.modelesRevenus.map((r) => r.id), codes);
 console.log("Terminé.");

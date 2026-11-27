@@ -15,6 +15,9 @@ import {
   type RegleAjustement,
 } from "@/moteurs/budget";
 import type { RegleFinanceur } from "@/moteurs/controles";
+import { construireEntretien, type Entretien, type LignesEntretien } from "./entretien";
+
+export * from "./entretien";
 
 export type StatutDonnee = "brouillon_ia" | "a_valider" | "validee";
 
@@ -430,4 +433,25 @@ export async function trouverRegleFinanceur(
     throw new ErreurReferentiel(`${organisme} a plusieurs produits (${regles.map((r) => r.produit).join(", ")}) : précise lequel.`);
   }
   return regles[0];
+}
+
+/** Entretien de cadrage (S3) : temps, dimensions de faisabilité et questions, avec les questions de terrain placées. */
+export async function lireEntretien(client: ClientBase): Promise<Entretien> {
+  const [temps, dimensions, questions, terrain] = await Promise.all([
+    ref(client).from("entretien_temps").select("*").order("ordre"),
+    ref(client).from("entretien_dimensions").select("*").order("ordre"),
+    ref(client).from("entretien_questions").select("*").order("ordre"),
+    lireQuestionsTerrain(client),
+  ]);
+  if (temps.error) echec("temps de l'entretien", temps.error);
+  if (dimensions.error) echec("dimensions de l'entretien", dimensions.error);
+  if (questions.error) echec("questions de l'entretien", questions.error);
+  try {
+    return construireEntretien(
+      { temps: temps.data, dimensions: dimensions.data, questions: questions.data } satisfies LignesEntretien,
+      terrain.map((q) => ({ cle: q.cle, libelle: q.libelle, sousTitre: q.sousTitre, reponses: q.reponses, secteurs: q.secteurs })),
+    );
+  } catch (erreur) {
+    throw new ErreurReferentiel(`entretien de cadrage incohérent : ${erreur instanceof Error ? erreur.message : String(erreur)}`);
+  }
 }

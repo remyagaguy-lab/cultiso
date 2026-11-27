@@ -4,9 +4,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { ErreurExploitation, lireExploitation, type ClientBase } from "@/core/exploitation";
 import type { EntreeBudget } from "@/moteurs";
+import { chargerEtat, type EtatEntretien } from "@/modules/cultiplan/entretien";
 import { deduireDuProfil, lireProfil, type ApportDuProfil } from "@/modules/cultiplan/profil";
 import { preparerEntreeBudget } from "@/modules/cultiplan/service";
-import { lireReglesFinanceurs as lireReglesFinanceursRef, lireSpeculations, type RegleFinanceurRef } from "@/referentiel";
+import { lireEntretien, lireReglesFinanceurs as lireReglesFinanceursRef, lireSpeculations, type Entretien, type RegleFinanceurRef } from "@/referentiel";
 import type { AccesDonnees, AtelierSimule, Culture, ExtraitSavoir, LignePrix, ResumeExploitation, Sol, SpeculationRef, Zone } from "../donnees";
 import type { Embeddeur } from "./embeddings";
 
@@ -74,6 +75,19 @@ export class DonneesSupabase implements AccesDonnees {
   async lireProfilPorteur(exploitationId: string): Promise<ApportDuProfil | null> {
     // Base pas encore migrée : pas de profil, les outils retombent sur ce que dit l'utilisateur.
     return deduireDuProfil(await lireProfil(this.clientType, exploitationId, { tolerant: true }));
+  }
+
+  async lireConsultation(
+    exploitationId: string,
+    options: { secteurs?: string[]; reportees?: string[] } = {},
+  ): Promise<{ entretien: Entretien; etat: EtatEntretien } | null> {
+    try {
+      const [entretien, etat] = await Promise.all([lireEntretien(this.clientType), chargerEtat(this.clientType, exploitationId, options)]);
+      return { entretien, etat };
+    } catch (erreur) {
+      if (erreur instanceof ErreurExploitation && erreur.code === "introuvable") return null;
+      throw erreur;
+    }
   }
 
   async chercherPrix(terme: string): Promise<LignePrix[]> {

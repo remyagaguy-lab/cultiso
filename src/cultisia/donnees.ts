@@ -1,6 +1,7 @@
 import type { EntreeBudget } from "@/moteurs";
+import type { EtatEntretien } from "@/modules/cultiplan/entretien";
 import type { ApportDuProfil } from "@/modules/cultiplan/profil";
-import type { RegleFinanceurRef } from "@/referentiel";
+import type { Entretien, RegleFinanceurRef } from "@/referentiel";
 
 /**
  * Accès aux données lues par les outils de Cultisia.
@@ -88,6 +89,9 @@ export interface AccesDonnees {
 
   /** Ce que le profil du porteur (R9) apporte aux moteurs (coût de vie, revenus extérieurs, apport), lu avec les droits de l'utilisateur. Facultatif. */
   lireProfilPorteur?(exploitationId: string): Promise<ApportDuProfil | null>;
+
+  /** Entretien de cadrage (S3) et état des réponses d'une exploitation, lus avec les droits de l'utilisateur ; null si l'exploitation est inaccessible. Facultatif. */
+  lireConsultation?(exploitationId: string, options?: { secteurs?: string[]; reportees?: string[] }): Promise<{ entretien: Entretien; etat: EtatEntretien } | null>;
 
   chercherPrix(terme: string): Promise<LignePrix[]>;
   /** Lu avec les droits de l'utilisateur : renvoie null si l'exploitation n'existe pas ou ne lui appartient pas. */

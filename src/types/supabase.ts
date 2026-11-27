@@ -496,6 +496,66 @@ isOneToOne: false
       referencedColumns: ["code"]
     }
                   ]
+                },"entretien_dimensions": {
+                  Row: {
+                    "cle": string,"ordre": number,"libelle": string,"phrase_sans_alerte": string,"regles": NonNullable<Json>,"statut": string,"source": string | null,"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cle": string,"ordre": number,"libelle": string,"phrase_sans_alerte": string,"regles"?: NonNullable<Json>,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cle"?: string,"ordre"?: number,"libelle"?: string,"phrase_sans_alerte"?: string,"regles"?: NonNullable<Json>,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"entretien_questions": {
+                  Row: {
+                    "cle": string,"temps": string,"ordre": number,"question_terrain": string | null,"libelle": string | null,"aide": string | null,"type": string | null,"unite": string | null,"reponses": Json | null,"remplit": Json | null,"condition": Json | null,"dimension": string | null,"essentielle": boolean,"court": string,"statut": string,"source": string | null,"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cle": string,"temps": string,"ordre": number,"question_terrain"?: string | null,"libelle"?: string | null,"aide"?: string | null,"type"?: string | null,"unite"?: string | null,"reponses"?: Json | null,"remplit"?: Json | null,"condition"?: Json | null,"dimension"?: string | null,"essentielle"?: boolean,"court": string,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cle"?: string,"temps"?: string,"ordre"?: number,"question_terrain"?: string | null,"libelle"?: string | null,"aide"?: string | null,"type"?: string | null,"unite"?: string | null,"reponses"?: Json | null,"remplit"?: Json | null,"condition"?: Json | null,"dimension"?: string | null,"essentielle"?: boolean,"court"?: string,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "entretien_questions_temps_fkey"
+      columns: ["temps"]
+isOneToOne: false
+      referencedRelation: "entretien_temps"
+      referencedColumns: ["cle"]
+    },{
+      foreignKeyName: "entretien_questions_question_terrain_fkey"
+      columns: ["question_terrain"]
+isOneToOne: false
+      referencedRelation: "questions_terrain"
+      referencedColumns: ["cle"]
+    },{
+      foreignKeyName: "entretien_questions_dimension_fkey"
+      columns: ["dimension"]
+isOneToOne: false
+      referencedRelation: "entretien_dimensions"
+      referencedColumns: ["cle"]
+    }
+                  ]
+                },"entretien_temps": {
+                  Row: {
+                    "cle": string,"ordre": number,"titre": string,"intro": string,"statut": string,"source": string | null,"created_at": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cle": string,"ordre": number,"titre": string,"intro": string,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cle"?: string,"ordre"?: number,"titre"?: string,"intro"?: string,"statut"?: string,"source"?: string | null,"created_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"bornes_rendement": {
                   Row: {
                     "created_at": string,"date_source": string,"id": string,"max_par_unite": number | null,"min_par_unite": number | null,"modele_revenu_id": string,"notes": string | null,"source": string,"statut": string,"typique_par_unite": number | null,"updated_at": string,"valide_le": string | null,"valide_par": string | null

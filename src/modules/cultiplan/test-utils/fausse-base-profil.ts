@@ -25,6 +25,10 @@ export function fauxClientProfil(initial: Record<string, Rangee[]> = {}, erreurs
           return chaine;
         },
         order: () => chaine,
+        single: async () => {
+          const l = lecture(filtres)[0];
+          return { data: erreur ? null : (l ?? null), error: erreur ?? (l ? null : { code: "PGRST116", message: "aucune ligne" }) };
+        },
         maybeSingle: async () => ({ data: erreur ? null : (lecture(filtres)[0] ?? null), error: erreur }),
         then: (ok: (r: ReturnType<typeof resultat>) => unknown) => Promise.resolve(resultat()).then(ok),
       };
@@ -34,8 +38,8 @@ export function fauxClientProfil(initial: Record<string, Rangee[]> = {}, erreurs
       select,
       upsert: async (ligne: Rangee, options: { onConflict: string }) => {
         if (erreur) return { error: erreur };
-        const cle = options.onConflict;
-        const i = lignes().findIndex((l) => l[cle] === ligne[cle]);
+        const cles = options.onConflict.split(",");
+        const i = lignes().findIndex((l) => cles.every((c) => l[c] === ligne[c]));
         if (i >= 0) lignes()[i] = { ...lignes()[i], ...ligne };
         else lignes().push({ ...ligne });
         return { error: null };
