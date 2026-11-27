@@ -4,7 +4,8 @@ import { Collapse, Tag, Typography } from "antd";
 import type { Controle, NiveauControle } from "@/moteurs/controles";
 import { expliquerControles, type ControleExplique } from "@/moteurs/explications";
 
-const NIVEAUX: Record<Exclude<NiveauControle, "ok">, { libelle: string; couleur: string; ordre: number }> = {
+const NIVEAUX: Record<NiveauControle, { libelle: string; couleur: string; ordre: number }> = {
+  ok: { libelle: "Rien à signaler", couleur: "success", ordre: 3 },
   bloquant: { libelle: "À régler avant de continuer", couleur: "error", ordre: 0 },
   alerte: { libelle: "À surveiller", couleur: "warning", ordre: 1 },
   info: { libelle: "Pour information", couleur: "processing", ordre: 2 },
@@ -33,13 +34,32 @@ function Technique({ c }: { c: ControleExplique }) {
   );
 }
 
+
+/** Un contrôle : niveau en toutes lettres, phrase du moteur, explication simple, détail technique dépliable. */
+export function CarteControle({ c }: { c: ControleExplique }) {
+  const n = NIVEAUX[c.niveau];
+  return (
+    <div className="rounded-card border border-border bg-surface p-4 transition-shadow hover:shadow-sm">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <Tag color={n.couleur} className="m-0">
+          {n.libelle}
+        </Tag>
+        <Typography.Text strong>{c.nom}</Typography.Text>
+      </div>
+      <p className="m-0 mb-1 font-medium">{c.message}</p>
+      <p className="m-0 mb-3 text-sm text-muted">{c.simple}</p>
+      <Collapse ghost size="small" items={[{ key: c.code, label: "Détail technique", children: <Technique c={c} /> }]} />
+    </div>
+  );
+}
+
 /**
  * Contrôles et alertes d'un plan : la phrase simple est toujours visible, la version technique se déplie au clavier ou au toucher.
  * Le niveau est dit en toutes lettres (jamais par la couleur seule).
  */
 export function ControlesExpliques({ controles }: { controles: Controle[] }) {
   const expliques = expliquerControles(controles.filter((c) => c.niveau !== "ok")).sort(
-    (a, b) => NIVEAUX[a.niveau as keyof typeof NIVEAUX].ordre - NIVEAUX[b.niveau as keyof typeof NIVEAUX].ordre,
+    (a, b) => NIVEAUX[a.niveau].ordre - NIVEAUX[b.niveau].ordre,
   );
 
   if (expliques.length === 0) {
@@ -52,26 +72,11 @@ export function ControlesExpliques({ controles }: { controles: Controle[] }) {
 
   return (
     <ul className="m-0 flex list-none flex-col gap-3 p-0" aria-label="Contrôles et alertes du plan">
-      {expliques.map((c, i) => {
-        const n = NIVEAUX[c.niveau as keyof typeof NIVEAUX];
-        return (
-          <li key={`${c.code}-${i}`} className="rounded-[var(--ork-use-radius-card,12px)] border border-border bg-surface p-4 transition-shadow hover:shadow-sm">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <Tag color={n.couleur} className="m-0">
-                {n.libelle}
-              </Tag>
-              <Typography.Text strong>{c.nom}</Typography.Text>
-            </div>
-            <p className="m-0 mb-1 font-medium">{c.message}</p>
-            <p className="m-0 mb-3 text-sm text-muted">{c.simple}</p>
-            <Collapse
-              ghost
-              size="small"
-              items={[{ key: c.code, label: "Détail technique", children: <Technique c={c} /> }]}
-            />
-          </li>
-        );
-      })}
+      {expliques.map((c, i) => (
+        <li key={`${c.code}-${i}`}>
+          <CarteControle c={c} />
+        </li>
+      ))}
     </ul>
   );
 }
