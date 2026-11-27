@@ -24,6 +24,7 @@ import {
   schemaCalendrierLigne,
   schemaHorizon,
   schemaMontee,
+  schemaSerieMensuelle,
   sommeAnnee,
   type Horizon,
   type InvestissementDate,
@@ -31,7 +32,7 @@ import {
 } from "./calendrier";
 import { fcfa, somme, taux, valider, VERSION_MOTEURS } from "./commun";
 import { calculerRatios, controler, type Controle, type DonneesControles, type Ratios } from "./controles";
-import { echeancierBrut, schemaCredit } from "./credit";
+import { schemaCredit } from "./credit";
 import { alertesPrudence } from "./prudence";
 import { analyserSensibilite, type Sensibilite } from "./sensibilite";
 
@@ -65,6 +66,8 @@ export const schemaLigneCharge = z
     ...champsHausseLigne,
     /** Profil mensuel du cycle (R1) : remplace `moisDecaissement` pour une ligne par cycle. */
     calendrier: schemaCalendrierLigne.optional(),
+    /** Série mensuelle exacte d'un moteur autonome (bandes, cheptel...) : remplace quantité, prix et calendrier. */
+    serieMensuelle: schemaSerieMensuelle.optional(),
     /** Investissement : mois de l'achat (0 = démarrage, 1 à 120). */
     moisAcquisition: z.number().int().min(0).max(HORIZON_MAX_MOIS).optional(),
     /** Investissement : renouvelé à la fin de sa durée de vie si l'horizon le permet (vrai par défaut). */
@@ -106,6 +109,8 @@ export const schemaLigneRevenu = z.object({
   ...champsHausseLigne,
   /** Profil mensuel du cycle (R1) : remplace `moisVente` pour une ligne par cycle. */
   calendrier: schemaCalendrierLigne.optional(),
+  /** Série mensuelle exacte d'un moteur autonome (bandes, cheptel...) : remplace quantité, prix, calendrier et montée en production. */
+  serieMensuelle: schemaSerieMensuelle.optional(),
   /** Bornes de production du référentiel, dans l'unité et la période de `quantite`, déjà mises à la taille de l'atelier (M4). */
   bornesQuantite: z
     .object({

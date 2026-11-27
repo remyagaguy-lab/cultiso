@@ -39,6 +39,18 @@ export const schemaCalendrierLigne = z
   })
   .refine((c) => Math.abs(c.parts.reduce((t, p) => t + p, 0) - 1) <= TOLERANCE_PARTS, { message: "les parts du cycle doivent faire 1 au total", path: ["parts"] });
 
+/**
+ * Série mensuelle exacte, venue d'un moteur qui a sa propre grille (bandes, cheptel, dimensionnement) : `montants[k]` (FCFA, prix et hausses déjà compris)
+ * tombe au mois `debutMois + k` de la grille. Elle remplace quantité, prix, calendrier, hausse et montée en production de la ligne.
+ */
+export const schemaSerieMensuelle = z.object({
+  /** Mois de la grille du premier montant (1 au moins : le mois 0 ne porte que les investissements, l'apport et le crédit). */
+  debutMois: z.number().int().min(1).max(HORIZON_MAX_MOIS),
+  montants: z.array(z.number().min(0)).min(1).max(HORIZON_MAX_MOIS),
+  /** Moteur d'où vient la série (« bandes », « troupeau », « financement »...). */
+  origine: z.string().optional(),
+});
+
 /** Hausses propres à une ligne (M2). */
 export const champsHausseLigne = {
   /** Hausse annuelle de cette ligne ; remplace la hausse uniforme de l'entrée. */
@@ -226,6 +238,14 @@ function placerAnnuel(cible: number[], horizonMois: number, montantParAn: (an: n
   }
 }
 
+/** Place une série mensuelle exacte sur la grille ; ce qui dépasse l'horizon n'est pas compté. */
+function placerSerie(cible: number[], horizonMois: number, serie: { debutMois: number; montants: number[] }) {
+  serie.montants.forEach((montant, k) => {
+    const mois = serie.debutMois + k;
+    if (mois <= horizonMois) cible[mois] += montant;
+  });
+}
+
 /** Place les cycles d'une ligne sur la grille selon son profil de cycle (R1). */
 function placerCycles(cible: number[], horizonMois: number, montantCycle: (an: number) => number, cyclesParAn: number, cal: { debutMois: number; parts: number[] }) {
   for (let k = 0; ; k++) {
@@ -270,7 +290,8 @@ export function construireGrille(e: Entree, scenario: Scenario): Grille {
     const mensuel = vide();
     const parCycle = r.quantite[scenario] * (1 - r.pertes) * r.prixUnitaire;
     const montant = (an: number) => parCycle * indiceHausse(r, e.haussePrix, an) * coefficientProduction(e, r, an);
-    if (r.calendrier && r.base === "cycle") placerCycles(mensuel, N, montant, r.cyclesParAn, r.calendrier);
+    if (r.serieMensuelle) placerSerie(mensuel, N, r.serieMensuelle);
+    else if (r.calendrier && r.base === "cycle") placerCycles(mensuel, N, montant, r.cyclesParAn, r.calendrier);
     else placerAnnuel(mensuel, N, (an) => parAn(montant(an), r), r.moisVente);
     mensuel.forEach((v, m) => (g.chiffreAffaires[m] += v));
     lignes.push({ id: r.id, libelle: r.libelle, sens: "revenu", classe: "exploitation", nature: null, atelierId: r.atelierId ?? null, mensuel });
@@ -283,7 +304,8 @@ export function construireGrille(e: Entree, scenario: Scenario): Grille {
       const parCycle = montantCharge(c);
       const volume = (an: number) => (c.nature === "variable" ? coefficientVolume(e, c.atelierId, an) : 1);
       const montant = (an: number) => parCycle * indiceHausse(c, e.hausseCharges, an) * volume(an);
-      if (c.calendrier && c.base === "cycle") placerCycles(mensuel, N, montant, c.cyclesParAn, c.calendrier);
+      if (c.serieMensuelle) placerSerie(mensuel, N, c.serieMensuelle);
+      else if (c.calendrier && c.base === "cycle") placerCycles(mensuel, N, montant, c.cyclesParAn, c.calendrier);
       else placerAnnuel(mensuel, N, (an) => parAn(montant(an), c), c.moisDecaissement);
       mensuel.forEach((v, m) => {
         g.chargesExploitation[m] += v;
