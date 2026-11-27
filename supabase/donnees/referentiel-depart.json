@@ -291,7 +291,105 @@
       "format_dossier": "Canevas ANPGF de mai 2022 : dossier physique (Lomé, Tsévié, Kara) ou plan d'affaires envoyé par courriel ; états au format SYSCOHADA.",
       "notes": "Apport du promoteur en nature ou en numéraire (§10.1). Remboursement en quatre ans, différé d'au plus un an (§10.3) : le canevas ne dit pas si les quatre ans comptent le différé, on prend la lecture prudente (différé compris). Aucun taux indicatif dans le canevas. La liste des pièces est celle que le canevas impose ; les pièces administratives (identité, statut, justificatifs fonciers) sont à demander à l'ANPGF.",
       "source": "Canevas de plan d'affaires ANPGF (Togo, mai 2022) §10.1, §10.3, §9 et informations utiles. Brouillon IA : à faire valider par l'ANPGF ou un expert."
-    }
+    },
+      {
+        "cle": "bna.credit_campagne",
+        "organisme": "BNA (Banque Nationale Agricole, Tunisie)",
+        "produit": "credit_campagne",
+        "libelle": "Crédit de campagne agricole à court terme",
+        "pays": "TN",
+        "apport_minimum": null,
+        "duree_max_mois": 12,
+        "duree_inclut_differe": true,
+        "differe_max_mois": null,
+        "taux_indicatif": null,
+        "taxes": [],
+        "pieces_exigees": [
+          "Justificatif d'exploitation de la terre (propriété, location ou métayage)",
+          "Justificatif de l'expérience et des qualifications",
+          "Justificatif de capacité de remboursement",
+          "Être en situation régulière avec la banque"
+        ],
+        "format_dossier": null,
+        "notes": "Crédit à court terme (moins d'un an), renouvelable chaque année, pour couvrir une partie des dépenses (céréales, arbres fruitiers, maraîchage, engraissement, aliments du bétail, élevage avicole, exploitations à plusieurs activités). Le montant et l'échéance sont fixés par spéculation dans un barème de crédits de campagne que le guide ne reproduit pas : on ne les connaît donc pas. Durée maximale : « inférieur à une année », saisie à 12 mois par prudence. Règle d'un pays voisin du Togo seulement par le type de produit : sert de modèle de lecture, pas de règle applicable à un porteur togolais.",
+        "source": "Guide de l'entrepreneuriat agricole et agroalimentaire (Tunisie, APIA, DOC-00010) p. 95-96. Brouillon IA : à faire valider par un expert."
+      },
+      {
+        "cle": "bna.investissement_equipements",
+        "organisme": "BNA (Banque Nationale Agricole, Tunisie)",
+        "produit": "investissement_equipements",
+        "libelle": "Crédit d'investissement pour équipements agricoles et hydrauliques",
+        "pays": "TN",
+        "apport_minimum": null,
+        "duree_max_mois": 84,
+        "duree_inclut_differe": true,
+        "differe_max_mois": 12,
+        "taux_indicatif": null,
+        "taxes": [],
+        "pieces_exigees": [
+          "Exploitant d'une terre en propriété ou en location de longue durée (au moins la durée du crédit)",
+          "Justificatif de l'expérience et des qualifications",
+          "Justificatif de capacité de remboursement",
+          "Garanties demandées par la banque",
+          "Autofinancement exigé",
+          "Dossier instruit par les services techniques régionaux (CRDA)"
+        ],
+        "format_dossier": null,
+        "notes": "Remboursement de 3 à 7 ans avec une période de grâce d'un an. Apport : le guide donne un schéma par catégorie d'opération (catégorie A : autofinancement 10 %, prime d'investissement 50 %, prêt 40 % ; catégorie B : 30 %, 30 %, 20 %, ces trois parts de la catégorie B ne font que 80 % dans le document, anomalie à vérifier à la source). L'apport minimum est laissé vide car il dépend de la catégorie et d'une prime publique qui n'existe pas dans notre modèle. Le guide ne dit pas si la période de grâce compte dans les 7 ans : lecture prudente (comprise).",
+        "source": "Guide de l'entrepreneuriat agricole et agroalimentaire (Tunisie, APIA, DOC-00010) p. 97-98. Brouillon IA : à faire valider par un expert."
+      },
+      {
+        "cle": "bna.chaine_valeur",
+        "organisme": "BNA (Banque Nationale Agricole, Tunisie)",
+        "produit": "chaine_de_valeur",
+        "libelle": "Financement des chaînes de valeur : crédit tripartite et crédit interface",
+        "pays": "TN",
+        "apport_minimum": null,
+        "duree_max_mois": null,
+        "duree_inclut_differe": true,
+        "differe_max_mois": null,
+        "taux_indicatif": null,
+        "taxes": [],
+        "pieces_exigees": [
+          "Convention ou contrat d'approvisionnement et de financement entre la banque, l'acheteur agro-industriel et les agriculteurs (crédit tripartite)",
+          "Engagement de vendre toute la production à l'acheteur"
+        ],
+        "format_dossier": null,
+        "notes": "Deux formes. Crédit tripartite : la banque finance le cycle de production ou d'investissement de petits agriculteurs, avec la caution de l'acheteur ; le déblocage se fait au profit de l'acheteur, qui fournit les intrants, achète toute la production et rembourse la banque par retenue sur ce qu'il leur paie. Crédit interface : la banque finance l'acheteur pour couvrir les besoins d'exploitation des petits agriculteurs. Aucune durée, aucun taux, aucun apport chiffrés dans le guide : tout reste vide. Le même mécanisme (la banque préfinance, l'acheteur rembourse sur le paiement) est décrit dans le manuel d'agriculture contractuelle DOC-00163 (p. 50-55, 76), analysé dans ANALYSE-BASE-RESSOURCES §2.3.4 (document scanné, non relu ligne à ligne pour cette entrée).",
+        "source": "Guide de l'entrepreneuriat agricole et agroalimentaire (Tunisie, APIA, DOC-00010) p. 99. Brouillon IA : à faire valider par un expert."
+      },
+      {
+        "cle": "bts.agri_invest",
+        "organisme": "BTS (Banque Tunisienne de Solidarité)",
+        "produit": "agri_invest",
+        "libelle": "Crédit Agri-Invest (investissement des jeunes promoteurs)",
+        "pays": "TN",
+        "apport_minimum": null,
+        "duree_max_mois": 84,
+        "duree_inclut_differe": true,
+        "differe_max_mois": 12,
+        "taux_indicatif": null,
+        "taxes": [
+          {
+            "nom": "Contribution de garantie",
+            "description": "1 % au profit du Fonds National de Garantie (FNG). Assiette non précisée dans le guide : à confirmer."
+          },
+          {
+            "nom": "Commission d'étude",
+            "description": "2 %. Assiette non précisée dans le guide : à confirmer."
+          }
+        ],
+        "pieces_exigees": [
+          "Nationalité tunisienne, âge de 18 à 59 ans",
+          "Qualification professionnelle justifiée (diplôme, formation ou autre justificatif)",
+          "Engagement à gérer le projet personnellement et à plein temps",
+          "Forme d'entreprise individuelle ou société unipersonnelle (SUARL)",
+          "Dossier complet déposé au CRDA (projets de catégorie A), à l'APIA (catégorie B) ou directement à la BTS"
+        ],
+        "format_dossier": null,
+        "notes": "Coût total du projet, fonds de roulement compris, au plus 150 000 dinars pour un diplômé de l'enseignement supérieur et 100 000 dinars sinon (plafond en monnaie tunisienne, non repris dans une colonne). Remboursement jusqu'à 7 ans, grâce de 3 à 12 mois selon l'activité. Taux d'intérêt annuel « préférentiel » non chiffré pour ce produit : laissé vide (le guide cite par ailleurs un taux de 5 % au plus pour les crédits de la BTS en général, p. 99, ce n'est pas un taux indicatif). Étude technique gratuite par les services régionaux. Assurance du cheptel exigée (25 %) et prise en charge par le crédit. Le produit Agri-saison est annoncé dans le même tableau mais son contenu n'est pas lu : non saisi.",
+        "source": "Guide de l'entrepreneuriat agricole et agroalimentaire (Tunisie, APIA, DOC-00010) p. 99-100. Brouillon IA : à faire valider par un expert."
+      }
   ],
   "bornes_rendement": [
     {

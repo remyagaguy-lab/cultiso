@@ -29,8 +29,7 @@ function faussClient(lignes: unknown[], erreur?: string) {
 
 describe("données de départ des financeurs", () => {
   it("ANPGF : apport 20 %, 4 ans, différé d'un an au plus, en brouillon IA avec sa source", () => {
-    expect(d.financeurs).toHaveLength(1);
-    const f = d.financeurs[0];
+    const f = d.financeurs.find((x) => x.organisme === "ANPGF")!;
     expect(f).toMatchObject({ organisme: "ANPGF", produit: "projet_demarrage", pays: "TG", apport_minimum: 0.2, duree_max_mois: 48, differe_max_mois: 12, statut: "brouillon_ia" });
     expect(f.source).toMatch(/§10\.1/);
     expect(f.source).toMatch(/§10\.3/);
@@ -43,6 +42,39 @@ describe("données de départ des financeurs", () => {
     const r = versRegleFinanceur(ligneAnpgf as never);
     expect(r.apportMinimum).toBe(0.2);
     expect(r.taxes[0].nom).toMatch(/Taxe/);
+  });
+});
+
+describe("financeurs ajoutés depuis la base de ressources", () => {
+  const autres = d.financeurs.filter((x) => x.organisme !== "ANPGF");
+
+  it("sont tous en brouillon IA, avec une source qui cite le document", () => {
+    expect(autres.map((x) => `${x.organisme.split(" ")[0]}.${x.produit}`).sort()).toEqual([
+      "BNA.chaine_de_valeur", "BNA.credit_campagne", "BNA.investissement_equipements", "BTS.agri_invest",
+    ]);
+    for (const x of autres) {
+      expect(x.statut).toBe("brouillon_ia");
+      expect(x.source).toMatch(/DOC-\d{5}/);
+      expect(x.source).toMatch(/p\. \d+/);
+    }
+  });
+
+  it("ne comblent aucune valeur inconnue : taux, apport et durées absentes restent vides", () => {
+    const parProduit = Object.fromEntries(autres.map((x) => [x.produit, x]));
+    for (const x of autres) expect(x.taux_indicatif).toBeNull();
+    expect(parProduit.credit_campagne).toMatchObject({ apport_minimum: null, differe_max_mois: null });
+    expect(parProduit.chaine_de_valeur).toMatchObject({ duree_max_mois: null, apport_minimum: null });
+    expect(parProduit.investissement_equipements).toMatchObject({ duree_max_mois: 84, differe_max_mois: 12, apport_minimum: null });
+    expect(parProduit.agri_invest).toMatchObject({ duree_max_mois: 84, differe_max_mois: 12 });
+  });
+
+  it("passent la validation de lecture et ont des identifiants distincts", () => {
+    const ids = new Set(d.financeurs.map((x) => x.id));
+    expect(ids.size).toBe(d.financeurs.length);
+    for (const { id, ...reste } of d.financeurs) {
+      const ligne = { ...reste, id, created_at: "", updated_at: "", valide_le: null, valide_par: null };
+      expect(() => versRegleFinanceur(ligne as never)).not.toThrow();
+    }
   });
 });
 
