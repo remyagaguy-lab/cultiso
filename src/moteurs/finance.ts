@@ -169,6 +169,41 @@ export const schemaParametresSensibilite = z.object({
   axeCharges: z.array(variation).min(1).default([-0.1, -0.05, 0, 0.05, 0.1]),
 });
 
+const flux = z.number().min(0).default(0);
+/**
+ * Financement détaillé (M6) mois par mois, tel que `financementPourMoteur` le tire de `calculerFinancement`. Il remplace l'apport et le crédit simples dans la grille :
+ * `apport` et `credit` ne servent plus qu'aux contrôles et aux ratios.
+ */
+export const schemaFinancementMensuel = z.object({
+  origine: z.string().optional(),
+  mois: z
+    .array(
+      z.object({
+        mois: z.number().int().min(0).max(HORIZON_MAX_MOIS),
+        apportEspeces: flux,
+        /** Prêts, campagne, chaîne de valeur et avances reçues. */
+        tirages: flux,
+        /** Subventions encaissées, nettes des avances remboursées. */
+        subventionsEncaissees: flux,
+        /** Intérêts de tous les crédits (prêts, campagne, chaîne, avances). */
+        interets: flux,
+        taxeInterets: flux,
+        /** Capital remboursé, retenues de l'acheteur comprises. */
+        capital: flux,
+        /** Subventions reprises au résultat (produit non encaissé). */
+        repriseSubventions: flux,
+      }),
+    )
+    .min(1),
+});
+
+/** Travail familial valorisé (R2) : coût de revient. Jamais compté dans la trésorerie, le résultat ni la CAF. */
+export const schemaTravailFamilial = z.object({
+  /** Heures de la famille utilisées × prix de l'heure, par an (`calculerMainOeuvre`, `valorisationFamille`). */
+  montantAnnuel: z.number().min(0),
+  origine: z.string().optional(),
+});
+
 export const schemaFinance = z.object({
   charges: z.array(schemaLigneCharge),
   revenus: z.array(schemaLigneRevenu),
@@ -183,6 +218,10 @@ export const schemaFinance = z.object({
   haussePrix: z.number().min(-0.5).max(1).default(0),
   apport: z.number().min(0).default(0),
   credit: schemaCredit.optional(),
+  /** Financement détaillé (M6) : remplace, dans la grille, les flux de `apport` et de `credit`. */
+  financement: schemaFinancementMensuel.optional(),
+  /** Travail familial valorisé (R2) : sert au coût de revient seulement. */
+  travailFamilial: schemaTravailFamilial.optional(),
   menage: schemaMenage.optional(),
   /** Salaires annuels des employés non saisis en lignes de charges (charge fixe d'exploitation, soumise à la hausse des charges). */
   salairesAnnuels: z.number().min(0).default(0),
@@ -230,6 +269,16 @@ export interface AnneeResultat {
   excedentBrut: number;
   amortissements: number;
   interets: number;
+  /** Taxe sur les intérêts (financement détaillé) ; 0 sans elle. */
+  taxeInterets: number;
+  /** Intérêts + taxe : charge financière de l'année. */
+  fraisFinanciers: number;
+  /** Subventions reprises au résultat (produit non encaissé, retiré de la CAF). */
+  repriseSubventions: number;
+  /** Travail familial valorisé (R2) : jamais dans le résultat ni la trésorerie. */
+  travailFamilial: number;
+  /** Résultat après valorisation du travail familial : à comparer au prix de vente (coût de revient complet). */
+  resultatApresTravailFamilial: number;
   impots: number;
   resultat: number;
   cafNette: number;
@@ -476,9 +525,13 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
     const impots = annuel(g.impots, an);
     const prelevementsNets = annuel(g.menage, an);
     const excedentBrut = chiffreAffaires - chargesVariables - chargesFixes;
-    const resultat = excedentBrut - amortissements - interets - impots;
-    const cafNette = resultat + amortissements;
-    const annuites = interets + remboursementCapital;
+    const taxeInterets = annuel(g.taxeInterets, an);
+    const repriseSubventions = annuel(g.repriseSubventions, an);
+    const travailFamilial = annuel(g.travailFamilial, an);
+    const resultat = excedentBrut - amortissements - interets - taxeInterets - impots + repriseSubventions;
+    // La reprise d'une subvention est un produit non encaissé : elle ne fait pas partie de la CAF.
+    const cafNette = resultat + amortissements - repriseSubventions;
+    const annuites = interets + taxeInterets + remboursementCapital;
     const margeAvantISA = excedentBrut + salaires;
     const capaciteRemboursement = margeAvantISA - salaires - prelevementsNets - impots;
     annees.push({
@@ -492,6 +545,11 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
       excedentBrut,
       amortissements,
       interets,
+      taxeInterets,
+      fraisFinanciers: interets + taxeInterets,
+      repriseSubventions,
+      travailFamilial,
+      resultatApresTravailFamilial: resultat - travailFamilial,
       impots,
       resultat,
       cafNette,
@@ -516,7 +574,7 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
   let pointBas: PointBas = { montant: 0, mois: 0, ...datation(0) };
   let pointBasSans: PointBas = { montant: 0, mois: 0, ...datation(0) };
   for (let m = 0; m <= N; m++) {
-    const entrees = g.apport[m] + g.tirageCredit[m] + g.chiffreAffaires[m];
+    const entrees = g.apport[m] + g.tirageCredit[m] + g.subventions[m] + g.chiffreAffaires[m];
     const sorties = g.investissements[m] + g.chargesExploitation[m] + g.impots[m] + g.echeances[m];
     const solde = entrees - sorties - g.menage[m];
     cumul += solde;
@@ -535,7 +593,7 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
   // Seuil de rentabilité de l'an 1 : charges fixes (amortissements, intérêts et impôts compris) / taux de marge sur coûts variables.
   const a1 = annees[0];
   const tauxMarge = a1.chiffreAffaires > 0 ? 1 - a1.chargesVariables / a1.chiffreAffaires : 0;
-  const fixesTotales = a1.chargesFixes + a1.amortissements + a1.interets + a1.impots;
+  const fixesTotales = a1.chargesFixes + a1.amortissements + a1.fraisFinanciers + a1.impots;
   const seuilCA = tauxMarge > 0 ? fixesTotales / tauxMarge : null;
   let moisAtteint: number | null = null;
   if (seuilCA !== null) {
@@ -549,7 +607,7 @@ export function calculerScenarioBrut(entree: Entree, scenario: Scenario): Calcul
   // Flux économiques annuels : −investissement du démarrage, puis excédent brut − investissements de chaque année complète.
   const fluxEconomiques = [-g.investissements[0]];
   for (let an = 1; an <= g.horizon.anneesCompletes; an++) fluxEconomiques.push(annees[an - 1].excedentBrut - annuel(g.investissements, an));
-  const chargesCumulees = somme(annees.map((a) => a.chargesVariables + a.chargesFixes + a.amortissements + a.interets + a.impots));
+  const chargesCumulees = somme(annees.map((a) => a.chargesVariables + a.chargesFixes + a.amortissements + a.fraisFinanciers + a.impots));
   const resultatCumule = somme(annees.map((a) => a.resultat));
   const rentabilite = chargesCumulees > 0 ? resultatCumule / chargesCumulees : null;
   const verdict: Verdict = {
@@ -618,6 +676,11 @@ const arrondirAnnee = (a: AnneeResultat): AnneeResultat => ({
   excedentBrut: fcfa(a.excedentBrut),
   amortissements: fcfa(a.amortissements),
   interets: fcfa(a.interets),
+  taxeInterets: fcfa(a.taxeInterets),
+  fraisFinanciers: fcfa(a.fraisFinanciers),
+  repriseSubventions: fcfa(a.repriseSubventions),
+  travailFamilial: fcfa(a.travailFamilial),
+  resultatApresTravailFamilial: fcfa(a.resultatApresTravailFamilial),
   impots: fcfa(a.impots),
   resultat: fcfa(a.resultat),
   cafNette: fcfa(a.cafNette),

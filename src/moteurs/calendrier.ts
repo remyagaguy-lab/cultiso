@@ -218,6 +218,14 @@ export interface Grille {
   echeances: number[];
   tirageCredit: number[];
   apport: number[];
+  /** Subventions encaissées (financement détaillé M6), nettes des avances remboursées. */
+  subventions: number[];
+  /** Taxe sur les intérêts (financement détaillé M6) : charge financière, sortie de caisse. */
+  taxeInterets: number[];
+  /** Subventions reprises au résultat (produit non encaissé). */
+  repriseSubventions: number[];
+  /** Valeur du travail familial (R2) : coût de revient seulement, jamais en trésorerie. */
+  travailFamilial: number[];
   impots: number[];
   /** Prélèvements du ménage moins ses revenus extérieurs. */
   menage: number[];
@@ -279,6 +287,10 @@ export function construireGrille(e: Entree, scenario: Scenario): Grille {
     echeances: vide(),
     tirageCredit: vide(),
     apport: vide(),
+    subventions: vide(),
+    taxeInterets: vide(),
+    repriseSubventions: vide(),
+    travailFamilial: vide(),
     impots: vide(),
     menage: vide(),
     investissementsDates: [],
@@ -356,22 +368,44 @@ export function construireGrille(e: Entree, scenario: Scenario): Grille {
     exterieurs.forEach((v, m) => (g.menage[m] -= v));
   }
 
-  // Financement : apport au démarrage, crédit tiré au mois voulu.
-  g.apport[0] = e.apport;
-  if (e.credit) {
-    const credit = echeancierBrut(e.credit);
-    if (e.moisTirageCredit > N) avertissements.push(`Le crédit est tiré au mois ${e.moisTirageCredit}, après la fin de l'horizon (${N} mois) : il n'est pas compté.`);
-    else {
-      g.tirageCredit[e.moisTirageCredit] += e.credit.montant;
-      for (const x of credit.echeancier) {
-        const mois = e.moisTirageCredit + x.mois;
-        if (mois > N) continue;
-        g.interets[mois] += x.interets;
-        g.capitalRembourse[mois] += x.amortissement;
-        g.echeances[mois] += x.echeance;
+  // Financement. Deux sources exclusives : le financement détaillé (M6, `financement`) qui porte apports, prêts, campagne, chaîne, subventions,
+  // intérêts et taxe mois par mois ; ou, à défaut, l'apport et le crédit simples. Avec le détail, `apport` et `credit` ne servent plus qu'aux contrôles
+  // et aux ratios : aucun flux n'en est tiré (pas de double comptage).
+  if (e.financement) {
+    for (const x of e.financement.mois) {
+      if (x.mois > N) {
+        if (x.apportEspeces + x.tirages + x.subventionsEncaissees + x.interets + x.taxeInterets + x.capital > 0)
+          avertissements.push(`Le financement détaillé a un flux au mois ${x.mois}, après la fin de l'horizon (${N} mois) : il n'est pas compté.`);
+        continue;
+      }
+      g.apport[x.mois] += x.apportEspeces;
+      g.tirageCredit[x.mois] += x.tirages;
+      g.subventions[x.mois] += x.subventionsEncaissees;
+      g.interets[x.mois] += x.interets;
+      g.taxeInterets[x.mois] += x.taxeInterets;
+      g.capitalRembourse[x.mois] += x.capital;
+      g.echeances[x.mois] += x.interets + x.taxeInterets + x.capital;
+      g.repriseSubventions[x.mois] += x.repriseSubventions;
+    }
+  } else {
+    g.apport[0] = e.apport;
+    if (e.credit) {
+      const credit = echeancierBrut(e.credit);
+      if (e.moisTirageCredit > N) avertissements.push(`Le crédit est tiré au mois ${e.moisTirageCredit}, après la fin de l'horizon (${N} mois) : il n'est pas compté.`);
+      else {
+        g.tirageCredit[e.moisTirageCredit] += e.credit.montant;
+        for (const x of credit.echeancier) {
+          const mois = e.moisTirageCredit + x.mois;
+          if (mois > N) continue;
+          g.interets[mois] += x.interets;
+          g.capitalRembourse[mois] += x.amortissement;
+          g.echeances[mois] += x.echeance;
+        }
       }
     }
   }
+  // Travail familial valorisé (R2) : un montant annuel réparti sur les 12 mois de chaque année. Il n'entre dans aucune trésorerie.
+  if (e.travailFamilial) placerAnnuel(g.travailFamilial, N, () => e.travailFamilial!.montantAnnuel, undefined);
   return g;
 }
 

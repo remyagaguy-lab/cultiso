@@ -558,3 +558,24 @@ export function calculerFinancement(entree: EntreeFinancement): ResultatFinancem
 export function plafondCampagne(bareme: { plafondParUnite: number; source: string; statut?: string }, tailleAtelier: number): { montant: number; source: string; statut?: string } {
   return { montant: dec(bareme.plafondParUnite * tailleAtelier), source: bareme.source, ...(bareme.statut ? { statut: bareme.statut } : {}) };
 }
+
+/**
+ * Passe le financement détaillé à la grille de M1 (`calculerFinances({ financement })`) : les mois du moteur, classés selon ce que la grille en fait
+ * (apport, tirages, subventions, intérêts, taxe, capital). La retenue de l'acheteur est déjà dans `capital` et `interets` : elle ne se retranche pas
+ * une seconde fois des ventes. Le plan ne doit pas passer en plus son `credit` ni son `apport` à la grille (le moteur financier les ignore alors).
+ */
+export function financementPourMoteur(mois: readonly MoisFinancement[]) {
+  return {
+    origine: "financement détaillé (M6)",
+    mois: mois.map((x) => ({
+      mois: x.mois,
+      apportEspeces: x.apportEspeces,
+      tirages: x.tiragesPrets + x.tiragesCampagne + x.tiragesChaine + x.avancesRecues,
+      subventionsEncaissees: x.subventionsEncaissees,
+      interets: x.interetsPrets + x.interetsCampagne + x.interetsChaine + x.interetsAvances,
+      taxeInterets: x.taxeInterets,
+      capital: x.capitalPrets + x.remboursementsCampagne + x.remboursementsAvances + x.retenuesAcheteur - x.interetsChaine,
+      repriseSubventions: x.repriseSubventions,
+    })),
+  };
+}

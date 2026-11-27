@@ -1,6 +1,6 @@
 # Contrat : financement, main d'oeuvre et débouchés (M6, R2, R3)
 
-Complète `CONTRAT.md`. Ces moteurs sont **autonomes** : ils ne lisent pas `finance.ts` (que le socle calendaire fait passer à la grille mensuelle, moteur 2.0.0) et n'y sont pas branchés. Leurs sorties portent leur propre grille mensuelle, que M1 additionnera à la trésorerie d'exploitation. La constante `VERSION_MOTEURS` n'a pas été montée par ce lot, pour ne pas entrer en conflit avec la version 2.0.0 en cours : à faire au moment de la fusion avec M1.
+Complète `CONTRAT.md`. Ces moteurs ont leur propre grille mensuelle (ils ne lisent pas `finance.ts`) et se **branchent** sur celle de `calculerFinances` depuis le moteur 2.1.0 : `financementPourMoteur` (M6) et l'entrée `travailFamilial` (R2), décrits dans « Branchement du financement détaillé et du travail familial » de `CONTRAT.md`. Leurs sorties portent toujours leur propre grille. `VERSION_MOTEURS` est passée à 2.1.0 par ce branchement.
 
 Même règle que le reste : aucune valeur de référence dans le code. Barèmes, taux, taxes, durée de reprise d'une subvention arrivent en paramètres avec leur source ; un paramètre absent n'est jamais deviné (la taxe vaut 0 et la lecture le dit ; un plafond absent laisse le tirage non vérifié).
 
@@ -30,7 +30,7 @@ Même règle que le reste : aucune valeur de référence dans le code. Barèmes,
 | `controles[]` | `{ code, niveau, valeurs, message }` : `PLAFOND_CAMPAGNE_DEPASSE`, `PLAFOND_CAMPAGNE_NON_VERIFIE`, `APPORT_NATURE_SANS_PIECE`, `RETENUE_ACHETEUR_NON_COUVERTE`, `PLAN_FINANCEMENT_DESEQUILIBRE`, `TAXE_INTERETS_NON_RENSEIGNEE`. Niveaux `info`, `alerte`, `bloquant`. |
 | `lecture[]` | Phrases simples, au tutoiement. |
 
-Ce que ce moteur ne fait pas : il ne ramène pas ses flux dans `calculerFinances` (frais financiers du résultat, trésorerie, VAN : à brancher quand M1 existe, avec `annees[].fraisFinanciers` et `mois[].flux`) ; pas de crédit-bail ni de compte courant d'associé ; pas de fiscalité du résultat (M8).
+Ce que ce moteur ne fait pas : il ne calcule pas lui-même le résultat ni la VAN (c'est `calculerFinances` qui les tire de `financementPourMoteur`) ; pas de crédit-bail ni de compte courant d'associé ; pas de fiscalité du résultat (M8).
 
 Données : `ref.baremes_credit_campagne` (migration locale `20261127190000`, non appliquée en ligne, **aucune ligne** : le lot ne donne aucun barème chiffré par spéculation). Lecture : `src/referentiel/financement.ts` (`lireBaremesCampagne`, `choisirBareme`).
 
