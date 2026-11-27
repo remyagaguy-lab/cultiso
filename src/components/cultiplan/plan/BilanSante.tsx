@@ -1,6 +1,6 @@
 "use client";
 
-import type { CodeControle, Controle } from "@/moteurs";
+import type { Controle } from "@/moteurs";
 import { expliquerControles } from "@/moteurs";
 import { CarteControle } from "../ControlesExpliques";
 import { Feu, Section, type Teinte } from "../commun";
@@ -17,7 +17,9 @@ const TITRE_GROUPE: Record<Groupe, string> = {
   technique: "Production et risques",
 };
 
-const GROUPE_DU_CODE: Record<CodeControle, Groupe> = {
+/** Un code nouveau du moteur n'a pas besoin d'être listé ici pour s'afficher : il tombe dans « Cohérence des chiffres ». */
+const GROUPE_DU_CODE: Record<string, Groupe> = {
+  HORIZON_INSUFFISANT: "tresorerie",
   POSTE_EN_DOUBLE: "coherence",
   UNITE_PERIODE: "coherence",
   VARIATION_BFR: "coherence",
@@ -56,7 +58,7 @@ const feuDuGroupe = (liste: Controle[]): Teinte =>
 const MOT_FEU: Record<Teinte, string> = { rouge: "À régler", orange: "À surveiller", gris: "Pour information", vert: "Tout va bien" };
 
 export function VueBilan({ controles }: { controles: Controle[] }) {
-  const groupes = ORDRE_GROUPES.map((g) => ({ g, liste: controles.filter((c) => GROUPE_DU_CODE[c.code] === g) })).filter((x) => x.liste.length > 0);
+  const groupes = ORDRE_GROUPES.map((g) => ({ g, liste: controles.filter((c) => (GROUPE_DU_CODE[c.code] ?? "coherence") === g) })).filter((x) => x.liste.length > 0);
   const nbAttention = controles.filter((c) => c.niveau === "bloquant" || c.niveau === "alerte").length;
   return (
     <>

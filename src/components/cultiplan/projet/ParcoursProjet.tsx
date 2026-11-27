@@ -11,7 +11,9 @@ export function ParcoursProjet({ exploitationId, children }: { exploitationId: s
   const etapes = [
     { libelle: "Consultation", href: `${base}/consultation` },
     { libelle: "Faisabilité", href: `${base}/faisabilite` },
+    { libelle: "Débouchés", href: `${base}/debouches` },
     { libelle: "Proposition", href: `${base}/proposition` },
+    { libelle: "Main d'oeuvre", href: `${base}/main-oeuvre` },
     { libelle: "Atelier animal", href: `${base}/elevage` },
   ];
   return (
