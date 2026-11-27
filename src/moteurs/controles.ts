@@ -27,6 +27,15 @@ export const CODES_CONTROLE = [
   "UNITE_PERIODE",
   "VARIATION_BFR",
   "BFR_AMORTI",
+  // Contrôles du §3.6 portés par des champs optionnels des lignes : ils ne se déclenchent que si la donnée est fournie.
+  "INTRANTS_ECART_ITINERAIRE",
+  "CONSOMMATION_BANDE",
+  "PERIODE_IMPRODUCTIVE",
+  "MAIN_OEUVRE_SAISONNIERE",
+  "MASSE_SALARIALE",
+  "VOLUME_HORS_DEBOUCHE",
+  "CONCENTRATION_CLIENT",
+  "CONCENTRATION_FOURNISSEUR",
 ] as const;
 export type CodeControle = (typeof CODES_CONTROLE)[number];
 
@@ -96,8 +105,37 @@ const MOTIF_IMPOT = /\b(impot|impots|taxe|taxes|patente)\b/;
 
 /** Données nécessaires aux contrôles, déjà calculées et arrondies par le moteur financier. */
 export interface DonneesControles {
-  charges: { id: string; libelle: string; typeCharge: string; nature: "fixe" | "variable"; classe: "investissement" | "exploitation"; base: "cycle" | "an"; frequence: number; moisDecaissement?: number[] }[];
-  revenus: { id: string; libelle: string; quantite: number; bornesQuantite?: { min?: number; max?: number; source?: string } }[];
+  charges: {
+    id: string;
+    libelle: string;
+    typeCharge: string;
+    nature: "fixe" | "variable";
+    classe: "investissement" | "exploitation";
+    base: "cycle" | "an";
+    frequence: number;
+    moisDecaissement?: number[];
+    /** Montant de la ligne sur une année (FCFA), avant hausse. */
+    montantAnnuel: number;
+    quantite: number;
+    fournisseur?: string;
+    referenceItineraire?: { quantite: number; source?: string };
+    couverture?: { moisCouverts: number; dureeBandeMois: number };
+    emploi?: { effectif: number; salaireMensuel?: number; saisonnier: boolean; moisTravailles?: number[] };
+  }[];
+  revenus: {
+    id: string;
+    libelle: string;
+    quantite: number;
+    pertes: number;
+    /** Chiffre d'affaires annuel de la ligne dans ce scénario (FCFA). */
+    chiffreAffaires: number;
+    bornesQuantite?: { min?: number; max?: number; source?: string; statut?: string };
+    client?: string;
+    perenne?: { anneeEntreeProduction?: number };
+    debouche?: { volumeAbsorbable: number; source?: string };
+  }[];
+  /** Seuils des contrôles du §3.6 ; un seuil absent : la mesure est donnée sans jugement. */
+  seuils?: { ecartIntrants?: number; ecartMasseSalariale?: number; concentrationMax?: number };
   apport: number;
   credit: { montant: number; dureeMois: number; differeMois: number } | null;
   menageRenseigne: boolean;
@@ -263,7 +301,7 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
   for (const r of d.revenus) {
     const b = r.bornesQuantite;
     if (!b || (b.min === undefined && b.max === undefined)) continue;
-    const valeurs = { ligneId: r.id, quantite: r.quantite, min: b.min ?? null, max: b.max ?? null, source: b.source ?? null };
+    const valeurs = { ligneId: r.id, quantite: r.quantite, min: b.min ?? null, max: b.max ?? null, source: b.source ?? null, statutBornes: b.statut ?? null };
     if (b.max !== undefined && r.quantite > b.max) {
       ajouter("RENDEMENT_HORS_BORNES", "alerte", valeurs, `${r.libelle} : la production prévue (${enQuantite(r.quantite)}) dépasse le maximum connu (${enQuantite(b.max)}). Justifie-la ou réduis-la.`);
     } else if (b.min !== undefined && r.quantite < b.min) {
@@ -351,5 +389,138 @@ export function controler(d: DonneesControles, ratios: Ratios): Controle[] {
     ajouter("BFR_AMORTI", "ok", { lignes: [] }, "Seul le matériel durable est amorti.");
   }
 
+  controlesLignes(d, ajouter);
+
   return controles;
+}
+
+type Ajouter = (code: CodeControle, niveau: NiveauControle, valeurs: Controle["valeurs"], message: string) => void;
+
+const moisDe = (l: number[] | undefined) => (l && l.length > 0 ? [...new Set(l)] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+const ecartRelatif = (mesure: number, attendu: number) => (attendu === 0 ? (mesure === 0 ? 0 : Infinity) : Math.abs(mesure - attendu) / attendu);
+const arrondi4 = (x: number) => (Number.isFinite(x) ? Math.round(x * 10_000) / 10_000 : null);
+
+/**
+ * Contrôles du §3.6 qui lisent des champs optionnels des lignes (itinéraire, bande, emploi, pérennes, débouché, client, fournisseur).
+ * Sans la donnée, pas de contrôle : le moteur n'invente rien. Ce qui demande le calendrier (M1), l'itinéraire complet (R1),
+ * le dimensionnement à rebours (M13) ou les bandes (M14) est décrit dans ANALYSE-BASE-RESSOURCES.md §4.
+ */
+function controlesLignes(d: DonneesControles, ajouter: Ajouter): void {
+  const seuils = d.seuils ?? {};
+
+  // Intrants saisis contre l'itinéraire du référentiel.
+  for (const c of d.charges) {
+    const ref = c.referenceItineraire;
+    if (!ref) continue;
+    const ecart = ecartRelatif(c.quantite, ref.quantite);
+    const valeurs = { ligneId: c.id, quantite: c.quantite, quantiteItineraire: ref.quantite, ecart: arrondi4(ecart), seuil: seuils.ecartIntrants ?? null, source: ref.source ?? null };
+    const dit = `${c.libelle} : ${enQuantite(c.quantite)} budgétés, l'itinéraire en prévoit ${enQuantite(ref.quantite)} (écart de ${Number.isFinite(ecart) ? enPourcent(ecart) : "plus de 100 %"}).`;
+    if (ecart === 0) ajouter("INTRANTS_ECART_ITINERAIRE", "ok", valeurs, `${c.libelle} : la quantité budgétée suit l'itinéraire technique (${enQuantite(ref.quantite)}).`);
+    else if (seuils.ecartIntrants === undefined) ajouter("INTRANTS_ECART_ITINERAIRE", "info", valeurs, `${dit} À toi de dire pourquoi.`);
+    else if (ecart > seuils.ecartIntrants) ajouter("INTRANTS_ECART_ITINERAIRE", "alerte", valeurs, `${dit} C'est au-delà de l'écart accepté (${enPourcent(seuils.ecartIntrants)}) : justifie-le ou reviens à l'itinéraire.`);
+    else ajouter("INTRANTS_ECART_ITINERAIRE", "ok", valeurs, `${dit} C'est dans l'écart accepté (${enPourcent(seuils.ecartIntrants)}).`);
+  }
+
+  // Consommation sur toute la durée de la bande.
+  for (const c of d.charges) {
+    const b = c.couverture;
+    if (!b) continue;
+    const valeurs = { ligneId: c.id, moisCouverts: b.moisCouverts, dureeBandeMois: b.dureeBandeMois };
+    if (b.moisCouverts < b.dureeBandeMois) {
+      const quantiteNecessaire = Math.round(((c.quantite * b.dureeBandeMois) / b.moisCouverts) * 100) / 100;
+      ajouter(
+        "CONSOMMATION_BANDE",
+        "alerte",
+        { ...valeurs, quantiteNecessaire },
+        `${c.libelle} : la quantité budgétée ne couvre que ${enQuantite(b.moisCouverts)} mois alors que la bande dure ${enQuantite(b.dureeBandeMois)} mois. Sur toute la durée, il en faut environ ${enQuantite(quantiteNecessaire)}.`,
+      );
+    } else {
+      ajouter("CONSOMMATION_BANDE", "ok", valeurs, `${c.libelle} : la quantité budgétée couvre toute la durée de la bande (${enQuantite(b.dureeBandeMois)} mois).`);
+    }
+  }
+
+  // Cultures pérennes : une période improductive à déclarer.
+  for (const r of d.revenus) {
+    if (!r.perenne) continue;
+    const an = r.perenne.anneeEntreeProduction;
+    const horizon = d.annees.length;
+    if (an === undefined) {
+      ajouter("PERIODE_IMPRODUCTIVE", "alerte", { ligneId: r.id }, `${r.libelle} : c'est une culture pérenne, mais tu n'as pas dit à partir de quelle année elle produit. Une plantation ne produit pas à plein dès la première année.`);
+    } else if (an === 1) {
+      ajouter("PERIODE_IMPRODUCTIVE", "info", { ligneId: r.id, anneeEntreeProduction: an }, `${r.libelle} : tu comptes une production dès la première année. Vérifie que les arbres ou les plants sont déjà adultes.`);
+    } else {
+      const surestimees = Array.from({ length: Math.min(an - 1, horizon) }, (_, i) => i + 1);
+      ajouter(
+        "PERIODE_IMPRODUCTIVE",
+        "alerte",
+        { ligneId: r.id, anneeEntreeProduction: an, anneesSurestimees: surestimees },
+        `${r.libelle} : la plantation ne produit qu'à partir de l'an ${an}, mais les calculs comptent encore une production complète ${listeAns(surestimees)}. Les résultats de ces années sont trop optimistes.`,
+      );
+    }
+  }
+
+  // Saisonniers payés toute l'année et masse salariale cohérente avec effectif × salaire × mois.
+  for (const c of d.charges) {
+    const e = c.emploi;
+    if (!e) continue;
+    const payes = moisDe(c.moisDecaissement);
+    if (e.saisonnier) {
+      const travailles = e.moisTravailles;
+      const horsTravail = travailles ? payes.filter((m) => !travailles.includes(m)) : [];
+      const valeurs = { ligneId: c.id, moisPayes: payes, moisTravailles: travailles ?? null, moisPayesSansTravail: horsTravail };
+      if (travailles && horsTravail.length > 0) {
+        ajouter("MAIN_OEUVRE_SAISONNIERE", "alerte", valeurs, `${c.libelle} : des saisonniers sont payés ${listeMois(horsTravail)}, hors des mois où ils travaillent. Un saisonnier n'est payé que pendant la saison.`);
+      } else if (!travailles && payes.length === 12) {
+        ajouter("MAIN_OEUVRE_SAISONNIERE", "alerte", valeurs, `${c.libelle} : des saisonniers sont payés les 12 mois de l'année. Dis pendant quels mois ils travaillent vraiment.`);
+      } else {
+        ajouter("MAIN_OEUVRE_SAISONNIERE", "ok", valeurs, `${c.libelle} : les saisonniers ne sont payés que pendant leurs mois de travail.`);
+      }
+    }
+    if (e.salaireMensuel !== undefined) {
+      const mois = e.saisonnier && e.moisTravailles ? moisDe(e.moisTravailles).length : payes.length;
+      const attendu = e.effectif * e.salaireMensuel * mois;
+      const ecart = ecartRelatif(c.montantAnnuel, attendu);
+      const valeurs = { ligneId: c.id, montantAnnuel: Math.round(c.montantAnnuel), attendu: Math.round(attendu), effectif: e.effectif, salaireMensuel: e.salaireMensuel, mois, ecart: arrondi4(ecart), seuil: seuils.ecartMasseSalariale ?? null };
+      const dit = `${c.libelle} : ${enFcfa(c.montantAnnuel)} par an dans le budget, alors que ${enQuantite(e.effectif)} personne(s) à ${enFcfa(e.salaireMensuel)} par mois pendant ${mois} mois font ${enFcfa(attendu)}.`;
+      const tolere = seuils.ecartMasseSalariale ?? 0;
+      if (ecart <= tolere || Math.abs(c.montantAnnuel - attendu) < 0.5) ajouter("MASSE_SALARIALE", "ok", valeurs, `${c.libelle} : le coût du personnel correspond à l'effectif, au salaire et aux mois travaillés (${enFcfa(attendu)} par an).`);
+      else if (seuils.ecartMasseSalariale === undefined) ajouter("MASSE_SALARIALE", "info", valeurs, `${dit} Vérifie les unités (mois ou année).`);
+      else ajouter("MASSE_SALARIALE", "alerte", valeurs, `${dit} Vérifie les unités (mois ou année) et le nombre de mois.`);
+    }
+  }
+
+  // Volumes vendables justifiés par un débouché.
+  for (const r of d.revenus) {
+    if (!r.debouche) continue;
+    const vendable = r.quantite * (1 - r.pertes);
+    const valeurs = { ligneId: r.id, volumeVendable: Math.round(vendable * 100) / 100, volumeAbsorbable: r.debouche.volumeAbsorbable, source: r.debouche.source ?? null };
+    if (vendable > r.debouche.volumeAbsorbable) {
+      ajouter("VOLUME_HORS_DEBOUCHE", "alerte", valeurs, `${r.libelle} : tu comptes vendre ${enQuantite(vendable)} alors que ton débouché n'en absorbe que ${enQuantite(r.debouche.volumeAbsorbable)}. Trouve d'autres acheteurs ou réduis la production.`);
+    } else {
+      ajouter("VOLUME_HORS_DEBOUCHE", "ok", valeurs, `${r.libelle} : le volume à vendre (${enQuantite(vendable)}) tient dans ton débouché (${enQuantite(r.debouche.volumeAbsorbable)}).`);
+    }
+  }
+
+  // Concentration sur un client ou un fournisseur.
+  const concentration = (code: "CONCENTRATION_CLIENT" | "CONCENTRATION_FOURNISSEUR", lignes: { nom: string | undefined; montant: number }[], autre: string, de: string) => {
+    const total = lignes.reduce((t, l) => t + l.montant, 0);
+    const groupes = new Map<string, { nom: string; montant: number }>();
+    for (const l of lignes) {
+      if (!l.nom) continue;
+      const cle = normaliserLibelle(l.nom);
+      groupes.set(cle, { nom: groupes.get(cle)?.nom ?? l.nom, montant: (groupes.get(cle)?.montant ?? 0) + l.montant });
+    }
+    const tries = [...groupes.values()].sort((a, b) => b.montant - a.montant);
+    if (tries.length === 0 || total <= 0) return;
+    const premier = tries[0];
+    const part = premier.montant / total;
+    const attribue = tries.reduce((t, g) => t + g.montant, 0) / total;
+    const valeurs = { nom: premier.nom, part: arrondi4(part), seuil: seuils.concentrationMax ?? null, partNonAttribuee: arrondi4(Math.max(0, 1 - attribue)) };
+    const dit = `${premier.nom} représente ${enPourcent(part)} de ${de}.`;
+    if (seuils.concentrationMax === undefined) ajouter(code, "info", valeurs, `${dit} S'il s'arrête, le projet est touché.`);
+    else if (part > seuils.concentrationMax) ajouter(code, "alerte", valeurs, `${dit} C'est au-dessus de ${enPourcent(seuils.concentrationMax)} : cherche un ${autre} de plus pour ne pas dépendre d'un seul.`);
+    else ajouter(code, "ok", valeurs, `${dit} C'est sous ${enPourcent(seuils.concentrationMax)}.`);
+  };
+  concentration("CONCENTRATION_CLIENT", d.revenus.map((r) => ({ nom: r.client, montant: r.chiffreAffaires })), "client", "tes ventes");
+  concentration("CONCENTRATION_FOURNISSEUR", d.charges.filter((c) => c.classe === "exploitation").map((c) => ({ nom: c.fournisseur, montant: c.montantAnnuel })), "fournisseur", "tes achats d'exploitation");
 }

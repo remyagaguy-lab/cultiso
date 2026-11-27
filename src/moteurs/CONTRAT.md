@@ -10,6 +10,7 @@ Chaque résultat porte `versionMoteur`. Une sortie ajoutée fait monter la versi
 | 1.1.0 | **M3** : ménage, salaires, impôts ; capacité de remboursement, solde résiduel, CAF disponible ; seuil de commercialisation ; trésorerie avec prélèvements, mois déficitaires, retrait possible, point bas. **Le `statut` change de sens** : il combine rentabilité, trésorerie et ménage |
 | 1.2.0 | **M4** : `controles[]` et `ratios` par scénario ; entrées `regleFinanceur` et `bornesQuantite` (par ligne de revenu) |
 | 1.3.0 | **M5** : `sensibilite` (variations, classement, équilibre, test du prix bas, tableau rendement × charges) ; entrées `ecartsScenarios` (scénarios croisés prix, rendement, charges) et `sensibilite` |
+| 1.5.0 | **M4 (suite)** : contrôles du §3.6 portés par des champs optionnels des lignes (itinéraire, bande, pérennes, emploi, débouché, client, fournisseur) et entrée `seuilsControles` ; `bornesQuantite.statut` (R10) |
 
 Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée dans les moteurs : elles arrivent en paramètres, depuis le référentiel `ref` ou les règles des financeurs, au statut `brouillon_ia` tant qu'un expert ne les a pas validées.
 
@@ -27,6 +28,13 @@ Aucune valeur de référence (seuil de financeur, taux, rendement) n'est codée 
 | `impotsAnnuels` | 0 | Impôts et taxes, en attendant la fiscalité par pays (M8) ; répartis sur 12 mois |
 | `regleFinanceur` | absente | `{ nom, apportMinimum?, source? }` : règle du financeur visé (R11), par exemple ANPGF 20 %. Absente : pas de contrôle d'apport |
 | `revenus[].bornesQuantite` | absentes | `{ min?, max?, source? }` : bornes de production du référentiel (R10), dans l'unité et la période de `quantite`, à la taille de l'atelier. Absentes : pas de contrôle de rendement |
+| `revenus[].client`, `charges[].fournisseur` | absents | Nom du client ou du fournisseur, pour la concentration |
+| `charges[].referenceItineraire` | absente | `{ quantite, source? }` : quantité attendue d'après l'itinéraire, dans l'unité et la période de `quantite` |
+| `charges[].couverture` | absente | `{ moisCouverts, dureeBandeMois }` : ce que couvre la quantité budgétée, et la durée de la bande |
+| `charges[].emploi` | absent | `{ effectif, salaireMensuel?, saisonnier = faux, moisTravailles? }` |
+| `revenus[].perenne` | absent | `{ anneeEntreeProduction? }` : culture pérenne ; sa seule présence rend la déclaration obligatoire |
+| `revenus[].debouche` | absent | `{ volumeAbsorbable, source? }` : volume que le marché ou un contrat absorbe (unité et période de `quantite`) |
+| `seuilsControles` | absents | `{ ecartIntrants?, ecartMasseSalariale?, concentrationMax? }`, en décimal. **Aucune valeur par défaut** : sans seuil, le contrôle donne la mesure en niveau `info`, sans jugement |
 
 ## Sorties par scénario (`scenarios.pessimiste | realiste | optimiste`)
 
@@ -81,8 +89,15 @@ Chaque contrôle : `{ code, niveau, valeurs, message }`. `niveau` : `ok` (rien �
 | `UNITE_PERIODE` | un mois répété dans une liste de mois ; salaire fixe annuel payé une seule fois (souvent un mois saisi comme un an) | info, alerte |
 | `VARIATION_BFR` | garantie du moteur : le BFR n'est compté qu'une fois (`variations` = BFR l'an 1, 0 ensuite) | ok |
 | `BFR_AMORTI` | ligne d'investissement nommée fonds de roulement, BFR ou imprévus | ok, alerte |
+| `INTRANTS_ECART_ITINERAIRE` | `referenceItineraire` fourni : écart relatif entre la quantité saisie et l'itinéraire (`ecart`, `seuil`) | ok, info (sans seuil), alerte |
+| `CONSOMMATION_BANDE` | `couverture` fournie : mois couverts sous la durée de la bande (`quantiteNecessaire`) | ok, alerte |
+| `PERIODE_IMPRODUCTIVE` | `perenne` fourni : année d'entrée en production absente (alerte), égale à 1 (info), ou supérieure à 1 (alerte : le moteur répète encore l'an type et surestime `anneesSurestimees`) | info, alerte |
+| `MAIN_OEUVRE_SAISONNIERE` | `emploi.saisonnier` : mois payés hors des mois travaillés, ou 12 mois payés sans mois travaillés | ok, alerte |
+| `MASSE_SALARIALE` | `emploi.salaireMensuel` fourni : montant annuel de la ligne contre effectif × salaire × mois (`attendu`, `ecart`) | ok, info (sans seuil), alerte |
+| `VOLUME_HORS_DEBOUCHE` | `debouche` fourni : quantité × (1 − pertes) au-dessus du volume absorbable | ok, alerte |
+| `CONCENTRATION_CLIENT`, `CONCENTRATION_FOURNISSEUR` | au moins un client (ou fournisseur) nommé : part du premier dans le chiffre d'affaires (ou les charges d'exploitation) ; `partNonAttribuee` pour ce qui n'est pas nommé | ok, info (sans seuil), alerte |
 
-Les contrôles du §3.6 qui demandent le calendrier, l'itinéraire ou le débouché (intrants issus de l'itinéraire, période improductive, consommation sur toute la bande, saisonniers payés 12 mois, volumes vendables) attendent M1, R1, R4, M13 et M14. VAN et TRI sont toujours calculés par le moteur, jamais saisis.
+Ces contrôles du §3.6 ne se déclenchent que si la ligne porte la donnée : le moteur n'invente ni itinéraire, ni débouché, ni client. Ce qui reste hors de portée tant que M1 (calendrier), R1 (itinéraires), R4 (profil pluriannuel), M13 (dimensionnement à rebours) et M14 (bandes) n'existent pas : intrants **calculés** depuis l'itinéraire (ici, seulement comparés à une quantité fournie), main d'oeuvre **calculée** depuis le calendrier, consommation calculée par courbes d'âge, volumes vendables **déduits** du marché, croissance de production liée à une cause (le moteur répète une année type, il n'y a pas de croissance à contrôler). VAN et TRI sont toujours calculés par le moteur, jamais saisis.
 
 ### Ratios (`ratios`, M4)
 

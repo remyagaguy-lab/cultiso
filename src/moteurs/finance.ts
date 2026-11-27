@@ -44,6 +44,21 @@ export const schemaLigneCharge = z
     dureeVieAns: z.number().positive().optional(),
     /** Mois de décaissement (1 à 12, relatifs au démarrage) ; réparti sur 12 mois sinon. */
     moisDecaissement: mois.optional(),
+    /** Fournisseur de la ligne, pour mesurer la concentration des achats (M4). */
+    fournisseur: z.string().min(1).optional(),
+    /** Quantité attendue d'après l'itinéraire technique du référentiel, dans l'unité et la période de `quantite` : sert à signaler un écart (M4, §3.6). */
+    referenceItineraire: z.object({ quantite: z.number().min(0), source: z.string().optional() }).optional(),
+    /** Consommation d'une bande ou d'un cycle : mois que couvre la quantité budgétée, et durée réelle de la bande (M14 attendu pour le calcul complet). */
+    couverture: z.object({ moisCouverts: z.number().positive(), dureeBandeMois: z.number().positive() }).optional(),
+    /** Emploi : effectif, salaire mensuel et mois travaillés, en attendant la main d'oeuvre calculée depuis le calendrier (M1, R2). */
+    emploi: z
+      .object({
+        effectif: z.number().positive(),
+        salaireMensuel: z.number().min(0).optional(),
+        saisonnier: z.boolean().default(false),
+        moisTravailles: mois.optional(),
+      })
+      .optional(),
   })
   .refine((l) => l.classe !== "investissement" || l.dureeVieAns !== undefined, {
     message: "un investissement doit avoir une durée de vie",
@@ -63,8 +78,30 @@ export const schemaLigneRevenu = z.object({
   moisVente: mois.optional(),
   /** Bornes de production du référentiel, dans l'unité et la période de `quantite`, déjà mises à la taille de l'atelier (M4). */
   bornesQuantite: z
-    .object({ min: z.number().min(0).optional(), max: z.number().min(0).optional(), source: z.string().optional() })
+    .object({
+      min: z.number().min(0).optional(),
+      max: z.number().min(0).optional(),
+      source: z.string().optional(),
+      /** Statut de la donnée du référentiel (brouillon_ia, a_valider, validee), repris dans les contrôles. */
+      statut: z.string().optional(),
+    })
     .optional(),
+  /** Client principal de la ligne, pour mesurer la concentration des ventes (M4). */
+  client: z.string().min(1).optional(),
+  /** Culture pérenne : année où la plantation produit (1 = dès la première année). Le moteur répète encore une année type (M1, R4). */
+  perenne: z.object({ anneeEntreeProduction: z.number().int().min(1).optional() }).optional(),
+  /** Débouché justifié : volume que le marché ou un contrat absorbe, dans l'unité et la période de `quantite`, pertes déduites (M13 attendu pour le dimensionnement à rebours). */
+  debouche: z.object({ volumeAbsorbable: z.number().min(0), source: z.string().optional() }).optional(),
+});
+
+/** Seuils des contrôles du §3.6. Aucune valeur par défaut : un seuil absent veut dire « seuil inconnu », et le contrôle se borne à donner la mesure. */
+export const schemaSeuilsControles = z.object({
+  /** Écart relatif toléré entre un intrant saisi et l'itinéraire (0,2 = 20 %). */
+  ecartIntrants: z.number().min(0).optional(),
+  /** Écart relatif toléré entre la masse salariale saisie et effectif × salaire × mois. */
+  ecartMasseSalariale: z.number().min(0).optional(),
+  /** Part maximale d'un seul client dans les ventes, ou d'un seul fournisseur dans les achats (0,5 = 50 %). */
+  concentrationMax: z.number().min(0).max(1).optional(),
 });
 
 /** Le ménage du porteur (M3). Absent : le revenu du ménage n'est pas évalué. */
@@ -112,6 +149,7 @@ export const schemaFinance = z.object({
   moisSalaires: mois.optional(),
   /** Impôts et taxes annuels, en attendant la fiscalité par pays (M8) ; répartis sur 12 mois. */
   impotsAnnuels: z.number().min(0).default(0),
+  seuilsControles: schemaSeuilsControles.optional(),
   ecartsScenarios: schemaEcartsScenarios.prefault({}),
   sensibilite: schemaParametresSensibilite.prefault({}),
   /** Règle du financeur visé (R11), pour les contrôles : par exemple { nom: "ANPGF", apportMinimum: 0.2 }. Aucune valeur par défaut. */
@@ -565,8 +603,19 @@ function arrondirScenario(c: CalculScenario, e: Entree, scenario: Scenario): Res
   const moisTresorerieNegative = c.tresorerie.filter((t) => t.cumul < -DEMI_FCFA).map((t) => t.mois);
   const pointBasTresorerie = { montant: fcfa(c.pointBas.montant), mois: c.pointBas.mois };
   const donnees: DonneesControles = {
-    charges: e.charges,
-    revenus: e.revenus.map((r) => ({ id: r.id, libelle: r.libelle, quantite: r.quantite[scenario], bornesQuantite: r.bornesQuantite })),
+    charges: e.charges.map((c) => ({ ...c, montantAnnuel: parAn(montantCharge(c), c) })),
+    revenus: e.revenus.map((r) => ({
+      id: r.id,
+      libelle: r.libelle,
+      quantite: r.quantite[scenario],
+      pertes: r.pertes,
+      chiffreAffaires: quantiteVendueAn(r, scenario) * r.prixUnitaire,
+      bornesQuantite: r.bornesQuantite,
+      client: r.client,
+      perenne: r.perenne,
+      debouche: r.debouche,
+    })),
+    seuils: e.seuilsControles,
     apport: e.apport,
     credit: e.credit ? { montant: e.credit.montant, dureeMois: e.credit.dureeMois, differeMois: e.credit.differeMois ?? 0 } : null,
     menageRenseigne: e.menage !== undefined,
