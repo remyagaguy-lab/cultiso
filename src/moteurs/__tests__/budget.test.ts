@@ -78,6 +78,20 @@ describe("générateur de budget", () => {
     expect(b.revenus[0].origine).toBe("ajustee_terrain");
   });
 
+  it("les lignes ajoutées passent avant les coefficients, quel que soit l'ordre des règles", () => {
+    const b = genererBudget({
+      ...base,
+      regles: [
+        { id: "contre-saison", cleQuestion: "saisonnalite", valeur: "contre_saison", effet: "multiplier", cible: { sens: "charge", type: "energie" }, coefficient: 1.35, statut: "brouillon_ia" },
+        regles[0],
+      ],
+      ateliers: [{ atelierId: "a1", speculationCode: "tomate", taille: 1 }],
+      contexte: { acces_eau: "motopompe", saisonnalite: "contre_saison" },
+    });
+    expect(b.charges.find((c) => c.id === "a1:eau-motopompe")?.quantite).toBeCloseTo(270, 6);
+    expect(b.journal.map((j) => j.regleId)).toEqual(["eau-motopompe", "contre-saison"]);
+  });
+
   it("une règle limitée à une spéculation ne touche pas les autres ateliers", () => {
     const b = genererBudget({
       ...base,

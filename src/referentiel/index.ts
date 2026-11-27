@@ -4,6 +4,7 @@
 // en base est signalée ici, pas au milieu d'un calcul.
 import { z } from "zod";
 import type { Atelier, ClientBase } from "@/core/exploitation";
+import type { Database } from "@/types/supabase";
 import {
   schemaModeleCharge,
   schemaModeleRevenu,
@@ -85,6 +86,83 @@ function echec(quoi: string, error: { message: string }): never {
 
 const ref = (client: ClientBase) => client.schema("ref");
 
+type Tables = Database["ref"]["Tables"];
+type LigneCharge = Pick<Tables["modeles_charges"]["Row"], "id" | "speculation_code" | "type_charge" | "libelle" | "unite" | "quantite" | "prix_reference" | "produit_prix" | "frequence" | "base" | "nature" | "classe" | "duree_vie_ans" | "mois_decaissement" | "statut">;
+type LigneRevenu = Pick<Tables["modeles_revenus"]["Row"], "id" | "speculation_code" | "type_revenu" | "libelle" | "unite" | "quantite_pessimiste" | "quantite_realiste" | "quantite_optimiste" | "pertes" | "prix_reference" | "produit_prix" | "base" | "mois_vente" | "statut">;
+type LigneRegle = Pick<Tables["regles_ajustement"]["Row"], "id" | "cle_question" | "valeur" | "speculation_code" | "effet" | "cible_sens" | "cible_type" | "cible_modele_id" | "coefficient" | "statut"> & { ligne: unknown };
+
+/** Ligne de ref.modeles_charges → modèle du moteur de budget (validé). */
+export function versModeleCharge(c: LigneCharge): ModeleCharge {
+  return conforme(
+    schemaModeleCharge,
+    {
+      id: c.id,
+      speculationCode: c.speculation_code,
+      typeCharge: c.type_charge,
+      libelle: c.libelle,
+      unite: c.unite,
+      quantite: Number(c.quantite),
+      prixReference: Number(c.prix_reference),
+      produitPrix: c.produit_prix ?? undefined,
+      frequence: Number(c.frequence),
+      base: c.base,
+      nature: c.nature,
+      classe: c.classe,
+      dureeVieAns: c.duree_vie_ans === null ? undefined : Number(c.duree_vie_ans),
+      moisDecaissement: c.mois_decaissement ?? undefined,
+      statut: c.statut,
+    },
+    `charge « ${c.libelle} »`,
+  );
+}
+
+/** Ligne de ref.modeles_revenus → modèle du moteur de budget (validé). */
+export function versModeleRevenu(r: LigneRevenu): ModeleRevenu {
+  return conforme(
+    schemaModeleRevenu,
+    {
+      id: r.id,
+      speculationCode: r.speculation_code,
+      typeRevenu: r.type_revenu,
+      libelle: r.libelle,
+      unite: r.unite,
+      quantite: {
+        pessimiste: Number(r.quantite_pessimiste),
+        realiste: Number(r.quantite_realiste),
+        optimiste: Number(r.quantite_optimiste),
+      },
+      pertes: Number(r.pertes),
+      prixReference: Number(r.prix_reference),
+      produitPrix: r.produit_prix ?? undefined,
+      base: r.base,
+      moisVente: r.mois_vente ?? undefined,
+      statut: r.statut,
+    },
+    `revenu « ${r.libelle} »`,
+  );
+}
+
+/** Ligne de ref.regles_ajustement → règle du moteur de budget (validée). */
+export function versRegle(r: LigneRegle): RegleAjustement {
+  return conforme(
+    schemaRegle,
+    {
+      id: r.id,
+      cleQuestion: r.cle_question,
+      valeur: r.valeur,
+      speculationCode: r.speculation_code ?? undefined,
+      effet: r.effet,
+      cible: r.cible_sens
+        ? { sens: r.cible_sens, type: r.cible_type ?? undefined, modeleId: r.cible_modele_id ?? undefined }
+        : undefined,
+      coefficient: r.coefficient === null ? undefined : Number(r.coefficient),
+      ligne: r.ligne ?? undefined,
+      statut: r.statut,
+    },
+    `règle ${r.id}`,
+  );
+}
+
 export async function lireSpeculations(
   client: ClientBase,
   filtres: { codes?: string[]; secteur?: Speculation["secteur"] } = {},
@@ -125,53 +203,8 @@ export async function lireModeles(
   if (charges.error) echec("modèles de charges", charges.error);
   if (revenus.error) echec("modèles de revenus", revenus.error);
   return {
-    modelesCharges: charges.data.map((c) =>
-      conforme(
-        schemaModeleCharge,
-        {
-          id: c.id,
-          speculationCode: c.speculation_code,
-          typeCharge: c.type_charge,
-          libelle: c.libelle,
-          unite: c.unite,
-          quantite: Number(c.quantite),
-          prixReference: Number(c.prix_reference),
-          produitPrix: c.produit_prix ?? undefined,
-          frequence: Number(c.frequence),
-          base: c.base,
-          nature: c.nature,
-          classe: c.classe,
-          dureeVieAns: c.duree_vie_ans === null ? undefined : Number(c.duree_vie_ans),
-          moisDecaissement: c.mois_decaissement ?? undefined,
-          statut: c.statut,
-        },
-        `charge « ${c.libelle} »`,
-      ),
-    ),
-    modelesRevenus: revenus.data.map((r) =>
-      conforme(
-        schemaModeleRevenu,
-        {
-          id: r.id,
-          speculationCode: r.speculation_code,
-          typeRevenu: r.type_revenu,
-          libelle: r.libelle,
-          unite: r.unite,
-          quantite: {
-            pessimiste: Number(r.quantite_pessimiste),
-            realiste: Number(r.quantite_realiste),
-            optimiste: Number(r.quantite_optimiste),
-          },
-          pertes: Number(r.pertes),
-          prixReference: Number(r.prix_reference),
-          produitPrix: r.produit_prix ?? undefined,
-          base: r.base,
-          moisVente: r.mois_vente ?? undefined,
-          statut: r.statut,
-        },
-        `revenu « ${r.libelle} »`,
-      ),
-    ),
+    modelesCharges: charges.data.map(versModeleCharge),
+    modelesRevenus: revenus.data.map(versModeleRevenu),
   };
 }
 
@@ -204,25 +237,7 @@ export async function lireRegles(client: ClientBase, codes: string[]): Promise<R
   if (error) echec("règles d'ajustement", error);
   return data
     .filter((r) => r.speculation_code === null || codes.includes(r.speculation_code))
-    .map((r) =>
-      conforme(
-        schemaRegle,
-        {
-          id: r.id,
-          cleQuestion: r.cle_question,
-          valeur: r.valeur,
-          speculationCode: r.speculation_code ?? undefined,
-          effet: r.effet,
-          cible: r.cible_sens
-            ? { sens: r.cible_sens, type: r.cible_type ?? undefined, modeleId: r.cible_modele_id ?? undefined }
-            : undefined,
-          coefficient: r.coefficient === null ? undefined : Number(r.coefficient),
-          ligne: r.ligne ?? undefined,
-          statut: r.statut,
-        },
-        `règle ${r.id}`,
-      ),
-    );
+    .map(versRegle);
 }
 
 /**

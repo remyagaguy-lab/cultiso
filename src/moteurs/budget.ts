@@ -3,7 +3,7 @@
 // les modificateurs écrits en dur dans le code devenant des données (règles du référentiel).
 // Chaque ligne garde son origine et le journal des ajustements appliqués : c'est ce qui rend le plan défendable.
 //
-// Ordre : prix de marché d'abord, règles ensuite (une règle « +15 % avec emballage premium » s'applique au prix du marché).
+// Ordre : prix de marché d'abord, règles ensuite (lignes ajoutées, puis coefficients) (une règle « +15 % avec emballage premium » s'applique au prix du marché).
 import { z } from "zod";
 import { valider } from "./commun";
 import type { LigneCharge, LigneRevenu } from "./finance";
@@ -196,7 +196,10 @@ export function genererBudget(entree: EntreeBudget): ResultatBudget {
         e.contexte[r.cleQuestion] === r.valeur &&
         (r.speculationCode === undefined || r.speculationCode === atelier.speculationCode),
     );
-    for (const regle of reglesActives) {
+    // Les lignes ajoutées passent d'abord, pour que les coefficients s'y appliquent aussi
+    // (ex. : le carburant de la motopompe est majoré en contre-saison).
+    const ordonnees = [...reglesActives.filter((r) => r.effet === "ajouter_ligne"), ...reglesActives.filter((r) => r.effet === "multiplier")];
+    for (const regle of ordonnees) {
       if (regle.effet === "multiplier" && regle.cible && regle.coefficient !== undefined) {
         const { sens, type, modeleId } = regle.cible;
         const vise = (typeLigne: string, idModele: string | null) =>

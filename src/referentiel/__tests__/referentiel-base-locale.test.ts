@@ -163,4 +163,30 @@ decrire("base locale : référentiel ref", () => {
     });
     expect(resultats.investissementTotal).toBe(60_000);
   });
+
+  it("données de départ : import rejouable puis budget de 2 ha de tomate et 500 poulets", async () => {
+    const importer = () =>
+      execSync("node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/importer-referentiel.mjs", {
+        stdio: "ignore",
+        env: { ...process.env, REFERENTIEL_API_URL: statut.API_URL, REFERENTIEL_CLE_SERVICE: statut.SERVICE_ROLE_KEY },
+      });
+    importer();
+    importer();
+    const specs = await lireSpeculations(utilisateur, { codes: ["tomate", "poulet_chair"] });
+    expect(specs.map((s) => s.code).sort()).toEqual(["poulet_chair", "tomate"]);
+    expect((await lireQuestionsTerrain(utilisateur)).filter((q) => !q.cle.startsWith("test_"))).toHaveLength(16);
+
+    const e = await creerExploitation(utilisateur, { nom: "Ferme de départ" });
+    await ajouterAtelier(utilisateur, e.id, { speculationCode: "tomate", taille: 2, unite: "ha" });
+    await ajouterAtelier(utilisateur, e.id, { speculationCode: "poulet_chair", taille: 500, unite: "sujet" });
+    await repondreTerrain(utilisateur, e.id, { cle: "eau", valeur: "motopompe" });
+    await repondreTerrain(utilisateur, e.id, { cle: "alimentation", valeur: "industriel" });
+
+    const budget = genererBudget(await preparerBudget(utilisateur, await lireExploitation(utilisateur, e.id)));
+    expect(budget.charges.find((c) => c.libelle === "Carburant de la motopompe")).toMatchObject({ quantite: 20, origine: "ajustee_terrain" });
+    expect(budget.charges.filter((c) => c.libelle.startsWith("Aliment")).every((c) => c.origine === "ajustee_terrain")).toBe(true);
+    expect(budget.charges.find((c) => c.libelle === "Poussins d'un jour")?.cyclesParAn).toBe(4);
+    const f = calculerFinances({ charges: budget.charges, revenus: budget.revenus });
+    expect(f.scenarios.realiste.annees[0].chiffreAffaires).toBeGreaterThan(0);
+  }, 300000);
 });

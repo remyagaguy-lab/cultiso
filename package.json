@@ -15,7 +15,8 @@
     "db:reset": "supabase db reset",
     "test:refonte": "jest src/cultisia src/moteurs src/core src/referentiel",
     "test:base-locale": "node scripts/test-base-locale.mjs",
-    "test:modele-reel": "node scripts/test-modele-reel.mjs"
+    "test:modele-reel": "node scripts/test-modele-reel.mjs",
+    "referentiel:importer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/importer-referentiel.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",

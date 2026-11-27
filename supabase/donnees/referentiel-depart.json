@@ -1,0 +1,272 @@
+{
+  "version": "2026-11-27",
+  "avertissement": "Données de départ reprises des brouillons archivés (Agripilot, Cultiso Brouillon, Stimulateur), générées par IA à l'origine. Toutes en statut brouillon_ia : à valider par un expert avant d'être montrées comme références. Les hypothèses ajoutées par Cultiso sont signalées dans la source de chaque donnée.",
+  "speculations": [
+    {
+      "code": "tomate",
+      "nom": "Tomate",
+      "secteur": "vegetal",
+      "sous_secteur": "maraichage",
+      "unite_echelle": "ha",
+      "duree_cycle_jours": 70,
+      "cycles_par_an": 1,
+      "zones": ["maritime", "plateaux", "centrale"],
+      "source": "Agripilot, filieres.json (maraichage-tomates). Mois de décaissement et de vente : hypothèse Cultiso d'après la durée du cycle.",
+      "charges": [
+        { "cle": "semences", "type_charge": "intrants", "libelle": "Semences de tomate", "unite": "sachet", "quantite": 4, "prix_reference": 9000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "engrais_npk", "type_charge": "intrants", "libelle": "Engrais NPK", "unite": "kg", "quantite": 100, "prix_reference": 450, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] },
+        { "cle": "fumure", "type_charge": "intrants", "libelle": "Fumure organique", "unite": "forfait", "quantite": 1, "prix_reference": 50000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "phyto", "type_charge": "sanitaire", "libelle": "Pesticides et fongicides", "unite": "litre", "quantite": 6, "prix_reference": 5000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2, 3] },
+        { "cle": "mo_entretien", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre d'entretien", "unite": "jour-homme", "quantite": 50, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3] },
+        { "cle": "mo_recolte", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de récolte", "unite": "jour-homme", "quantite": 20, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3] },
+        { "cle": "irrigation", "type_charge": "energie", "libelle": "Irrigation (eau et pompage)", "unite": "forfait", "quantite": 1, "prix_reference": 60000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3] },
+        { "cle": "location", "type_charge": "infrastructures", "libelle": "Location du terrain", "unite": "ha et saison", "quantite": 1, "prix_reference": 80000, "nature": "fixe", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "transport", "type_charge": "logistique", "libelle": "Transport et mise en marché", "unite": "forfait", "quantite": 1, "prix_reference": 65000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3] },
+        { "cle": "emballage", "type_charge": "logistique", "libelle": "Ficelles, tuteurs et emballage", "unite": "forfait", "quantite": 1, "prix_reference": 24000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3] }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Tomate fraîche", "unite": "kg", "quantite_pessimiste": 5000, "quantite_realiste": 8000, "quantite_optimiste": 12000, "pertes": 0, "prix_reference": 150, "mois_vente": [3] }
+      ]
+    },
+    {
+      "code": "piment",
+      "nom": "Piment",
+      "secteur": "vegetal",
+      "sous_secteur": "maraichage",
+      "unite_echelle": "ha",
+      "duree_cycle_jours": 90,
+      "cycles_par_an": 1,
+      "zones": ["maritime", "plateaux", "centrale", "kara"],
+      "source": "Agripilot, filieres.json (maraichage-piments). Mois : hypothèse Cultiso d'après la durée du cycle.",
+      "charges": [
+        { "cle": "semences", "type_charge": "intrants", "libelle": "Semences de piment", "unite": "sachet", "quantite": 3, "prix_reference": 7500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "engrais_npk", "type_charge": "intrants", "libelle": "Engrais NPK", "unite": "kg", "quantite": 80, "prix_reference": 450, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] },
+        { "cle": "fumure", "type_charge": "intrants", "libelle": "Fumure organique", "unite": "forfait", "quantite": 1, "prix_reference": 50000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "phyto", "type_charge": "sanitaire", "libelle": "Pesticides et insecticides", "unite": "litre", "quantite": 6, "prix_reference": 5500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2, 3] },
+        { "cle": "mo_entretien", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre d'entretien", "unite": "jour-homme", "quantite": 55, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3] },
+        { "cle": "mo_recolte", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de récolte", "unite": "jour-homme", "quantite": 30, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3, 4] },
+        { "cle": "irrigation", "type_charge": "energie", "libelle": "Irrigation (eau et pompage)", "unite": "forfait", "quantite": 1, "prix_reference": 60000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3] },
+        { "cle": "location", "type_charge": "infrastructures", "libelle": "Location du terrain", "unite": "ha et saison", "quantite": 1, "prix_reference": 80000, "nature": "fixe", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "transport", "type_charge": "logistique", "libelle": "Transport et mise en marché", "unite": "forfait", "quantite": 1, "prix_reference": 70000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3, 4] },
+        { "cle": "emballage", "type_charge": "logistique", "libelle": "Emballage et ficelles", "unite": "forfait", "quantite": 1, "prix_reference": 29000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3, 4] }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Piment frais", "unite": "kg", "quantite_pessimiste": 3000, "quantite_realiste": 5000, "quantite_optimiste": 8000, "pertes": 0, "prix_reference": 280, "mois_vente": [3, 4] }
+      ]
+    },
+    {
+      "code": "oignon",
+      "nom": "Oignon",
+      "secteur": "vegetal",
+      "sous_secteur": "maraichage",
+      "unite_echelle": "ha",
+      "duree_cycle_jours": 120,
+      "cycles_par_an": 1,
+      "zones": ["maritime", "savanes", "kara"],
+      "source": "Agripilot, filieres.json (maraichage-oignon). Mois : hypothèse Cultiso d'après la durée du cycle.",
+      "charges": [
+        { "cle": "semences", "type_charge": "intrants", "libelle": "Semences d'oignon hybride", "unite": "sachet", "quantite": 3, "prix_reference": 18000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "engrais", "type_charge": "intrants", "libelle": "Engrais NPK et fumure", "unite": "forfait", "quantite": 1, "prix_reference": 90000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] },
+        { "cle": "phyto", "type_charge": "sanitaire", "libelle": "Pesticides et fongicides", "unite": "litre", "quantite": 5, "prix_reference": 6000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2, 3] },
+        { "cle": "mo_pepiniere", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de pépinière et de repiquage", "unite": "jour-homme", "quantite": 30, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "mo_entretien", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre d'entretien et d'irrigation", "unite": "jour-homme", "quantite": 40, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2, 3, 4] },
+        { "cle": "mo_recolte", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de récolte et de séchage", "unite": "jour-homme", "quantite": 25, "prix_reference": 3500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [4] },
+        { "cle": "irrigation", "type_charge": "energie", "libelle": "Irrigation (pompe et carburant)", "unite": "forfait", "quantite": 1, "prix_reference": 70000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3, 4] },
+        { "cle": "location", "type_charge": "infrastructures", "libelle": "Location du terrain", "unite": "ha et saison", "quantite": 1, "prix_reference": 70000, "nature": "fixe", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "transport", "type_charge": "logistique", "libelle": "Emballage et transport", "unite": "forfait", "quantite": 1, "prix_reference": 50000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [4] }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Oignon", "unite": "kg", "quantite_pessimiste": 8000, "quantite_realiste": 15000, "quantite_optimiste": 22000, "pertes": 0, "prix_reference": 270, "mois_vente": [4] }
+      ]
+    },
+    {
+      "code": "mais",
+      "nom": "Maïs",
+      "secteur": "vegetal",
+      "sous_secteur": "cultures_vivrieres",
+      "unite_echelle": "ha",
+      "duree_cycle_jours": 90,
+      "cycles_par_an": 1,
+      "zones": ["maritime", "plateaux", "centrale", "kara", "savanes"],
+      "source": "Agripilot, filieres.json (cultures-vivrieres-mais). Semences à 600 FCFA/kg dans Agripilot, 1 500 à 2 000 FCFA/kg dans le Stimulateur : à trancher. Mois : hypothèse Cultiso.",
+      "charges": [
+        { "cle": "semences", "type_charge": "intrants", "libelle": "Semences certifiées de maïs", "unite": "kg", "quantite": 25, "prix_reference": 600, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "engrais_npk", "type_charge": "intrants", "libelle": "Engrais NPK de fond", "unite": "kg", "quantite": 100, "prix_reference": 450, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "uree", "type_charge": "intrants", "libelle": "Urée de couverture", "unite": "kg", "quantite": 50, "prix_reference": 500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2] },
+        { "cle": "phyto", "type_charge": "sanitaire", "libelle": "Herbicide et insecticide", "unite": "litre", "quantite": 3, "prix_reference": 4500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] },
+        { "cle": "mo_entretien", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de semis et d'entretien", "unite": "jour-homme", "quantite": 25, "prix_reference": 3000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] },
+        { "cle": "mo_recolte", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre de récolte", "unite": "jour-homme", "quantite": 12, "prix_reference": 3000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3] },
+        { "cle": "location", "type_charge": "infrastructures", "libelle": "Location du terrain", "unite": "ha et saison", "quantite": 1, "prix_reference": 35000, "nature": "fixe", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "transport", "type_charge": "logistique", "libelle": "Transport et conditionnement", "unite": "forfait", "quantite": 1, "prix_reference": 18000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [3] }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Maïs grain", "unite": "kg", "quantite_pessimiste": 1500, "quantite_realiste": 2500, "quantite_optimiste": 4000, "pertes": 0, "prix_reference": 175, "mois_vente": [3, 4] }
+      ]
+    },
+    {
+      "code": "soja",
+      "nom": "Soja",
+      "secteur": "vegetal",
+      "sous_secteur": "cultures_vivrieres",
+      "unite_echelle": "ha",
+      "duree_cycle_jours": null,
+      "cycles_par_an": 1,
+      "zones": ["kara"],
+      "source": "Stimulateur, calculations.js (barème Soja : préparation 90 000, intrants 140 000 FCFA/ha, 1,2 t/ha) et countries.js (Togo : soja 300 à 500 FCFA/kg, moyenne 400). Scénarios : coefficients du Stimulateur (0,7 débutant, 1,5 bon). Détail des postes, durée du cycle et mois : à compléter.",
+      "charges": [
+        { "cle": "preparation", "type_charge": "main_oeuvre", "libelle": "Préparation du sol", "unite": "forfait", "quantite": 1, "prix_reference": 90000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "intrants", "type_charge": "intrants", "libelle": "Semences et intrants", "unite": "forfait", "quantite": 1, "prix_reference": 140000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2] }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Soja grain", "unite": "kg", "quantite_pessimiste": 840, "quantite_realiste": 1200, "quantite_optimiste": 1800, "pertes": 0, "prix_reference": 400, "mois_vente": [4] }
+      ]
+    },
+    {
+      "code": "poulet_chair",
+      "nom": "Poulet de chair",
+      "secteur": "animal",
+      "sous_secteur": "aviculture",
+      "unite_echelle": "sujet",
+      "duree_cycle_jours": 45,
+      "cycles_par_an": 4,
+      "zones": ["maritime", "plateaux", "centrale", "kara", "savanes"],
+      "source": "Agripilot, filieres.json (elevage-volaille-poulets), lot de 200 ramené à 1 sujet ; Stimulateur (4 cycles par an, mortalité 5 %, bâtiment 3 500 FCFA par tête, équipement 150 000 FCFA, ramené ici à un lot de 500). Durées de vie : hypothèse Cultiso.",
+      "charges": [
+        { "cle": "poussins", "type_charge": "intrants", "libelle": "Poussins d'un jour", "unite": "sujet", "quantite": 1, "prix_reference": 650, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment_demarrage", "type_charge": "intrants", "libelle": "Aliment de démarrage (J0 à J14)", "unite": "sac de 50 kg", "quantite": 0.02, "prix_reference": 18000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment_croissance", "type_charge": "intrants", "libelle": "Aliment de croissance (J15 à J28)", "unite": "sac de 50 kg", "quantite": 0.03, "prix_reference": 16500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment_finition", "type_charge": "intrants", "libelle": "Aliment de finition (J29 à J45)", "unite": "sac de 50 kg", "quantite": 0.03, "prix_reference": 15500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [2] },
+        { "cle": "sante", "type_charge": "sanitaire", "libelle": "Vaccins et médicaments", "unite": "forfait par sujet", "quantite": 1, "prix_reference": 175, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "litiere", "type_charge": "sanitaire", "libelle": "Litière et désinfection", "unite": "forfait par sujet", "quantite": 1, "prix_reference": 100, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "main_oeuvre", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre", "unite": "mois", "quantite": 0.0075, "prix_reference": 40000, "nature": "fixe", "classe": "exploitation" },
+        { "cle": "batiment", "type_charge": "infrastructures", "libelle": "Poulailler", "unite": "place", "quantite": 1, "prix_reference": 3500, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 10 },
+        { "cle": "equipement", "type_charge": "infrastructures", "libelle": "Mangeoires, abreuvoirs, thermomètre", "unite": "place", "quantite": 1, "prix_reference": 300, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 5 }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Poulet vif", "unite": "kg de poids vif", "quantite_pessimiste": 1.8, "quantite_realiste": 2.1, "quantite_optimiste": 2.3, "pertes": 0.05, "prix_reference": 2050, "mois_vente": [2] }
+      ]
+    },
+    {
+      "code": "poule_pondeuse",
+      "nom": "Poules pondeuses",
+      "secteur": "animal",
+      "sous_secteur": "aviculture",
+      "unite_echelle": "poule",
+      "duree_cycle_jours": 365,
+      "cycles_par_an": 1,
+      "zones": ["maritime", "plateaux", "centrale"],
+      "source": "Agripilot, filieres.json (elevage-pondeuses), lot de 100 ramené à 1 poule ; Stimulateur (bâtiment 4 500 FCFA par tête, équipement 200 000 FCFA, ramené ici à un lot de 100 ; 240 œufs et 8 % de mortalité, non repris car le rendement d'Agripilot est déjà par poule logée). Aliment : 3,5 kg par poule et par mois (Stimulateur), car les 20 sacs par mois pour 100 poules d'Agripilot font 333 g par jour, trois fois la ration habituelle. Durées de vie : hypothèse Cultiso. Poules de réforme (coproduit) : à ajouter.",
+      "charges": [
+        { "cle": "poulettes", "type_charge": "intrants", "libelle": "Poulettes prêtes à pondre (18 semaines)", "unite": "sujet", "quantite": 1, "prix_reference": 7000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment_ponte", "type_charge": "intrants", "libelle": "Aliment de ponte", "unite": "sac de 50 kg par mois", "quantite": 0.07, "prix_reference": 16000, "frequence": 12, "nature": "variable", "classe": "exploitation" },
+        { "cle": "sante", "type_charge": "sanitaire", "libelle": "Vaccins et vitamines", "unite": "forfait par trimestre", "quantite": 0.01, "prix_reference": 15000, "frequence": 4, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 4, 7, 10] },
+        { "cle": "main_oeuvre", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre", "unite": "mois", "quantite": 0.01, "prix_reference": 45000, "frequence": 12, "nature": "fixe", "classe": "exploitation" },
+        { "cle": "eau_electricite", "type_charge": "energie", "libelle": "Eau et électricité", "unite": "mois", "quantite": 0.01, "prix_reference": 8000, "frequence": 12, "nature": "fixe", "classe": "exploitation" },
+        { "cle": "entretien_batiment", "type_charge": "infrastructures", "libelle": "Entretien du bâtiment", "unite": "an", "quantite": 0.01, "prix_reference": 80000, "base": "an", "nature": "fixe", "classe": "exploitation" },
+        { "cle": "batiment", "type_charge": "infrastructures", "libelle": "Bâtiment de ponte", "unite": "place", "quantite": 1, "prix_reference": 4500, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 10 },
+        { "cle": "equipement", "type_charge": "infrastructures", "libelle": "Pondoirs, mangeoires, abreuvoirs", "unite": "place", "quantite": 1, "prix_reference": 2000, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 5 }
+      ],
+      "revenus": [
+        { "cle": "oeufs", "type_revenu": "principal", "libelle": "Œufs", "unite": "œuf", "quantite_pessimiste": 220, "quantite_realiste": 260, "quantite_optimiste": 290, "pertes": 0, "prix_reference": 95 }
+      ]
+    },
+    {
+      "code": "tilapia",
+      "nom": "Tilapia en étang",
+      "secteur": "halieutique",
+      "sous_secteur": "pisciculture",
+      "unite_echelle": "étang de 5 000 alevins",
+      "duree_cycle_jours": 180,
+      "cycles_par_an": 2,
+      "zones": ["maritime", "plateaux", "centrale"],
+      "source": "Agripilot, filieres.json (pisciculture-tilapia). Deux cycles par an déduits de la durée du cycle (180 jours). Construction de l'étang non comprise (Stimulateur : 800 FCFA par alevin, à valider). Durées de vie : hypothèse Cultiso.",
+      "charges": [
+        { "cle": "alevins", "type_charge": "intrants", "libelle": "Alevins de tilapia", "unite": "lot de 1 000 alevins", "quantite": 5, "prix_reference": 35000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment", "type_charge": "intrants", "libelle": "Aliment complet pour poisson", "unite": "sac de 25 kg", "quantite": 40, "prix_reference": 22000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3, 4, 5, 6] },
+        { "cle": "chaux", "type_charge": "sanitaire", "libelle": "Chaux agricole (désinfection)", "unite": "sac de 50 kg", "quantite": 4, "prix_reference": 8000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "main_oeuvre", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre", "unite": "mois", "quantite": 6, "prix_reference": 35000, "nature": "fixe", "classe": "exploitation", "mois_decaissement": [1, 2, 3, 4, 5, 6] },
+        { "cle": "pompe", "type_charge": "infrastructures", "libelle": "Pompe et tuyaux", "unite": "forfait", "quantite": 1, "prix_reference": 120000, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 5 },
+        { "cle": "filets", "type_charge": "infrastructures", "libelle": "Filets et matériel de pêche", "unite": "forfait", "quantite": 1, "prix_reference": 45000, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 3 }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Tilapia frais", "unite": "kg", "quantite_pessimiste": 1200, "quantite_realiste": 2000, "quantite_optimiste": 3000, "pertes": 0, "prix_reference": 1650, "mois_vente": [6, 12] }
+      ]
+    },
+    {
+      "code": "gari",
+      "nom": "Gari de manioc",
+      "secteur": "transformation",
+      "sous_secteur": "transformation_manioc",
+      "unite_echelle": "fournée de 500 kg de manioc",
+      "duree_cycle_jours": 7,
+      "cycles_par_an": 40,
+      "zones": ["maritime", "plateaux", "centrale"],
+      "source": "Agripilot, filieres.json (transformation-gari-manioc), modèle artisanal avec râpe louée. 40 fournées par an : hypothèse Cultiso à valider. Unité semi-industrielle (Stimulateur : équipement 2,5 M, aménagement 0,6 M FCFA) non reprise.",
+      "charges": [
+        { "cle": "manioc", "type_charge": "intrants", "libelle": "Manioc frais", "unite": "kg", "quantite": 500, "prix_reference": 50, "nature": "variable", "classe": "exploitation" },
+        { "cle": "rapage", "type_charge": "intrants", "libelle": "Location de la râpe mécanique", "unite": "kg râpé", "quantite": 500, "prix_reference": 15, "nature": "variable", "classe": "exploitation" },
+        { "cle": "pressage", "type_charge": "intrants", "libelle": "Sacs de jute et pressage", "unite": "forfait", "quantite": 1, "prix_reference": 5000, "nature": "variable", "classe": "exploitation" },
+        { "cle": "combustible", "type_charge": "energie", "libelle": "Bois de chauffe (séchage et torréfaction)", "unite": "kg", "quantite": 50, "prix_reference": 100, "nature": "variable", "classe": "exploitation" },
+        { "cle": "main_oeuvre", "type_charge": "main_oeuvre", "libelle": "Main-d'œuvre (2 personnes pendant 5 jours)", "unite": "jour-homme", "quantite": 10, "prix_reference": 3500, "nature": "variable", "classe": "exploitation" },
+        { "cle": "sacs", "type_charge": "logistique", "libelle": "Sacs de conditionnement de 25 kg", "unite": "sac", "quantite": 6, "prix_reference": 800, "nature": "variable", "classe": "exploitation" }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Gari", "unite": "kg", "quantite_pessimiste": 120, "quantite_realiste": 150, "quantite_optimiste": 175, "pertes": 0, "prix_reference": 275 }
+      ]
+    },
+    {
+      "code": "embouche_ovine",
+      "nom": "Embouche de petits ruminants (moutons)",
+      "secteur": "animal",
+      "sous_secteur": "elevage_ruminants",
+      "unite_echelle": "tête",
+      "duree_cycle_jours": 180,
+      "cycles_par_an": 2,
+      "zones": ["plateaux", "centrale", "kara", "savanes"],
+      "source": "Stimulateur, calculations.js (Ovins : 2 cycles par an, mortalité 5 %, 180 kg d'aliment par tête, bâtiment 35 000 FCFA par tête, équipement 80 000 FCFA, ramené ici à un lot de 20) et countries.js (Togo : agneau 45 000 à 75 000, agneau vendu 80 000 à 150 000, botte de foin 500 à 1 000 FCFA). Vaccination : Agripilot (elevage-caprins). Botte de 15 kg, durées de vie et absence d'écart entre scénarios : hypothèses Cultiso à valider.",
+      "charges": [
+        { "cle": "agneaux", "type_charge": "intrants", "libelle": "Achat d'agneaux à emboucher", "unite": "tête", "quantite": 1, "prix_reference": 60000, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "aliment", "type_charge": "intrants", "libelle": "Fourrage (bottes de foin)", "unite": "botte", "quantite": 12, "prix_reference": 750, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1, 2, 3, 4, 5, 6] },
+        { "cle": "vaccins", "type_charge": "sanitaire", "libelle": "Vaccination (PPR) et déparasitage", "unite": "tête", "quantite": 1, "prix_reference": 2500, "nature": "variable", "classe": "exploitation", "mois_decaissement": [1] },
+        { "cle": "bergerie", "type_charge": "infrastructures", "libelle": "Bergerie", "unite": "place", "quantite": 1, "prix_reference": 35000, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 10 },
+        { "cle": "equipement", "type_charge": "infrastructures", "libelle": "Mangeoires et abreuvoirs", "unite": "place", "quantite": 1, "prix_reference": 4000, "nature": "fixe", "classe": "investissement", "duree_vie_ans": 5 }
+      ],
+      "revenus": [
+        { "cle": "vente", "type_revenu": "principal", "libelle": "Mouton engraissé", "unite": "tête", "quantite_pessimiste": 1, "quantite_realiste": 1, "quantite_optimiste": 1, "pertes": 0.05, "prix_reference": 115000, "mois_vente": [6] }
+      ]
+    }
+  ],
+  "questions": [
+    { "cle": "ecosysteme", "ordre": 1, "libelle": "Dans quel milieu se trouve ton exploitation ?", "sous_titre": "Le milieu oriente le choix des cultures et le risque d'inondation ou de sécheresse.", "secteurs": [], "reponses": [{ "valeur": "plaine", "libelle": "Plaine" }, { "valeur": "bas_fond", "libelle": "Bas-fond" }, { "valeur": "plateau", "libelle": "Plateau ou colline" }, { "valeur": "periurbain", "libelle": "Zone périurbaine" }] },
+    { "cle": "accessibilite", "ordre": 2, "libelle": "Peut-on rejoindre ton site toute l'année ?", "sous_titre": "Un site isolé renchérit le transport des intrants et des récoltes.", "secteurs": [], "reponses": [{ "valeur": "bonne", "libelle": "Oui, route praticable toute l'année" }, { "valeur": "saisonniere", "libelle": "Difficile en saison des pluies" }, { "valeur": "isolee", "libelle": "Zone isolée" }] },
+    { "cle": "saisonnalite", "ordre": 3, "libelle": "À quelle période produis-tu ?", "sous_titre": "La contre-saison paie mieux mais coûte plus en eau et en énergie.", "secteurs": ["vegetal"], "reponses": [{ "valeur": "saison_pluies", "libelle": "En saison des pluies" }, { "valeur": "contre_saison", "libelle": "En contre-saison (saison sèche)" }, { "valeur": "toute_annee", "libelle": "Toute l'année" }] },
+    { "cle": "eau", "ordre": 4, "libelle": "D'où vient ton eau ?", "sous_titre": "Une motopompe ajoute du carburant à ton budget.", "secteurs": [], "reponses": [{ "valeur": "pluie", "libelle": "Pluie seulement" }, { "valeur": "puits", "libelle": "Puits" }, { "valeur": "forage", "libelle": "Forage" }, { "valeur": "motopompe", "libelle": "Rivière ou retenue avec motopompe" }, { "valeur": "reseau", "libelle": "Réseau d'eau" }] },
+    { "cle": "mecanisation", "ordre": 5, "libelle": "Comment prépares-tu le sol ?", "sous_titre": "Le travail du sol pèse sur la main-d'œuvre et le calendrier.", "secteurs": ["vegetal"], "reponses": [{ "valeur": "manuelle", "libelle": "À la main" }, { "valeur": "traction_animale", "libelle": "Traction animale" }, { "valeur": "tracteur_loue", "libelle": "Tracteur loué" }, { "valeur": "tracteur_propre", "libelle": "Mon propre tracteur" }] },
+    { "cle": "objectif", "ordre": 6, "libelle": "Quel est ton objectif principal ?", "sous_titre": "Il fixe la taille utile et le circuit de vente.", "secteurs": [], "reponses": [{ "valeur": "complement_revenu", "libelle": "Un complément de revenu" }, { "valeur": "activite_principale", "libelle": "Mon activité principale" }, { "valeur": "contrat", "libelle": "Livrer un acheteur sous contrat" }] },
+    { "cle": "souche", "ordre": 7, "libelle": "Quelle souche ou race comptes-tu élever ?", "sous_titre": "Une souche améliorée produit plus mais demande plus de soins.", "secteurs": ["animal", "halieutique"], "reponses": [{ "valeur": "locale", "libelle": "Locale" }, { "valeur": "amelioree", "libelle": "Améliorée" }, { "valeur": "importee", "libelle": "Importée" }] },
+    { "cle": "logement", "ordre": 8, "libelle": "Comment seront logés tes animaux ?", "sous_titre": "Le logement protège des maladies et des vols.", "secteurs": ["animal", "halieutique"], "reponses": [{ "valeur": "plein_air", "libelle": "En plein air" }, { "valeur": "semi_ouvert", "libelle": "Abri semi-ouvert" }, { "valeur": "batiment", "libelle": "Bâtiment fermé" }, { "valeur": "etang", "libelle": "Étang en terre" }, { "valeur": "bac", "libelle": "Bacs ou cages" }] },
+    { "cle": "alimentation", "ordre": 9, "libelle": "Comment nourris-tu tes animaux ?", "sous_titre": "L'aliment industriel complet coûte plus cher mais fait grossir plus vite.", "secteurs": ["animal", "halieutique"], "reponses": [{ "valeur": "paturage", "libelle": "Pâturage" }, { "valeur": "artisanal", "libelle": "Aliment fabriqué sur place" }, { "valeur": "industriel", "libelle": "Aliment industriel complet" }, { "valeur": "mixte", "libelle": "Un mélange" }] },
+    { "cle": "energie", "ordre": 10, "libelle": "Quelle énergie utilises-tu ?", "sous_titre": "L'énergie compte pour l'éclairage, le froid et les machines.", "secteurs": [], "reponses": [{ "valeur": "aucune", "libelle": "Aucune" }, { "valeur": "reseau", "libelle": "Réseau électrique" }, { "valeur": "groupe", "libelle": "Groupe électrogène" }, { "valeur": "solaire", "libelle": "Solaire" }] },
+    { "cle": "equipement", "ordre": 11, "libelle": "As-tu déjà le matériel nécessaire ?", "sous_titre": "Le matériel déjà acquis réduit ton investissement de départ.", "secteurs": [], "reponses": [{ "valeur": "existant", "libelle": "Oui, je l'ai" }, { "valeur": "location", "libelle": "Je vais le louer" }, { "valeur": "a_acheter", "libelle": "Je dois l'acheter" }] },
+    { "cle": "approvisionnement", "ordre": 12, "libelle": "Où achètes-tu tes intrants ?", "sous_titre": "La distance au fournisseur pèse sur le prix rendu.", "secteurs": [], "reponses": [{ "valeur": "proche", "libelle": "Sur place ou tout près" }, { "valeur": "ville_voisine", "libelle": "Dans la ville voisine" }, { "valeur": "lome", "libelle": "À Lomé" }] },
+    { "cle": "hygiene", "ordre": 13, "libelle": "Quelles règles d'hygiène appliques-tu ?", "sous_titre": "La biosécurité réduit fortement la mortalité.", "secteurs": ["animal", "halieutique", "transformation"], "reponses": [{ "valeur": "aucune", "libelle": "Aucune règle particulière" }, { "valeur": "de_base", "libelle": "Nettoyage et désinfection de base" }, { "valeur": "stricte", "libelle": "Protocole strict (pédiluve, accès contrôlé)" }] },
+    { "cle": "stockage", "ordre": 14, "libelle": "Peux-tu stocker ta production ?", "sous_titre": "Stocker permet de vendre quand les prix remontent.", "secteurs": [], "reponses": [{ "valeur": "aucun", "libelle": "Non, je vends tout de suite" }, { "valeur": "magasin", "libelle": "Magasin ou grenier" }, { "valeur": "froid", "libelle": "Chambre froide" }] },
+    { "cle": "canal_vente", "ordre": 15, "libelle": "À qui vas-tu vendre ?", "sous_titre": "Le circuit de vente change le prix que tu touches.", "secteurs": [], "reponses": [{ "valeur": "bord_champ", "libelle": "Bord champ" }, { "valeur": "marche_local", "libelle": "Marché local" }, { "valeur": "grossiste", "libelle": "Grossiste" }, { "valeur": "restaurants", "libelle": "Restaurants et hôtels" }, { "valeur": "supermarche", "libelle": "Supermarchés" }, { "valeur": "export", "libelle": "Export" }] },
+    { "cle": "conditionnement", "ordre": 16, "libelle": "Comment présentes-tu ton produit ?", "sous_titre": "Un emballage soigné coûte un peu et se vend plus cher.", "secteurs": [], "reponses": [{ "valeur": "vrac", "libelle": "En vrac" }, { "valeur": "standard", "libelle": "Emballage simple" }, { "valeur": "premium", "libelle": "Emballage premium et étiquette" }] }
+  ],
+  "regles": [
+    { "cle": "isolee_logistique", "cle_question": "accessibilite", "valeur": "isolee", "effet": "multiplier", "cible_sens": "charge", "cible_type": "logistique", "coefficient": 1.25, "description": "Zone isolée : transport et emballage +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 2)." },
+    { "cle": "contre_saison_energie", "cle_question": "saisonnalite", "valeur": "contre_saison", "effet": "multiplier", "cible_sens": "charge", "cible_type": "energie", "coefficient": 1.35, "description": "Contre-saison : énergie +35 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 3)." },
+    { "cle": "premium_prix", "cle_question": "conditionnement", "valeur": "premium", "effet": "multiplier", "cible_sens": "revenu", "cible_type": "principal", "coefficient": 1.15, "description": "Emballage premium : prix de vente +15 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur des revenus)." },
+    { "cle": "industriel_aliment_poulet_1", "cle_question": "alimentation", "valeur": "industriel", "speculation_code": "poulet_chair", "effet": "multiplier", "cible_sens": "charge", "cible_modele": "poulet_chair.aliment_demarrage", "coefficient": 1.25, "description": "Aliment industriel complet : +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 1)." },
+    { "cle": "industriel_aliment_poulet_2", "cle_question": "alimentation", "valeur": "industriel", "speculation_code": "poulet_chair", "effet": "multiplier", "cible_sens": "charge", "cible_modele": "poulet_chair.aliment_croissance", "coefficient": 1.25, "description": "Aliment industriel complet : +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 1)." },
+    { "cle": "industriel_aliment_poulet_3", "cle_question": "alimentation", "valeur": "industriel", "speculation_code": "poulet_chair", "effet": "multiplier", "cible_sens": "charge", "cible_modele": "poulet_chair.aliment_finition", "coefficient": 1.25, "description": "Aliment industriel complet : +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 1)." },
+    { "cle": "industriel_aliment_pondeuse", "cle_question": "alimentation", "valeur": "industriel", "speculation_code": "poule_pondeuse", "effet": "multiplier", "cible_sens": "charge", "cible_modele": "poule_pondeuse.aliment_ponte", "coefficient": 1.25, "description": "Aliment industriel complet : +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 1)." },
+    { "cle": "industriel_aliment_tilapia", "cle_question": "alimentation", "valeur": "industriel", "speculation_code": "tilapia", "effet": "multiplier", "cible_sens": "charge", "cible_modele": "tilapia.aliment", "coefficient": 1.25, "description": "Aliment industriel complet : +25 %.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (modificateur 1)." }
+  ],
+  "regles_par_speculation": [
+    { "prefixe": "motopompe", "speculations": ["tomate", "piment", "oignon", "mais", "soja"], "cle_question": "eau", "valeur": "motopompe", "effet": "ajouter_ligne", "ligne": { "type_charge": "energie", "libelle": "Carburant de la motopompe", "unite": "litre", "quantite": 10, "prix_reference": 800, "nature": "variable", "classe": "exploitation" }, "description": "Motopompe : carburant ajouté (10 litres par unité, valeur arbitraire du Brouillon, à valider).", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." },
+    { "prefixe": "contre_saison_irrigation", "speculations": ["tomate", "piment", "oignon", "mais", "soja"], "cle_question": "saisonnalite", "valeur": "contre_saison", "effet": "ajouter_ligne", "ligne": { "type_charge": "infrastructures", "libelle": "Entretien du matériel d'irrigation", "unite": "forfait", "quantite": 1, "prix_reference": 15000, "nature": "variable", "classe": "exploitation" }, "description": "Contre-saison : entretien de l'irrigation ajouté.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." },
+    { "prefixe": "premium_emballage", "speculations": ["tomate", "piment", "oignon", "mais", "soja", "gari"], "cle_question": "conditionnement", "valeur": "premium", "effet": "ajouter_ligne", "ligne": { "type_charge": "logistique", "libelle": "Emballages premium et étiquettes", "unite": "étiquette", "quantite": 50, "prix_reference": 150, "nature": "variable", "classe": "exploitation" }, "description": "Emballage premium : étiquettes et emballages ajoutés (50 par unité, valeur du Brouillon, à valider ; non appliqué aux élevages, où l'unité est l'animal).", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." }
+  ]
+}
