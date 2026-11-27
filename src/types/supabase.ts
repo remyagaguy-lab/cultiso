@@ -630,6 +630,26 @@ isOneToOne: true
                   Relationships: [
                     
                   ]
+                },"baremes_credit_campagne": {
+                  Row: {
+                    "created_at": string,"date_source": string,"duree_max_mois": number | null,"id": string,"notes": string | null,"organisme": string | null,"plafond_par_unite": number,"produit": string | null,"source": string,"speculation_code": string,"statut": string,"taux_indicatif": number | null,"updated_at": string,"valide_le": string | null,"valide_par": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"date_source": string,"duree_max_mois"?: number | null,"id"?: string,"notes"?: string | null,"organisme"?: string | null,"plafond_par_unite": number,"produit"?: string | null,"source": string,"speculation_code": string,"statut"?: string,"taux_indicatif"?: number | null,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"date_source"?: string,"duree_max_mois"?: number | null,"id"?: string,"notes"?: string | null,"organisme"?: string | null,"plafond_par_unite"?: number,"produit"?: string | null,"source"?: string,"speculation_code"?: string,"statut"?: string,"taux_indicatif"?: number | null,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "baremes_credit_campagne_speculation_code_fkey"
+      columns: ["speculation_code"]
+isOneToOne: false
+      referencedRelation: "speculations"
+      referencedColumns: ["code"]
+    }
+                  ]
                 },"speculations": {
                   Row: {
                     "code": string,"created_at": string,"cycles_par_an": number,"duree_cycle_jours": number | null,"nom": string,"secteur": string,"source": string | null,"sous_secteur": string | null,"statut": string,"unite_echelle": string,"updated_at": string,"valide_le": string | null,"valide_par": string | null,"zones": (string)[]

@@ -39,3 +39,4 @@ export {
 } from "./budget";
 export { schemaBandes, simulerBandes, type CoutAnimalPretAProduire, type EntreeBandes, type MoisBandes, type Renouvellement, type ResultatBandes, type SeuilTechnique } from "./bandes";
 export { schemaTroupeau, simulerTroupeau, TYPES_ENTREE, TYPES_SORTIE, type BilanCategorie, type EntreeTroupeau, type ResultatTroupeau } from "./troupeau";
+export { calculerFinancement, plafondCampagne, schemaFinancementComplet, type EntreeFinancement, type ResultatFinancement, type MoisFinancement, type AnneeFinancement, type ControleFinancement } from "./financement";
