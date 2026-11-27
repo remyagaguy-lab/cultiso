@@ -14,6 +14,7 @@ import {
   type ModeleRevenu,
   type RegleAjustement,
 } from "@/moteurs/budget";
+import type { RegleFinanceur } from "@/moteurs/controles";
 
 export type StatutDonnee = "brouillon_ia" | "a_valider" | "validee";
 
@@ -267,4 +268,122 @@ export async function preparerBudget(
     regles,
     prix: [],
   };
+}
+
+// ---------------------------------------------------------------------------------------------
+// R11 : règles des financeurs (ANPGF, banques, IMF...). Aucune valeur n'est écrite ici : tout vient de ref.regles_financeurs.
+// ---------------------------------------------------------------------------------------------
+
+export interface RegleFinanceurRef {
+  id: string;
+  organisme: string;
+  produit: string;
+  libelle: string;
+  pays: string | null;
+  /** Part minimale de l'apport dans le coût du projet (0,2 = 20 %). null : règle inconnue. */
+  apportMinimum: number | null;
+  /** Durée maximale du financement, différé compris, en mois. */
+  dureeMaxMois: number | null;
+  /** Le maximum de durée compte-t-il le différé ? */
+  dureeInclutDiffere: boolean;
+  differeMaxMois: number | null;
+  /** Taux annuel indicatif (0,24 = 24 %) : le taux réel est fixé par le financeur. */
+  tauxIndicatif: number | null;
+  taxes: { nom: string; description: string | null }[];
+  piecesExigees: string[];
+  formatDossier: string | null;
+  notes: string | null;
+  statut: StatutDonnee;
+  source: string | null;
+}
+
+const statutDonnee = z.enum(["brouillon_ia", "a_valider", "validee"]);
+const schemaRegleFinanceurRef = z.object({
+  id: z.string(),
+  organisme: z.string().min(1),
+  produit: z.string().min(1),
+  libelle: z.string(),
+  pays: z.string().nullable(),
+  apportMinimum: z.number().min(0).max(1).nullable(),
+  dureeMaxMois: z.number().int().positive().nullable(),
+  dureeInclutDiffere: z.boolean(),
+  differeMaxMois: z.number().int().min(0).nullable(),
+  tauxIndicatif: z.number().min(0).max(1).nullable(),
+  taxes: z.array(z.object({ nom: z.string().min(1), description: z.string().nullable().default(null) })),
+  piecesExigees: z.array(z.string()),
+  formatDossier: z.string().nullable(),
+  notes: z.string().nullable(),
+  statut: statutDonnee,
+  source: z.string().nullable(),
+});
+
+const nombreOuNull = (x: number | string | null) => (x === null ? null : Number(x));
+
+/** Ligne de ref.regles_financeurs → règle validée. */
+export function versRegleFinanceur(r: Tables["regles_financeurs"]["Row"]): RegleFinanceurRef {
+  return conforme(
+    schemaRegleFinanceurRef,
+    {
+      id: r.id,
+      organisme: r.organisme,
+      produit: r.produit,
+      libelle: r.libelle,
+      pays: r.pays,
+      apportMinimum: nombreOuNull(r.apport_minimum),
+      dureeMaxMois: r.duree_max_mois,
+      dureeInclutDiffere: r.duree_inclut_differe,
+      differeMaxMois: r.differe_max_mois,
+      tauxIndicatif: nombreOuNull(r.taux_indicatif),
+      taxes: r.taxes,
+      piecesExigees: r.pieces_exigees,
+      formatDossier: r.format_dossier,
+      notes: r.notes,
+      statut: r.statut,
+      source: r.source,
+    },
+    `financeur ${r.organisme} / ${r.produit}`,
+  );
+}
+
+/** Règles des financeurs, par organisme puis par produit. Filtres : organisme (sans tenir compte de la casse), produit, pays. */
+export async function lireReglesFinanceurs(
+  client: ClientBase,
+  filtres: { organisme?: string; produit?: string; pays?: string } = {},
+): Promise<RegleFinanceurRef[]> {
+  let requete = ref(client).from("regles_financeurs").select("*").order("organisme").order("produit");
+  if (filtres.organisme) requete = requete.ilike("organisme", filtres.organisme.replace(/[%_]/g, "\$&"));
+  if (filtres.produit) requete = requete.eq("produit", filtres.produit);
+  if (filtres.pays) requete = requete.eq("pays", filtres.pays);
+  const { data, error } = await requete;
+  if (error) echec("règles des financeurs", error);
+  return data.map(versRegleFinanceur);
+}
+
+/** Règle au format attendu par les contrôles du moteur financier (M4). Une règle inconnue (null) reste absente : elle n'est pas contrôlée. */
+export function versRegleMoteur(r: RegleFinanceurRef): RegleFinanceur {
+  return {
+    nom: r.organisme,
+    ...(r.apportMinimum !== null ? { apportMinimum: r.apportMinimum } : {}),
+    ...(r.dureeMaxMois !== null ? { dureeMaxMois: r.dureeMaxMois, dureeInclutDiffere: r.dureeInclutDiffere } : {}),
+    ...(r.differeMaxMois !== null ? { differeMaxMois: r.differeMaxMois } : {}),
+    ...(r.source ? { source: r.source } : {}),
+    statut: r.statut,
+  };
+}
+
+/**
+ * Service : la règle d'un financeur pour les contrôles. Sans `produit`, il faut que l'organisme n'en ait qu'un seul ;
+ * sinon l'appelant doit préciser lequel (ErreurReferentiel avec la liste). Renvoie null si l'organisme est inconnu.
+ */
+export async function trouverRegleFinanceur(
+  client: ClientBase,
+  organisme: string,
+  produit?: string,
+): Promise<RegleFinanceurRef | null> {
+  const regles = await lireReglesFinanceurs(client, { organisme, produit });
+  if (regles.length === 0) return null;
+  if (regles.length > 1) {
+    throw new ErreurReferentiel(`${organisme} a plusieurs produits (${regles.map((r) => r.produit).join(", ")}) : précise lequel.`);
+  }
+  return regles[0];
 }

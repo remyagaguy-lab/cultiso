@@ -31,6 +31,26 @@ export interface DonneesDepart {
   }[];
   regles: RegleDepart[];
   regles_par_speculation: (Omit<RegleDepart, "cle" | "speculation_code"> & { prefixe: string; speculations: string[] })[];
+  /** Règles des financeurs (R11). */
+  financeurs: FinanceurDepart[];
+}
+
+interface FinanceurDepart {
+  cle: string;
+  organisme: string;
+  produit: string;
+  libelle: string;
+  pays: string | null;
+  apport_minimum: number | null;
+  duree_max_mois: number | null;
+  duree_inclut_differe: boolean;
+  differe_max_mois: number | null;
+  taux_indicatif: number | null;
+  taxes: { nom: string; description: string }[];
+  pieces_exigees: string[];
+  format_dossier: string | null;
+  notes: string | null;
+  source: string;
 }
 
 interface ChargeDepart {
@@ -194,5 +214,7 @@ export function deplier(d: DonneesDepart) {
     source: r.source,
   }));
 
-  return { speculations, modelesCharges, modelesRevenus, questions, regles };
+  const financeurs = d.financeurs.map(({ cle, ...f }) => ({ id: uuidDe(`financeur:${cle}`), ...f, statut: STATUT }));
+
+  return { speculations, modelesCharges, modelesRevenus, questions, regles, financeurs };
 }

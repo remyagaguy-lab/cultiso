@@ -436,6 +436,20 @@ isOneToOne: false
       referencedColumns: ["code"]
     }
                   ]
+                },"regles_financeurs": {
+                  Row: {
+                    "apport_minimum": number | null,"created_at": string,"differe_max_mois": number | null,"duree_inclut_differe": boolean,"duree_max_mois": number | null,"format_dossier": string | null,"id": string,"libelle": string,"notes": string | null,"organisme": string,"pays": string | null,"pieces_exigees": (string)[],"produit": string,"source": string | null,"statut": string,"taux_indicatif": number | null,"taxes": NonNullable<Json>,"updated_at": string,"valide_le": string | null,"valide_par": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "apport_minimum"?: number | null,"created_at"?: string,"differe_max_mois"?: number | null,"duree_inclut_differe"?: boolean,"duree_max_mois"?: number | null,"format_dossier"?: string | null,"id"?: string,"libelle": string,"notes"?: string | null,"organisme": string,"pays"?: string | null,"pieces_exigees"?: (string)[],"produit": string,"source"?: string | null,"statut"?: string,"taux_indicatif"?: number | null,"taxes"?: NonNullable<Json>,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Update: {
+                    "apport_minimum"?: number | null,"created_at"?: string,"differe_max_mois"?: number | null,"duree_inclut_differe"?: boolean,"duree_max_mois"?: number | null,"format_dossier"?: string | null,"id"?: string,"libelle"?: string,"notes"?: string | null,"organisme"?: string,"pays"?: string | null,"pieces_exigees"?: (string)[],"produit"?: string,"source"?: string | null,"statut"?: string,"taux_indicatif"?: number | null,"taxes"?: NonNullable<Json>,"updated_at"?: string,"valide_le"?: string | null,"valide_par"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"speculations": {
                   Row: {
                     "code": string,"created_at": string,"cycles_par_an": number,"duree_cycle_jours": number | null,"nom": string,"secteur": string,"source": string | null,"sous_secteur": string | null,"statut": string,"unite_echelle": string,"updated_at": string,"valide_le": string | null,"valide_par": string | null,"zones": (string)[]

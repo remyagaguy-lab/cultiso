@@ -268,5 +268,29 @@
     { "prefixe": "motopompe", "speculations": ["tomate", "piment", "oignon", "mais", "soja"], "cle_question": "eau", "valeur": "motopompe", "effet": "ajouter_ligne", "ligne": { "type_charge": "energie", "libelle": "Carburant de la motopompe", "unite": "litre", "quantite": 10, "prix_reference": 800, "nature": "variable", "classe": "exploitation" }, "description": "Motopompe : carburant ajouté (10 litres par unité, valeur arbitraire du Brouillon, à valider).", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." },
     { "prefixe": "contre_saison_irrigation", "speculations": ["tomate", "piment", "oignon", "mais", "soja"], "cle_question": "saisonnalite", "valeur": "contre_saison", "effet": "ajouter_ligne", "ligne": { "type_charge": "infrastructures", "libelle": "Entretien du matériel d'irrigation", "unite": "forfait", "quantite": 1, "prix_reference": 15000, "nature": "variable", "classe": "exploitation" }, "description": "Contre-saison : entretien de l'irrigation ajouté.", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." },
     { "prefixe": "premium_emballage", "speculations": ["tomate", "piment", "oignon", "mais", "soja", "gari"], "cle_question": "conditionnement", "valeur": "premium", "effet": "ajouter_ligne", "ligne": { "type_charge": "logistique", "libelle": "Emballages premium et étiquettes", "unite": "étiquette", "quantite": 50, "prix_reference": 150, "nature": "variable", "classe": "exploitation" }, "description": "Emballage premium : étiquettes et emballages ajoutés (50 par unité, valeur du Brouillon, à valider ; non appliqué aux élevages, où l'unité est l'animal).", "source": "Cultiso Brouillon, generer_donnees_financieres.php (ajout contextuel)." }
+  ],
+  "financeurs": [
+    {
+      "cle": "anpgf.projet_demarrage",
+      "organisme": "ANPGF",
+      "produit": "projet_demarrage",
+      "libelle": "Financement d'un projet en démarrage (canevas de plan d'affaires, mai 2022)",
+      "pays": "TG",
+      "apport_minimum": 0.2,
+      "duree_max_mois": 48,
+      "duree_inclut_differe": true,
+      "differe_max_mois": 12,
+      "taux_indicatif": null,
+      "taxes": [
+        { "nom": "Taxe sur l'échéance", "description": "Le tableau d'amortissement du canevas porte une colonne « Taxe » à côté des intérêts. Nature et taux non précisés : à confirmer auprès de l'ANPGF." }
+      ],
+      "pieces_exigees": [
+        "Plan d'affaires rédigé selon le canevas ANPGF (annexes 1 à 3 : coût et financement, amortissement, états financiers prévisionnels)",
+        "Sûretés proposées pour garantir le remboursement (section 9 du canevas)"
+      ],
+      "format_dossier": "Canevas ANPGF de mai 2022 : dossier physique (Lomé, Tsévié, Kara) ou plan d'affaires envoyé par courriel ; états au format SYSCOHADA.",
+      "notes": "Apport du promoteur en nature ou en numéraire (§10.1). Remboursement en quatre ans, différé d'au plus un an (§10.3) : le canevas ne dit pas si les quatre ans comptent le différé, on prend la lecture prudente (différé compris). Aucun taux indicatif dans le canevas. La liste des pièces est celle que le canevas impose ; les pièces administratives (identité, statut, justificatifs fonciers) sont à demander à l'ANPGF.",
+      "source": "Canevas de plan d'affaires ANPGF (Togo, mai 2022) §10.1, §10.3, §9 et informations utiles. Brouillon IA : à faire valider par l'ANPGF ou un expert."
+    }
   ]
 }

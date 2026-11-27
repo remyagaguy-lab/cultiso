@@ -57,6 +57,7 @@ await ecrire("questions_terrain", "cle", d.questions);
 await ecrire("modeles_charges", "id", d.modelesCharges);
 await ecrire("modeles_revenus", "id", d.modelesRevenus);
 await ecrire("regles_ajustement", "id", d.regles);
+await ecrire("regles_financeurs", "id", d.financeurs);
 await retirerObsoletes("modeles_charges", d.modelesCharges.map((c) => c.id), codes);
 await retirerObsoletes("modeles_revenus", d.modelesRevenus.map((r) => r.id), codes);
 console.log("Terminé.");
